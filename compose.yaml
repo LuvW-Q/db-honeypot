@@ -1,0 +1,48 @@
+name: dbhoneypot
+
+# ============================================================
+# 数据库蜜罐系统编排：MySQL 8.4 固定使用隔离网段 172.28.0.0/24
+# 仅用于课程授权的隔离实验环境，禁止暴露到公共互联网
+# ============================================================
+
+services:
+  mysql:
+    image: docker.1ms.run/library/mysql:8.0
+    container_name: dbhoneypot-mysql
+    restart: unless-stopped
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+      - --default-time-zone=+00:00
+      - --skip-name-resolve=0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?请在 .env 中设置}
+      HONEYPOT_MIGRATE_PASSWORD: ${HONEYPOT_MIGRATE_PASSWORD:?}
+      HONEYPOT_APP_RW_PASSWORD: ${HONEYPOT_APP_RW_PASSWORD:?}
+      HONEYPOT_APP_RO_PASSWORD: ${HONEYPOT_APP_RO_PASSWORD:?}
+      HONEYPOT_BACKUP_PASSWORD: ${HONEYPOT_BACKUP_PASSWORD:?}
+      TZ: UTC
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - dbhoneypot_mysql_data:/var/lib/mysql
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+    networks:
+      - dbhoneypot_net
+
+volumes:
+  dbhoneypot_mysql_data:
+
+networks:
+  dbhoneypot_net:
+    name: dbhoneypot_net
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24

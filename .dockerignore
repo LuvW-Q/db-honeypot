@@ -1,0 +1,28 @@
+# ============================================================
+# Docker 构建上下文忽略（后端/前端镜像与 Compose 构建）
+# ============================================================
+.git/
+.gitignore
+.env
+.env.*
+!.env.example
+*.log
+logs/
+backup/
+db/backup/
+node_modules/
+frontend/node_modules/
+frontend/dist/
+.venv/
+**/.venv/
+**/__pycache__/
+**/*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+docs/
+specs/
+.tools/
+.DS_Store
