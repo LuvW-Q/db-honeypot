@@ -1,0 +1,220 @@
+/* 全站基础样式：统一配色、层级与四页布局骨架（FR-067）。 */
+
+:root {
+  color-scheme: light;
+  --app-bg: #f2f5f9;
+  --app-card-bg: #ffffff;
+  --app-border: #e4e7ed;
+  --app-text: #303133;
+  --app-text-secondary: #606266;
+  --app-text-muted: #909399;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+    Arial, sans-serif;
+  background: var(--app-bg);
+  color: var(--app-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 24px;
+  background: var(--app-card-bg);
+  border-bottom: 1px solid var(--app-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.app-brand {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 220px;
+}
+
+.app-brand__title {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.app-brand__subtitle {
+  font-size: 12px;
+  color: var(--app-text-muted);
+  white-space: nowrap;
+}
+
+.top-nav {
+  border-bottom: none !important;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.app-main {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 20px 24px 8px;
+}
+
+.app-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--app-text-muted);
+  font-size: 12px;
+}
+
+/* 页面通用骨架 */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.page-header__title {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.page-header__desc {
+  margin: 0;
+  color: var(--app-text-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.page-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* 筛选条 */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.filter-bar__item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filter-bar__label {
+  font-size: 12px;
+  color: var(--app-text-muted);
+}
+
+/* 通用区块 */
+.section-card {
+  border-radius: 8px;
+}
+
+.section-card + .section-card {
+  margin-top: 16px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.section-title__hint {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--app-text-muted);
+}
+
+.table-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.mono {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  word-break: break-all;
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .overview-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .app-header {
+    padding: 0 12px;
+    gap: 12px;
+  }
+
+  .app-brand__subtitle {
+    display: none;
+  }
+
+  .app-main {
+    padding: 12px;
+  }
+}
