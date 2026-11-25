@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&amp;family=Inter:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-primary":"#ffffff","on-tertiary-fixed-variant":"#005049","surface-container-lowest":"#ffffff","surface-tint":"#006398","secondary-fixed":"#dae2fd","surface-container-highest":"#e2e8f0","surface-container-high":"#f1f5f9","surface-container-low":"#ffffff","on-secondary-fixed":"#131b2e","primary-container":"#0284c7","inverse-surface":"#213145","surface-variant":"#f1f5f9","primary-fixed-dim":"#93ccff","secondary-fixed-dim":"#bec6e0","primary":"#0284c7","on-surface":"#0f172a","on-primary-fixed":"#001d31","on-background":"#0f172a","primary-fixed":"#cce5ff","on-primary-container":"#ffffff","tertiary-fixed-dim":"#6bd8cb","on-error":"#ffffff","on-surface-variant":"#64748b","secondary":"#0f766e","tertiary":"#0284c7","surface-bright":"#ffffff","on-error-container":"#991b1b","tertiary-container":"#e0f2fe","secondary-container":"#ccfbf1","on-secondary-fixed-variant":"#3f465c","on-tertiary-fixed":"#00201d","error-container":"#fee2e2","surface":"#f8fafc","inverse-on-surface":"#f8fafc","surface-container":"#f8fafc","on-primary-fixed-variant":"#004b73","surface-dim":"#e2e8f0","on-secondary-container":"#115e59","outline":"#94a3b8","outline-variant":"#e2e8f0","on-secondary":"#ffffff","on-tertiary-container":"#0369a1","background":"#f8fafc","tertiary-fixed":"#89f5e7","on-tertiary":"#ffffff","error":"#ef4444","inverse-primary":"#93ccff"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"space-3xl":"3rem","gutter-desktop":"1.25rem","space-2xs":"0.125rem","space-xs":"0.25rem","space-sm":"0.5rem","margin-desktop":"1.5rem","space-xl":"1.5rem","gutter":"1rem","space-2xl":"2rem","margin":"1rem","space-md":"0.75rem","space-lg":"1rem","gutter-lg":"1.5rem","margin-lg":"2rem"},"fontFamily":{"body-sm":["Inter"],"headline-md":["Hanken Grotesk"],"body-md":["Inter"],"headline-lg":["Hanken Grotesk"],"title-md":["Inter"],"display-lg":["Hanken Grotesk"],"headline-lg-mobile":["Hanken Grotesk"],"body-lg":["Inter"],"code-md":["JetBrains Mono"],"code-lg":["JetBrains Mono"],"title-lg":["Inter"],"display-lg-mobile":["Hanken Grotesk"],"label-sm":["JetBrains Mono"],"label-md":["JetBrains Mono"],"code-sm":["JetBrains Mono"],"display-hero":["Hanken Grotesk"],"headline-sm":["Hanken Grotesk"],"label-badge":["JetBrains Mono"]},"fontSize":{"body-sm":["12px",{"lineHeight":"16px","letterSpacing":"0.01em","fontWeight":"400"}],"headline-md":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"body-md":["13px",{"lineHeight":"18px","letterSpacing":"0em","fontWeight":"400"}],"headline-lg":["28px",{"lineHeight":"36px","letterSpacing":"-0.015em","fontWeight":"600"}],"title-md":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"600"}],"display-lg":["36px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-lg-mobile":["22px",{"lineHeight":"30px","letterSpacing":"-0.01em","fontWeight":"600"}],"body-lg":["15px",{"lineHeight":"22px","letterSpacing":"0em","fontWeight":"400"}],"code-md":["12px",{"lineHeight":"16px","letterSpacing":"0em","fontWeight":"400"}],"code-lg":["13px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"500"}],"title-lg":["16px",{"lineHeight":"24px","letterSpacing":"-0.005em","fontWeight":"600"}],"display-lg-mobile":["28px",{"lineHeight":"36px","letterSpacing":"-0.01em","fontWeight":"700"}],"label-sm":["10px",{"lineHeight":"12px","letterSpacing":"0.08em","fontWeight":"600"}],"label-md":["11px",{"lineHeight":"14px","letterSpacing":"0.06em","fontWeight":"500"}],"code-sm":["11px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"400"}],"display-hero":["36px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-sm":["16px",{"lineHeight":"22px","fontWeight":"600"}],"label-badge":["11px",{"lineHeight":"14px","letterSpacing":"0.05em","fontWeight":"600"}]}}}}</script></head><body class="bg-background font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-72 bg-white z-50 flex flex-col justify-between border-r border-outline-variant shadow-sm"><div class="flex flex-col"><div class="px-space-xl pt-space-lg pb-space-md border-b border-outline-variant/60"><div class="flex items-center gap-space-sm"><img alt="DB Honeypot Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrAGI7GEp6kueCBueKuGhv44EkMDeW6kRaaAictqxzFj1m2enq_0FvCSdC8aDqt0z1Ai3ENm6s53-r3TEM6aHdCf0T3oonUQoIVTTrjSjrapqKbuWvly023MpAMnx0irX3NC3F5Vuf1aeEf0spCMCb9Fccri0bUfHLT5ychfSQo2VEOeQN6SWOipaTG7FITFIcJkCti3adLt3P70Dd6Oc2j-B76CX17A-KLjxPfRGIlK"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary font-bold tracking-tight">DB Honeypot</span><span class="font-body-sm text-body-sm text-on-surface-variant font-medium">攻击行为分析系统</span></div></div><div class="mt-space-md p-space-sm bg-surface-container-high/60 border border-outline-variant rounded flex items-center gap-space-xs"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span></span><span class="font-code-sm text-code-sm text-emerald-700 font-medium tracking-tight">诱饵库监听中: PORT 3306 [演示库就绪]</span></div></div><nav class="flex flex-col gap-space-xs px-space-md pt-space-md" data-active-classes="bg-sky-50 text-primary font-headline-sm font-semibold rounded border border-sky-200"><a class="flex items-center justify-between px-space-md py-space-sm rounded font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="dashboard" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">grid_view</span><span>首页概览</span></div><span class="font-code-sm text-code-sm text-outline">01</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="attackers" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">person_alert</span><span>攻击者列表</span></div><span class="font-code-sm text-code-sm text-outline">02</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="attacker-detail" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">troubleshoot</span><span>攻击者详情与时间线</span></div><span class="font-code-sm text-code-sm text-outline">03</span></a><a aria-current="page" class="flex items-center justify-between px-space-md py-space-sm transition-all bg-sky-50 text-primary font-headline-sm font-semibold rounded border border-sky-200 shadow-sm" data-path="alerts" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px] text-primary">notifications_active</span><span>告警列表</span></div><span class="px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-rose-100 text-rose-700 font-bold border border-rose-200">3</span></a></nav></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-16 bg-white/95 backdrop-blur-md z-40 px-gutter-lg flex items-center justify-between border-b border-outline-variant shadow-sm"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs px-space-sm py-1 rounded bg-surface-container-high border border-outline-variant"><span class="material-symbols-outlined text-[16px] text-primary">dns</span><span class="font-code-sm text-code-sm text-on-surface font-medium">Honeypot-MySQL-01 (Isolated DMZ)</span></div><span class="px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-sky-50 text-sky-700 border border-sky-200 font-semibold tracking-wide">AI 辅助分析</span></div><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-xs font-code-sm text-code-sm text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">schedule</span><span id="console-clock">LIVE UTC+8</span></div><button class="flex items-center gap-space-xs px-space-md py-1.5 rounded bg-white border border-outline-variant hover:bg-surface-container-high text-primary hover:text-sky-700 font-body-sm text-body-sm transition-all shadow-sm" type="button"><span class="material-symbols-outlined text-[16px]">refresh</span><span>现场刷新数据</span></button><div class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-sm shadow-sm"><span class="material-symbols-outlined text-white text-[18px]">person</span></div></div></header><main class="w-full pt-16 px-gutter-lg pb-margin-lg bg-background"><div class="flex flex-col w-full">
+<!-- Dynamic Notification Toast Container (FR-058) -->
+<div class="fixed top-20 right-8 z-50 transform translate-y-[-120%] opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-space-md px-space-lg py-space-md rounded-lg bg-white border border-outline-variant shadow-lg" id="toast-notification">
+<div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">告警状态已更新</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">FR-058: 告警已同步标记为已读，已上报安全核验流水</span>
+</div>
+<button class="text-outline hover:text-on-surface ml-space-sm" onclick="hideToast()">
+<span class="material-symbols-outlined text-[16px]">close</span>
+</button>
+</div>
+<!-- Header & Telemetry Stat Strip -->
+<section class="flex flex-col gap-space-lg mt-space-md">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex flex-col gap-space-xs"><h1 class="font-headline-lg text-headline-lg text-on-surface font-semibold tracking-tight">告警列表 Alert Management</h1></div>
+<div class="flex items-center gap-space-md flex-wrap">
+<div class="flex items-center gap-space-xs px-space-md py-space-sm rounded-lg bg-white border border-outline-variant shadow-sm">
+<span class="font-code-sm text-code-sm text-outline">引擎状态:</span>
+<span class="flex items-center gap-1 font-code-sm text-code-sm text-emerald-600 font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            ACTIVE (0ms 延迟)
+          </span>
+</div>
+<button class="flex items-center gap-space-xs px-space-lg py-space-sm rounded bg-primary hover:bg-sky-700 text-white font-headline-sm text-headline-sm font-semibold transition-all shadow-sm" id="batch-read-btn" onclick="batchMarkAllRead()">
+<span class="material-symbols-outlined text-[18px]">done_all</span>
+<span>批量标记已读</span>
+</button>
+</div>
+</div>
+<!-- Quick Overview Stats: Bento Grid Strip -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-space-md">
+<!-- Total Alerts -->
+<div class="relative overflow-hidden p-space-lg rounded-lg bg-white border border-outline-variant shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-code-sm text-code-sm uppercase tracking-wider font-semibold">全部告警 TOTAL</span>
+<div class="w-7 h-7 rounded bg-sky-50 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[18px]">notifications</span></div>
+</div>
+<div class="mt-space-md flex items-baseline gap-space-sm">
+<span class="font-display-hero text-display-hero font-bold text-on-surface" id="stat-total">18</span>
+<span class="font-code-sm text-code-sm text-outline">件</span>
+</div>
+<div class="mt-space-xs flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm pt-2 border-t border-slate-100">
+<span>历史命中统计</span>
+<span class="font-code-sm text-code-sm text-primary font-medium">100% 审计入库</span>
+</div>
+</div>
+<!-- Unread Alerts -->
+<div class="relative overflow-hidden p-space-lg rounded-lg bg-white border border-rose-200 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm uppercase tracking-wider text-rose-600 font-semibold">待审未读 UNREAD</span>
+<span class="relative flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-600"></span>
+</span>
+</div>
+<div class="mt-space-md flex items-baseline gap-space-sm">
+<span class="font-display-hero text-display-hero font-bold text-rose-600" id="stat-unread">3</span>
+<span class="font-code-sm text-code-sm text-rose-600 font-medium">件需处置</span>
+</div>
+<div class="mt-space-xs flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm pt-2 border-t border-rose-50">
+<span>高风险待审</span>
+<span class="font-code-sm text-code-sm text-rose-600 font-semibold">2 严重 / 1 高危</span>
+</div>
+</div>
+<!-- Today New Alerts -->
+<div class="relative overflow-hidden p-space-lg rounded-lg bg-white border border-outline-variant shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-code-sm text-code-sm uppercase tracking-wider font-semibold">今日新增 TODAY</span>
+<div class="w-7 h-7 rounded bg-amber-50 flex items-center justify-center text-amber-600"><span class="material-symbols-outlined text-[18px]">bolt</span></div>
+</div>
+<div class="mt-space-md flex items-baseline gap-space-sm">
+<span class="font-display-hero text-display-hero font-bold text-on-surface">5</span>
+<span class="font-code-sm text-code-sm text-emerald-600 font-semibold">+27.5% 较昨日</span>
+</div>
+<div class="mt-space-xs flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm pt-2 border-t border-slate-100">
+<span>峰值时段</span>
+<span class="font-code-sm text-code-sm text-sky-700 font-medium">14:00 - 15:30</span>
+</div>
+</div>
+<!-- Resolution Rate -->
+<div class="relative overflow-hidden p-space-lg rounded-lg bg-white border border-outline-variant shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-code-sm text-code-sm uppercase tracking-wider font-semibold">处理完成率 RESOLUTION</span>
+<div class="w-7 h-7 rounded bg-teal-50 flex items-center justify-center text-teal-600"><span class="material-symbols-outlined text-[18px]">task_alt</span></div>
+</div>
+<div class="mt-space-md flex items-baseline gap-space-sm">
+<span class="font-display-hero text-display-hero font-bold text-teal-700" id="stat-resolution">83.3%</span>
+<span class="font-code-sm text-code-sm text-outline">已标记</span>
+</div>
+<!-- Progress Bar SVG -->
+<div class="mt-space-sm w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+<div class="bg-teal-600 h-full rounded-full transition-all duration-500" id="stat-progress-bar" style="width: 83.3%"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Multi-Dimensional Filter Toolbar -->
+<section class="mt-space-lg p-space-md rounded-lg bg-white border border-outline-variant shadow-sm flex flex-col gap-space-md">
+<div class="flex flex-col xl:flex-row xl:items-center justify-between gap-space-md">
+<!-- Status Tabs -->
+<div class="flex items-center gap-space-xs bg-slate-100 p-1 rounded-lg border border-slate-200">
+<button class="filter-tab-status px-space-md py-1.5 rounded font-body-sm text-body-sm font-semibold transition-all bg-white text-primary shadow-sm" onclick="setFilter('status', 'ALL', this)">
+          全部 (18)
+        </button>
+<button class="filter-tab-status px-space-md py-1.5 rounded font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-1.5" onclick="setFilter('status', 'UNREAD', this)">
+<span>未读</span>
+<span class="px-1.5 py-0.2 rounded font-label-badge text-label-badge bg-rose-500 text-white font-bold" id="tab-unread-counter">3</span>
+</button>
+<button class="filter-tab-status px-space-md py-1.5 rounded font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-all" onclick="setFilter('status', 'READ', this)">
+          已读 (15)
+        </button>
+</div>
+<!-- Risk Level Quick Toggles -->
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-code-sm text-code-sm text-outline mr-space-xs">级别:</span>
+<button class="filter-level-btn px-space-sm py-1 rounded font-label-badge text-label-badge bg-sky-50 text-primary border border-sky-200 font-bold" onclick="setFilter('level', 'ALL', this)">全部</button>
+<button class="filter-level-btn px-space-sm py-1 rounded font-label-badge text-label-badge bg-white text-rose-600 border border-slate-200 hover:bg-slate-50" onclick="setFilter('level', 'CRITICAL', this)">🔴 严重</button>
+<button class="filter-level-btn px-space-sm py-1 rounded font-label-badge text-label-badge bg-white text-amber-600 border border-slate-200 hover:bg-slate-50" onclick="setFilter('level', 'HIGH', this)">🟠 高危</button>
+<button class="filter-level-btn px-space-sm py-1 rounded font-label-badge text-label-badge bg-white text-amber-500 border border-slate-200 hover:bg-slate-50" onclick="setFilter('level', 'MEDIUM', this)">🟡 中危</button>
+<button class="filter-level-btn px-space-sm py-1 rounded font-label-badge text-label-badge bg-white text-emerald-600 border border-slate-200 hover:bg-slate-50" onclick="setFilter('level', 'LOW', this)">🟢 低危</button>
+</div>
+<!-- Type Dropdown & Time Window -->
+<div class="flex items-center gap-space-sm flex-wrap">
+<div class="relative">
+<select class="appearance-none bg-white border border-outline-variant text-on-surface font-body-sm text-body-sm px-space-md py-1.5 pr-8 rounded focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer shadow-sm" id="type-select" onchange="filterAlerts()">
+<option value="ALL">全部告警类型 (全部命中)</option>
+<option value="R02">爆破告警 [R02 认证爆破]</option>
+<option value="R04">拖库告警 [R04 批量拖库]</option>
+<option value="R05">破坏性操作告警 [R05 拦截]</option>
+<option value="R01">踩点探测告警 [R01 扫描探测]</option>
+<option value="R03">配置信息探查 [R03 敏感信息]</option>
+</select>
+<span class="material-symbols-outlined text-[16px] text-outline absolute right-2.5 top-2.5 pointer-events-none">expand_more</span>
+</div>
+<div class="flex items-center gap-1 bg-slate-100 p-1 rounded border border-slate-200">
+<button class="time-range-btn px-space-sm py-1 rounded font-code-sm text-code-sm bg-white text-primary shadow-sm font-semibold" onclick="setTimeRange('TODAY', this)">今日</button>
+<button class="time-range-btn px-space-sm py-1 rounded font-code-sm text-code-sm text-outline hover:text-on-surface" onclick="setTimeRange('3DAYS', this)">3天</button>
+<button class="time-range-btn px-space-sm py-1 rounded font-code-sm text-code-sm text-outline hover:text-on-surface" onclick="setTimeRange('7DAYS', this)">7天</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive Alert Stream Container -->
+<section class="mt-space-lg flex flex-col gap-space-md" id="alerts-stream">
+<!-- Alert 1: Unread | CRITICAL | R02 Brute Force -->
+<article class="alert-card group relative p-space-lg rounded-lg bg-white border-l-4 border-l-rose-500 border-y border-r border-outline-variant hover:border-slate-300 transition-all duration-200 shadow-sm" data-alert-id="ALT-20241124-001" data-level="CRITICAL" data-status="UNREAD" data-type="R02">
+<div class="flex flex-col lg:flex-row lg:items-start justify-between gap-space-md">
+<!-- Left: Status & Identity -->
+<div class="flex items-start gap-space-md flex-1">
+<div class="status-indicator-wrapper mt-1 flex flex-col items-center">
+<span class="status-dot relative flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-rose-600"></span>
+</span>
+</div>
+<div class="flex flex-col gap-space-xs flex-1">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="status-badge px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-rose-100 text-rose-700 font-bold border border-rose-200">未读 UNREAD</span>
+<span class="px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-rose-50 text-rose-600 border border-rose-200 font-semibold tracking-wider">🔴 严重 CRITICAL</span>
+<span class="px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-sky-50 text-sky-800 border border-sky-200 font-mono">RULE: R02 (认证爆破规则)</span>
+<span class="font-code-sm text-code-sm text-outline">ID: ALT-20241124-001</span>
+</div>
+<div class="mt-space-xs flex items-center gap-space-md">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold group-hover:text-primary transition-colors">高频密码爆破告警 (Brute Force Detected)</h2>
+</div>
+<!-- Evidence Box -->
+<div class="mt-space-sm p-space-md rounded bg-slate-50 border border-slate-200">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-code-sm text-code-sm text-teal-700 font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">flip_camera_ios</span>
+                  证据提取 (Evidence Snippet)
+                </span>
+<span class="font-code-sm text-code-sm text-outline">命中频次: 3次 / 阈值: 5次</span>
+</div>
+<p class="font-body-sm text-body-sm text-slate-800 leading-relaxed">
+                检测到 5 分钟内针对 4 个账号的 8 次认证尝试，失败率达到 87.5%，超过系统阈值。攻击者连续认证失败 7 次，并在第 8 次使用常见弱口令尝试登录诱饵 admin 账户。
+              </p>
+</div>
+<!-- Metadata Row -->
+<div class="mt-space-sm flex items-center gap-space-lg flex-wrap font-code-sm text-code-sm text-on-surface-variant">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-outline">person_pin</span>
+<span>攻击源 IP:</span>
+<a class="font-mono text-primary font-medium hover:underline hover:text-sky-700" href="#">192.168.10.84</a>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+<span>告警时间:</span>
+<span class="font-mono text-on-surface font-medium">2024-11-24 15:28:40</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-outline">link</span>
+<span>关联会话:</span>
+<a class="font-mono text-primary font-medium hover:underline" href="#">sess_20241124_01</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Actions -->
+<div class="flex lg:flex-col items-center lg:items-end justify-end gap-space-sm shrink-0">
+<button class="mark-btn flex items-center gap-space-xs px-space-md py-1.5 rounded bg-white hover:bg-slate-50 text-primary border border-primary/30 font-body-sm text-body-sm font-medium transition-all shadow-sm" onclick="markAsRead(this, 'ALT-20241124-001')">
+<span class="material-symbols-outlined text-[16px]">done</span>
+<span>标记已读</span>
+</button>
+<a class="flex items-center gap-space-xs px-space-md py-1.5 rounded text-outline hover:text-on-surface font-body-sm text-body-sm transition-all" href="#">
+<span>查看会话证据</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</article>
+<!-- Alert 2: Unread | CRITICAL | R05 Destructive SQL -->
+<article class="alert-card group relative p-space-lg rounded-lg bg-white border-l-4 border-l-rose-500 border-y border-r border-outline-variant hover:border-slate-300 transition-all duration-200 shadow-sm" data-alert-id="ALT-20241124-002" data-level="CRITICAL" data-status="UNREAD" data-type="R05">
+<div class="flex flex-col lg:flex-row lg:items-start justify-between gap-space-md">
+<!-- Left: Status & Identity -->
+<div class="flex items-start gap-space-md flex-1">
+<div class="status-indicator-wrapper mt-1 flex flex-col items-center">
+<span class="status-dot relative flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-rose-600"></span>
+</span>
+</div>
+<div class="flex flex-col gap-space-xs flex-1">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="status-badge px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-rose-100 text-rose-700 font-bold border border-rose-200">未读 UNREAD</span>
+<span class="px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-rose-50 text-rose-600 border border-rose-200 font-semibold tracking-wider">🔴 严重 CRITICAL</span>
+<span class="px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-sky-50 text-sky-800 border border-sky-200 font-mono">RULE: R05 (破坏性操作拦截)</span>
+<span class="font-code-sm text-code-sm text-outline">ID: ALT-20241124-002</span>
+</div>
+<div class="mt-space-xs flex items-center gap-space-md">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold group-hover:text-primary transition-colors">破坏性 SQL 拦截告警 (Destructive DROP/ALTER Intercepted)</h2>
+</div>
+<!-- Evidence Box -->
+<div class="mt-space-sm p-space-md rounded bg-slate-50 border border-slate-200">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-code-sm text-code-sm text-rose-600 font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">dangerous</span>
+                  高危破坏拦截 (Destructive Statement Intercepted)
+                </span>
+<span class="font-code-sm text-code-sm text-teal-700 font-medium">已虚拟阻断 (Fake Response OK)</span>
+</div>
+<div class="font-code-md text-code-md text-rose-700 bg-rose-50 border border-rose-200 px-space-sm py-1 rounded font-mono mb-space-xs">
+                DROP TABLE fake_customers; -- payload attack
+              </div>
+<p class="font-body-sm text-body-sm text-slate-800 leading-relaxed">
+                攻击者尝试执行 DROP TABLE fake_customers 毁灭性破坏指令。诱饵引擎已阻断真实执行，并伪造 Query OK 假回显，同步抓取完整攻击载荷指纹。
+              </p>
+</div>
+<!-- Metadata Row -->
+<div class="mt-space-sm flex items-center gap-space-lg flex-wrap font-code-sm text-code-sm text-on-surface-variant">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-outline">person_pin</span>
+<span>攻击源 IP:</span>
+<a class="font-mono text-primary font-medium hover:underline hover:text-sky-700" href="#">172.16.4.22</a>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+<span>告警时间:</span>
+<span class="font-mono text-on-surface font-medium">2024-11-24 14:45:10</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-outline">link</span>
+<span>关联会话:</span>
+<a class="font-mono text-primary font-medium hover:underline" href="#">sess_20241124_03</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Actions -->
+<div class="flex lg:flex-col items-center lg:items-end justify-end gap-space-sm shrink-0">
+<button class="mark-btn flex items-center gap-space-xs px-space-md py-1.5 rounded bg-white hover:bg-slate-50 text-primary border border-primary/30 font-body-sm text-body-sm font-medium transition-all shadow-sm" onclick="markAsRead(this, 'ALT-20241124-002')">
+<span class="material-symbols-outlined text-[16px]">done</span>
+<span>标记已读</span>
+</button>
+<a class="flex items-center gap-space-xs px-space-md py-1.5 rounded text-outline hover:text-on-surface font-body-sm text-body-sm transition-all" href="#">
+<span>查看会话证据</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</article>
+<!-- Alert 3: Unread | HIGH | R04 Data Exfiltration -->
+<article class="alert-card group relative p-space-lg rounded-lg bg-white border-l-4 border-l-amber-500 border-y border-r border-outline-variant hover:border-slate-300 transition-all duration-200 shadow-sm" data-alert-id="ALT-20241124-003" data-level="HIGH" data-status="UNREAD" data-type="R04">
+<div class="flex flex-col lg:flex-row lg:items-start justify-between gap-space-md">
+<!-- Left: Status & Identity -->
+<div class="flex items-start gap-space-md flex-1">
+<div class="status-indicator-wrapper mt-1 flex flex-col items-center">
+<span class="status-dot relative flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+</span>
+</div>
+<div class="flex flex-col gap-space-xs flex-1">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="status-badge px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-amber-100 text-amber-800 font-bold border border-amber-200">未读 UNREAD</span>
+<span class="px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-amber-50 text-amber-700 border border-amber-200 font-semibold tracking-wider">🟠 高危 HIGH</span>
+<span class="px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-sky-50 text-sky-800 border border-sky-200 font-mono">RULE: R04 (批量拖库检测)</span>
+<span class="font-code-sm text-code-sm text-outline">ID: ALT-20241124-003</span>
+</div>
+<div class="mt-space-xs flex items-center gap-space-md">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold group-hover:text-primary transition-colors">敏感表大批量拖库告警 (Data Exfiltration Alert)</h2>
+</div>
+<!-- Evidence Box -->
+<div class="mt-space-sm p-space-md rounded bg-slate-50 border border-slate-200">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-code-sm text-code-sm text-amber-700 font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">database</span>
+                  诱饵全表扫描事件 (Full Table Scan)
+                </span>
+<span class="font-code-sm text-code-sm text-outline">抓取行数: 30 rows</span>
+</div>
+<p class="font-body-sm text-body-sm text-slate-800 leading-relaxed">
+                执行 SELECT 全表扫描诱饵表 fake_users，读取超过 30 行虚构客户密码哈希及邮箱数据，触发批量拖库敏感度特征判定模型。
+              </p>
+</div>
+<!-- Metadata Row -->
+<div class="mt-space-sm flex items-center gap-space-lg flex-wrap font-code-sm text-code-sm text-on-surface-variant">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-outline">person_pin</span>
+<span>攻击源 IP:</span>
+<a class="font-mono text-primary font-medium hover:underline hover:text-sky-700" href="#">10.0.8.129</a>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+<span>告警时间:</span>
+<span class="font-mono text-on-surface font-medium">2024-11-24 14:18:20</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-outline">link</span>
+<span>关联会话:</span>
+<a class="font-mono text-primary font-medium hover:underline" href="#">sess_20241124_02</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Actions -->
+<div class="flex lg:flex-col items-center lg:items-end justify-end gap-space-sm shrink-0">
+<button class="mark-btn flex items-center gap-space-xs px-space-md py-1.5 rounded bg-white hover:bg-slate-50 text-primary border border-primary/30 font-body-sm text-body-sm font-medium transition-all shadow-sm" onclick="markAsRead(this, 'ALT-20241124-003')">
+<span class="material-symbols-outlined text-[16px]">done</span>
+<span>标记已读</span>
+</button>
+<a class="flex items-center gap-space-xs px-space-md py-1.5 rounded text-outline hover:text-on-surface font-body-sm text-body-sm transition-all" href="#">
+<span>查看会话证据</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</article>
+<!-- Alert 4: Read | HIGH | R03 Config Recon -->
+<article class="alert-card group relative p-space-lg rounded-lg bg-slate-50 border border-slate-200 transition-all duration-200" data-alert-id="ALT-20241124-004" data-level="HIGH" data-status="READ" data-type="R03">
+<div class="flex flex-col lg:flex-row lg:items-start justify-between gap-space-md">
+<!-- Left: Status & Identity -->
+<div class="flex items-start gap-space-md flex-1">
+<div class="status-indicator-wrapper mt-1 flex flex-col items-center">
+<span class="status-dot w-2.5 h-2.5 rounded-full border border-slate-400 bg-transparent"></span>
+</div>
+<div class="flex flex-col gap-space-xs flex-1">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="status-badge px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-slate-200 text-slate-600 font-medium">已读 READ</span>
+<span class="px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-amber-50 text-amber-700 border border-amber-200 font-medium tracking-wider">🟠 高危 HIGH</span>
+<span class="px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-slate-100 text-slate-600 border border-slate-200 font-mono">RULE: R03 (踩点探测规则)</span>
+<span class="font-code-sm text-code-sm text-outline">ID: ALT-20241124-004</span>
+</div>
+<div class="mt-space-xs flex items-center gap-space-md">
+<h2 class="font-headline-sm text-headline-sm text-slate-700 font-semibold">敏感配置信息探查告警 (Configuration Recon)</h2>
+</div>
+<!-- Evidence Box -->
+<div class="mt-space-sm p-space-md rounded bg-white border border-slate-200">
+<p class="font-body-sm text-body-sm text-slate-600 leading-relaxed">
+                探测 fake_config 诱饵系统配置表，查询敏感参数 app.secret 与 api_endpoint，已于 12:00:00 由安全管理员完成审计核验。
+              </p>
+</div>
+<!-- Metadata Row -->
+<div class="mt-space-sm flex items-center gap-space-lg flex-wrap font-code-sm text-code-sm text-slate-500">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">person_pin</span>
+<span>攻击源 IP:</span>
+<a class="font-mono text-slate-700 hover:underline" href="#">192.168.10.19</a>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>告警时间:</span>
+<span class="font-mono text-slate-700">2024-11-24 11:45:22</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">link</span>
+<span>关联会话:</span>
+<a class="font-mono text-slate-700 hover:underline" href="#">sess_20241124_05</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Actions -->
+<div class="flex lg:flex-col items-center lg:items-end justify-end gap-space-sm shrink-0">
+<span class="px-space-md py-1 rounded bg-slate-200 text-slate-600 font-code-sm text-code-sm">已归档</span>
+<a class="flex items-center gap-space-xs px-space-md py-1.5 rounded text-outline hover:text-on-surface font-body-sm text-body-sm transition-all" href="#">
+<span>查看会话</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</article>
+<!-- Alert 5: Read | MEDIUM | R01 Service Recon -->
+<article class="alert-card group relative p-space-lg rounded-lg bg-slate-50 border border-slate-200 transition-all duration-200" data-alert-id="ALT-20241123-005" data-level="MEDIUM" data-status="READ" data-type="R01">
+<div class="flex flex-col lg:flex-row lg:items-start justify-between gap-space-md">
+<!-- Left: Status & Identity -->
+<div class="flex items-start gap-space-md flex-1">
+<div class="status-indicator-wrapper mt-1 flex flex-col items-center">
+<span class="status-dot w-2.5 h-2.5 rounded-full border border-slate-400 bg-transparent"></span>
+</div>
+<div class="flex flex-col gap-space-xs flex-1">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="status-badge px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-slate-200 text-slate-600 font-medium">已读 READ</span>
+<span class="px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-amber-50 text-amber-700 border border-amber-200 font-medium tracking-wider">🟡 中危 MEDIUM</span>
+<span class="px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-slate-100 text-slate-600 border border-slate-200 font-mono">RULE: R01 (服务探测规则)</span>
+<span class="font-code-sm text-code-sm text-outline">ID: ALT-20241123-005</span>
+</div>
+<div class="mt-space-xs flex items-center gap-space-md">
+<h2 class="font-headline-sm text-headline-sm text-slate-700 font-semibold">数据库版本与元数据扫描探测 (Fingerprinting)</h2>
+</div>
+<!-- Evidence Box -->
+<div class="mt-space-sm p-space-md rounded bg-white border border-slate-200">
+<p class="font-body-sm text-body-sm text-slate-600 leading-relaxed">
+                连续探测 3306 端口指纹与 MySQL 版本内置变量 @@version、@@version_comment，未检测到实质入侵行为，属自动化扫描器初级踩点。
+              </p>
+</div>
+<!-- Metadata Row -->
+<div class="mt-space-sm flex items-center gap-space-lg flex-wrap font-code-sm text-code-sm text-slate-500">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">person_pin</span>
+<span>攻击源 IP:</span>
+<a class="font-mono text-slate-700 hover:underline" href="#">10.0.12.50</a>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>告警时间:</span>
+<span class="font-mono text-slate-700">2024-11-23 09:20:15</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">link</span>
+<span>关联会话:</span>
+<a class="font-mono text-slate-700 hover:underline" href="#">sess_20241123_01</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Actions -->
+<div class="flex lg:flex-col items-center lg:items-end justify-end gap-space-sm shrink-0">
+<span class="px-space-md py-1 rounded bg-slate-200 text-slate-600 font-code-sm text-code-sm">已归档</span>
+<a class="flex items-center gap-space-xs px-space-md py-1.5 rounded text-outline hover:text-on-surface font-body-sm text-body-sm transition-all" href="#">
+<span>查看会话</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</article>
+</section>
+<!-- Empty State Fallback (Hidden by default, shown when filters match zero) -->
+<div class="hidden mt-space-lg p-margin-lg rounded-lg bg-white border border-outline-variant shadow-sm flex flex-col items-center justify-center text-center" id="alerts-empty-state">
+<div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-outline mb-space-md">
+<span class="material-symbols-outlined text-[32px]">format_image_left</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface font-semibold">无符合条件的告警记录</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md mt-space-xs">
+      当前过滤条件下未检索到异常告警，蜜罐规则引擎持续监听中，一切正常。
+    </p>
+<button class="mt-space-md px-space-lg py-1.5 rounded bg-white border border-outline-variant hover:bg-slate-50 text-primary font-body-sm text-body-sm font-medium transition-all shadow-sm" onclick="resetFilters()">
+      重置所有筛选器
+    </button>
+</div>
+<!-- Pagination & Audit Footer -->
+<section class="mt-space-xl pt-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-md border-t border-slate-200">
+<div class="flex items-center gap-space-sm font-code-sm text-code-sm text-outline"><span>显示第 1 - 5 条</span><span>•</span><span id="page-total-label">共 18 条告警记录</span></div>
+<!-- Pagination Controls -->
+<div class="flex items-center gap-space-xs">
+<button class="px-space-md py-1.5 rounded bg-white border border-outline-variant hover:bg-slate-50 text-outline hover:text-on-surface font-body-sm text-body-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm" disabled="">
+        上一页
+      </button>
+<button class="w-8 h-8 rounded bg-primary text-white font-code-sm text-code-sm font-bold flex items-center justify-center shadow-sm">
+        1
+      </button>
+<button class="w-8 h-8 rounded bg-white border border-outline-variant hover:bg-slate-50 text-on-surface font-code-sm text-code-sm flex items-center justify-center transition-all shadow-sm">
+        2
+      </button>
+<button class="w-8 h-8 rounded bg-white border border-outline-variant hover:bg-slate-50 text-on-surface font-code-sm text-code-sm flex items-center justify-center transition-all shadow-sm">
+        3
+      </button>
+<button class="w-8 h-8 rounded bg-white border border-outline-variant hover:bg-slate-50 text-on-surface font-code-sm text-code-sm flex items-center justify-center transition-all shadow-sm">
+        4
+      </button>
+<button class="px-space-md py-1.5 rounded bg-white border border-outline-variant hover:bg-slate-50 text-on-surface font-body-sm text-body-sm transition-all shadow-sm">
+        下一页
+      </button>
+</div>
+</section>
+<!-- Interactive JavaScript Engine for Filters and Toast -->
+<script>
+    let activeFilters = {
+      status: 'ALL',
+      level: 'ALL',
+      type: 'ALL',
+      time: 'TODAY'
+    };
+
+    let unreadCount = 3;
+    let totalCount = 18;
+
+    function showToast(message) {
+      const toast = document.getElementById('toast-notification');
+      if (!toast) return;
+      if (message) {
+        const textElem = toast.querySelector('.font-headline-sm');
+        if (textElem) textElem.textContent = message;
+      }
+      toast.classList.remove('translate-y-[-120%]', 'opacity-0', 'pointer-events-none');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        hideToast();
+      }, 4000);
+    }
+
+    function hideToast() {
+      const toast = document.getElementById('toast-notification');
+      if (!toast) return;
+      toast.classList.add('translate-y-[-120%]', 'opacity-0', 'pointer-events-none');
+      toast.classList.remove('translate-y-0', 'opacity-100');
+    }
+
+    function markAsRead(btnElement, alertId) {
+      const card = btnElement.closest('.alert-card');
+      if (!card || card.getAttribute('data-status') === 'READ') return;
+
+      // Update data attribute
+      card.setAttribute('data-status', 'READ');
+      card.classList.remove('bg-white', 'border-l-4', 'border-l-rose-500', 'border-l-amber-500', 'shadow-sm');
+      card.classList.add('bg-slate-50', 'border-slate-200');
+
+      // Update indicator dot
+      const indicator = card.querySelector('.status-indicator-wrapper');
+      if (indicator) {
+        indicator.innerHTML = '<span class="status-dot w-2.5 h-2.5 rounded-full border border-slate-400 bg-transparent"></span>';
+      }
+
+      // Update status badge
+      const badge = card.querySelector('.status-badge');
+      if (badge) {
+        badge.className = 'status-badge px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-slate-200 text-slate-600 font-medium';
+        badge.textContent = '已读 READ';
+      }
+
+      // Replace button with read tag
+      const parentActions = btnElement.parentElement;
+      btnElement.remove();
+      const archivedTag = document.createElement('span');
+      archivedTag.className = 'px-space-md py-1 rounded bg-slate-200 text-slate-600 font-code-sm text-code-sm';
+      archivedTag.textContent = '已标记已读';
+      parentActions.insertBefore(archivedTag, parentActions.firstChild);
+
+      // Decrement Counter
+      unreadCount = Math.max(0, unreadCount - 1);
+      updateCounters();
+
+      // Show Toast Notification
+      showToast('已成功将告警标记为已读，状态已同步 (FR-058)');
+
+      // Re-apply current filter view
+      filterAlerts();
+    }
+
+    function batchMarkAllRead() {
+      const unreadCards = document.querySelectorAll('.alert-card[data-status="UNREAD"]');
+      if (unreadCards.length === 0) {
+        showToast('当前已无未读告警需处理');
+        return;
+      }
+
+      unreadCards.forEach(card => {
+        const btn = card.querySelector('.mark-btn');
+        const alertId = card.getAttribute('data-alert-id');
+        if (btn) markAsRead(btn, alertId);
+      });
+
+      showToast('已批量标记全部告警为已读 (FR-058/FR-066)');
+    }
+
+    function updateCounters() {
+      const unreadCounterElem = document.getElementById('stat-unread');
+      const tabCounterElem = document.getElementById('tab-unread-counter');
+      const resolutionElem = document.getElementById('stat-resolution');
+      const progressBarElem = document.getElementById('stat-progress-bar');
+
+      if (unreadCounterElem) unreadCounterElem.textContent = unreadCount;
+      if (tabCounterElem) tabCounterElem.textContent = unreadCount;
+
+      const rate = (((totalCount - unreadCount) / totalCount) * 100).toFixed(1);
+      if (resolutionElem) resolutionElem.textContent = `${rate}%`;
+      if (progressBarElem) progressBarElem.style.width = `${rate}%`;
+    }
+
+    function setFilter(dim, val, btn) {
+      activeFilters[dim] = val;
+
+      if (dim === 'status') {
+        document.querySelectorAll('.filter-tab-status').forEach(el => {
+          el.className = 'filter-tab-status px-space-md py-1.5 rounded font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-1.5';
+        });
+        btn.className = 'filter-tab-status px-space-md py-1.5 rounded font-body-sm text-body-sm font-semibold transition-all bg-white text-primary shadow-sm flex items-center gap-1.5';
+      }
+
+      if (dim === 'level') {
+        document.querySelectorAll('.filter-level-btn').forEach(el => {
+          el.className = 'filter-level-btn px-space-sm py-1 rounded font-label-badge text-label-badge bg-white text-slate-600 border border-slate-200 hover:bg-slate-50';
+        });
+        btn.className = 'filter-level-btn px-space-sm py-1 rounded font-label-badge text-label-badge bg-sky-50 text-primary border border-sky-200 font-bold';
+      }
+
+      filterAlerts();
+    }
+
+    function setTimeRange(val, btn) {
+      activeFilters.time = val;
+      document.querySelectorAll('.time-range-btn').forEach(el => {
+        el.className = 'time-range-btn px-space-sm py-1 rounded font-code-sm text-code-sm text-outline hover:text-on-surface';
+      });
+      btn.className = 'time-range-btn px-space-sm py-1 rounded font-code-sm text-code-sm bg-white text-primary shadow-sm font-semibold';
+    }
+
+    function filterAlerts() {
+      const typeSelect = document.getElementById('type-select');
+      if (typeSelect) activeFilters.type = typeSelect.value;
+
+      const cards = document.querySelectorAll('.alert-card');
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const cStatus = card.getAttribute('data-status');
+        const cLevel = card.getAttribute('data-level');
+        const cType = card.getAttribute('data-type');
+
+        const matchStatus = (activeFilters.status === 'ALL') || (cStatus === activeFilters.status);
+        const matchLevel = (activeFilters.level === 'ALL') || (cLevel === activeFilters.level);
+        const matchType = (activeFilters.type === 'ALL') || (cType === activeFilters.type);
+
+        if (matchStatus && matchLevel && matchType) {
+          card.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      const emptyState = document.getElementById('alerts-empty-state');
+      if (emptyState) {
+        if (visibleCount === 0) {
+          emptyState.classList.remove('hidden');
+        } else {
+          emptyState.classList.add('hidden');
+        }
+      }
+    }
+
+    function resetFilters() {
+      activeFilters = { status: 'ALL', level: 'ALL', type: 'ALL', time: 'TODAY' };
+      const statusBtns = document.querySelectorAll('.filter-tab-status');
+      if (statusBtns[0]) setFilter('status', 'ALL', statusBtns[0]);
+      const levelBtns = document.querySelectorAll('.filter-level-btn');
+      if (levelBtns[0]) setFilter('level', 'ALL', levelBtns[0]);
+      const typeSelect = document.getElementById('type-select');
+      if (typeSelect) typeSelect.value = 'ALL';
+      filterAlerts();
+    }
+  </script>
+</div></main></div>
+</body></html>

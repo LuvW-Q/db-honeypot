@@ -1,0 +1,566 @@
+<!DOCTYPE html><html class="dark" lang="zh-CN"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-tertiary-container":"#211cb4","error-container":"#93000a","secondary-container":"#00a572","outline":"#869397","surface-tint":"#4cd7f6","background":"#051424","surface-container":"#122131","primary-fixed":"#acedff","surface-bright":"#2c3a4c","surface-container-highest":"#273647","on-primary-fixed":"#001f26","surface-container-high":"#1c2b3c","tertiary-container":"#9a9dff","surface-variant":"#273647","on-surface-variant":"#bcc9cd","on-surface":"#d4e4fa","on-error":"#690005","tertiary-fixed":"#e1e0ff","on-background":"#d4e4fa","surface":"#051424","on-secondary-fixed":"#002113","secondary-fixed":"#6ffbbe","on-error-container":"#ffdad6","on-secondary":"#003824","on-tertiary-fixed-variant":"#2f2ebe","on-tertiary-fixed":"#07006c","secondary":"#4edea3","on-primary-fixed-variant":"#004e5c","inverse-primary":"#00687a","on-primary":"#003640","on-tertiary":"#1000a9","surface-dim":"#051424","inverse-on-surface":"#233143","tertiary-fixed-dim":"#c0c1ff","tertiary":"#c0c1ff","error":"#ffb4ab","surface-container-low":"#0d1c2d","on-primary-container":"#00424f","primary":"#4cd7f6","inverse-surface":"#d4e4fa","on-secondary-container":"#00311f","primary-container":"#06b6d4","primary-fixed-dim":"#4cd7f6","surface-container-lowest":"#010f1f","on-secondary-fixed-variant":"#005236","outline-variant":"#3d494c","secondary-fixed-dim":"#4edea3"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"space-xs":"0.25rem","margin-lg":"2rem","gutter":"1rem","space-xl":"1.5rem","space-md":"0.75rem","space-lg":"1rem","margin":"1.25rem","gutter-lg":"1.5rem","space-sm":"0.5rem"},"fontFamily":{"body-lg":["Inter"],"label-badge":["JetBrains Mono"],"body-sm":["Inter"],"code-sm":["JetBrains Mono"],"display-hero":["Inter"],"code-md":["JetBrains Mono"],"headline-lg-mobile":["Inter"],"headline-sm":["Inter"],"headline-md":["Inter"],"body-md":["Inter"],"code-lg":["JetBrains Mono"],"headline-lg":["Inter"]},"fontSize":{"body-lg":["15px",{"lineHeight":"24px","fontWeight":"400"}],"label-badge":["11px",{"lineHeight":"14px","letterSpacing":"0.05em","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"18px","fontWeight":"400"}],"code-sm":["11px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"400"}],"display-hero":["36px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"700"}],"code-md":["13px",{"lineHeight":"20px","letterSpacing":"0","fontWeight":"400"}],"headline-lg-mobile":["22px",{"lineHeight":"28px","fontWeight":"600"}],"headline-sm":["16px",{"lineHeight":"22px","fontWeight":"600"}],"headline-md":["20px",{"lineHeight":"26px","letterSpacing":"-0.01em","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"20px","fontWeight":"400"}],"code-lg":["14px",{"lineHeight":"22px","letterSpacing":"0","fontWeight":"500"}],"headline-lg":["28px",{"lineHeight":"36px","letterSpacing":"-0.015em","fontWeight":"600"}]}}}}</script></head><body class="bg-background font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-low z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.4)]"><div class="flex flex-col"><div class="px-space-xl pt-space-lg pb-space-md"><div class="flex items-center gap-space-sm"><img alt="DB Honeypot Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrAGI7GEp6kueCBueKuGhv44EkMDeW6kRaaAictqxzFj1m2enq_0FvCSdC8aDqt0z1Ai3ENm6s53-r3TEM6aHdCf0T3oonUQoIVTTrjSjrapqKbuWvly023MpAMnx0irX3NC3F5Vuf1aeEf0spCMCb9Fccri0bUfHLT5ychfSQo2VEOeQN6SWOipaTG7FITFIcJkCti3adLt3P70Dd6Oc2j-B76CX17A-KLjxPfRGIlK"><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary font-bold tracking-tight">DB Honeypot</span><span class="font-body-sm text-body-sm text-on-surface-variant font-medium">攻击行为分析系统</span></div></div><div class="mt-space-md p-space-sm bg-surface-container-lowest rounded flex items-center gap-space-xs"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span></span><span class="font-code-sm text-code-sm text-secondary font-medium tracking-tight">诱饵库监听中: PORT 3306 [演示库就绪]</span></div></div><nav class="flex flex-col gap-space-xs px-space-md pt-space-sm" data-active-classes="bg-primary-container text-on-primary-container font-headline-sm font-semibold rounded"><a aria-current="page" class="flex items-center justify-between px-space-md py-space-sm transition-all bg-primary-container text-on-primary-container font-headline-sm font-semibold rounded" data-path="dashboard" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">grid_view</span><span>首页概览</span></div><span class="font-code-sm text-code-sm text-outline">01</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded font-body-md text-body-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" data-path="attackers" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">person_alert</span><span>攻击者列表</span></div><span class="font-code-sm text-code-sm text-outline">02</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded font-body-md text-body-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" data-path="attacker-detail" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">troubleshoot</span><span>攻击者详情与时间线</span></div><span class="font-code-sm text-code-sm text-outline">03</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded font-body-md text-body-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" data-path="alerts" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">notifications_active</span><span>告警列表</span></div><span class="px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-error-container text-on-error-container font-bold">3</span></a></nav></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-16 bg-surface/85 backdrop-blur-xl z-40 px-gutter-lg flex items-center justify-between shadow-[0_1px_8px_rgba(0,0,0,0.25)]"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs px-space-sm py-1 rounded bg-surface-container-high"><span class="material-symbols-outlined text-[16px] text-primary">dns</span><span class="font-code-sm text-code-sm text-on-surface font-medium">Honeypot-MySQL-01 (Isolated DMZ)</span></div><span class="px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-tertiary-container/30 text-tertiary font-semibold tracking-wide">AI 辅助分析</span></div><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-xs font-code-sm text-code-sm text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">schedule</span><span id="console-clock">LIVE UTC+8</span></div><button class="flex items-center gap-space-xs px-space-md py-1.5 rounded bg-surface-container-high hover:bg-surface-container-highest text-primary hover:text-on-surface font-body-sm text-body-sm transition-all shadow-[0_0_8px_rgba(6,182,212,0.15)]" type="button"><span class="material-symbols-outlined text-[16px]">refresh</span><span>现场刷新数据</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="w-full pt-16 px-gutter-lg pb-margin-lg bg-background"><div class="flex flex-col w-full">
+<!-- Top Section: Page Header, System State Banner & Controls -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md mb-space-lg">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">首页概览</span>
+<span class="font-code-md text-code-md text-primary font-medium tracking-wide">DASHBOARD</span>
+<div class="flex items-center gap-space-xs px-space-sm py-0.5 rounded bg-surface-container-high">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+</span>
+<span class="font-label-badge text-label-badge text-secondary font-semibold uppercase tracking-wider">演示库就绪: Seed Rules Active, Live Trap Online</span>
+</div>
+</div>
+
+</div>
+<!-- Right Controls: Time filter & Seed Data State -->
+<div class="flex items-center gap-space-sm self-start lg:self-auto flex-wrap">
+<div class="flex items-center bg-surface-container-low rounded p-0.5 shadow-sm">
+<button class="time-filter-btn px-space-md py-1 rounded font-body-sm text-body-sm font-semibold transition-all bg-primary-container text-on-primary-container shadow-sm" data-range="24h" type="button">今日 24H</button>
+<button class="time-filter-btn px-space-md py-1 rounded font-body-sm text-body-sm font-normal text-on-surface-variant hover:text-on-surface transition-all" data-range="7d" type="button">最近 7 天</button>
+<button class="time-filter-btn px-space-md py-1 rounded font-body-sm text-body-sm font-normal text-on-surface-variant hover:text-on-surface transition-all" data-range="all" type="button">全部历史</button>
+</div>
+
+
+</div>
+</div>
+<!-- Primary Dynamic Content Container (Toggles between Normal & FR-069 Empty State) -->
+<div class="flex flex-col gap-space-lg w-full" id="dashboard-content">
+<!-- Four Primary KPI Metric Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
+<!-- Card 1: 连接数 (Sessions) -->
+<a class="group flex flex-col justify-between p-space-lg rounded-xl bg-surface-container-low hover:bg-surface-container transition-all shadow-md relative overflow-hidden" data-path="attackers" href="#">
+<div class="absolute -right-4 -bottom-4 w-28 h-28 rounded-full bg-primary/5 blur-2xl group-hover:bg-primary/10 transition-all pointer-events-none"></div>
+<div>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant uppercase tracking-wider font-semibold">连接数 · SESSIONS</span>
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[18px]">hub</span>
+</div>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-sm">
+<span class="font-display-hero text-display-hero text-on-surface font-bold tracking-tight">1,428</span>
+<span class="font-label-badge text-label-badge text-secondary flex items-center font-bold">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>12.5%
+            </span>
+</div>
+</div>
+<div class="mt-space-md pt-space-sm flex items-center justify-between font-code-sm text-code-sm text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-secondary"></span>
+            今日新增 +184 会话
+          </span>
+<span class="text-outline font-label-badge text-label-badge">SRC: sessions</span>
+</div>
+</a>
+<!-- Card 2: 查询数 (Queries) -->
+<a class="group flex flex-col justify-between p-space-lg rounded-xl bg-surface-container-low hover:bg-surface-container transition-all shadow-md relative overflow-hidden" data-path="attackers" href="#">
+<div class="absolute -right-4 -bottom-4 w-28 h-28 rounded-full bg-surface-tint/5 blur-2xl group-hover:bg-surface-tint/10 transition-all pointer-events-none"></div>
+<div>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant uppercase tracking-wider font-semibold">查询数 · QUERIES</span>
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center text-surface-tint group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+</div>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-sm">
+<span class="font-display-hero text-display-hero text-on-surface font-bold tracking-tight">18,920</span>
+<span class="font-label-badge text-label-badge text-primary font-bold">94.2% 拦截</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-sm flex items-center justify-between font-code-sm text-code-sm text-on-surface-variant">
+<span class="flex items-center gap-1 text-on-surface">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-primary"></span>
+            今日执行 +2,410 次
+          </span>
+<span class="text-outline font-label-badge text-label-badge">SRC: attack_log</span>
+</div>
+</a>
+<!-- Card 3: 告警数 (Unread Alerts) -->
+<a class="group flex flex-col justify-between p-space-lg rounded-xl bg-surface-container-low hover:bg-surface-container transition-all shadow-md relative overflow-hidden" data-path="alerts" href="#">
+<div class="absolute -right-4 -bottom-4 w-28 h-28 rounded-full bg-error/10 blur-2xl group-hover:bg-error/20 transition-all pointer-events-none"></div>
+<div>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant uppercase tracking-wider font-semibold">未处理告警 · ALERTS</span>
+<div class="w-8 h-8 rounded bg-error-container flex items-center justify-center text-error group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[18px]">warning</span>
+</div>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-sm">
+<span class="font-display-hero text-display-hero text-error font-bold tracking-tight">3</span>
+<span class="px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-error-container text-on-error-container font-bold">需立即复核</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-sm flex items-center justify-between font-code-sm text-code-sm text-on-surface-variant">
+<span class="text-error font-medium flex items-center gap-1">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-error"></span>
+            严重 1 · 高危 2
+          </span>
+<span class="text-outline font-label-badge text-label-badge">SRC: alerts 未读</span>
+</div>
+</a>
+<!-- Card 4: 高风险攻击者数 (Risk >= 60) -->
+<a class="group flex flex-col justify-between p-space-lg rounded-xl bg-surface-container-low hover:bg-surface-container transition-all shadow-md relative overflow-hidden" data-path="attackers" href="#">
+<div class="absolute -right-4 -bottom-4 w-28 h-28 rounded-full bg-tertiary/10 blur-2xl group-hover:bg-tertiary/20 transition-all pointer-events-none"></div>
+<div>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant uppercase tracking-wider font-semibold">高风险攻击者 · RISK &gt;= 60</span>
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center text-tertiary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[18px]">security</span>
+</div>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-sm">
+<span class="font-display-hero text-display-hero text-on-surface font-bold tracking-tight">14</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">/ 44 总量</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-sm flex items-center justify-between font-code-sm text-code-sm text-on-surface-variant">
+<span class="text-on-surface flex items-center gap-1">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-error"></span>
+            占比 31.8% (阈值超标)
+          </span>
+<span class="text-outline font-label-badge text-label-badge">SRC: v_attacker_profile</span>
+</div>
+</a>
+</div>
+<!-- Visualization Charts Section (2 Columns, responsive grid) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Chart: v_daily_attack_trend (7 Columns) -->
+<div class="lg:col-span-7 flex flex-col p-space-lg rounded-xl bg-surface-container-low shadow-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs mb-space-md">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">每日攻击趋势</span>
+
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">最近7天全协议交互与行为意图演变 (11-18 ~ 11-24)</span>
+</div>
+<div class="flex items-center gap-space-md flex-wrap">
+<div class="flex items-center gap-1 font-code-sm text-code-sm text-on-surface">
+<span class="w-3 h-2 rounded-sm bg-primary"></span>
+<span>爆破 (R02)</span>
+</div>
+<div class="flex items-center gap-1 font-code-sm text-code-sm text-on-surface">
+<span class="w-3 h-2 rounded-sm bg-secondary"></span>
+<span>拖库/查询 (R04)</span>
+</div>
+<div class="flex items-center gap-1 font-code-sm text-code-sm text-on-surface">
+<span class="w-3 h-2 rounded-sm bg-tertiary"></span>
+<span>踩点扫描 (R01/03)</span>
+</div>
+</div>
+</div>
+<!-- High-Contrast SVG Trend Chart -->
+<div class="w-full h-64 relative flex items-center justify-center bg-surface-container-lowest rounded-lg p-space-sm overflow-hidden">
+<svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 700 240">
+<defs>
+<linearGradient id="grad-cyan" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#4cd7f6" stop-opacity="0.35"></stop>
+<stop offset="100%" stop-color="#4cd7f6" stop-opacity="0.0"></stop>
+</linearGradient>
+<linearGradient id="grad-green" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#4edea3" stop-opacity="0.25"></stop>
+<stop offset="100%" stop-color="#4edea3" stop-opacity="0.0"></stop>
+</linearGradient>
+</defs>
+<!-- Horizontal Grid Lines -->
+<line stroke="#1c2b3c" stroke-dasharray="3,3" stroke-width="1" x1="40" x2="680" y1="30" y2="30"></line>
+<line stroke="#1c2b3c" stroke-dasharray="3,3" stroke-width="1" x1="40" x2="680" y1="80" y2="80"></line>
+<line stroke="#1c2b3c" stroke-dasharray="3,3" stroke-width="1" x1="40" x2="680" y1="130" y2="130"></line>
+<line stroke="#1c2b3c" stroke-dasharray="3,3" stroke-width="1" x1="40" x2="680" y1="180" y2="180"></line>
+<line stroke="#273647" stroke-width="1.5" x1="40" x2="680" y1="210" y2="210"></line>
+<!-- Axis Labels Y -->
+<text fill="#869397" font-family="JetBrains Mono" font-size="10" text-anchor="end" x="32" y="34">4k</text>
+<text fill="#869397" font-family="JetBrains Mono" font-size="10" text-anchor="end" x="32" y="84">3k</text>
+<text fill="#869397" font-family="JetBrains Mono" font-size="10" text-anchor="end" x="32" y="134">2k</text>
+<text fill="#869397" font-family="JetBrains Mono" font-size="10" text-anchor="end" x="32" y="184">1k</text>
+<!-- Area Fill 1: Brute Force Cyan -->
+<path d="M 60 170 Q 150 145 250 110 T 450 70 T 570 50 L 660 38 L 660 210 L 60 210 Z" fill="url(#grad-cyan)"></path>
+<!-- Line 1: Brute Force -->
+<path d="M 60 170 Q 150 145 250 110 T 450 70 T 570 50 L 660 38" fill="none" stroke="#4cd7f6" stroke-width="2.5"></path>
+<!-- Area Fill 2: Data Exfiltration Green -->
+<path d="M 60 190 Q 150 175 250 160 T 450 120 T 570 95 L 660 85 L 660 210 L 60 210 Z" fill="url(#grad-green)"></path>
+<!-- Line 2: Data Exfil -->
+<path d="M 60 190 Q 150 175 250 160 T 450 120 T 570 95 L 660 85" fill="none" stroke="#4edea3" stroke-width="2"></path>
+<!-- Line 3: Recon Purple / Tertiary -->
+<path d="M 60 198 Q 150 192 250 185 T 450 165 T 570 150 L 660 140" fill="none" stroke="#c0c1ff" stroke-dasharray="4,2" stroke-width="1.5"></path>
+<!-- Data Point Markers for Highlight (Latest 11-24) -->
+<circle cx="660" cy="38" fill="#4cd7f6" r="4.5" stroke="#051424" stroke-width="2"></circle>
+<circle cx="660" cy="85" fill="#4edea3" r="4" stroke="#051424" stroke-width="2"></circle>
+<circle cx="660" cy="140" fill="#c0c1ff" r="3.5" stroke="#051424" stroke-width="2"></circle>
+<!-- Tooltip / Callout Badge on 11-24 -->
+<rect fill="#122131" height="24" rx="4" stroke="#4cd7f6" stroke-width="1" width="95" x="560" y="8"></rect>
+<text fill="#d4e4fa" font-family="JetBrains Mono" font-size="11" font-weight="600" text-anchor="middle" x="607" y="24">2,410 次峰值</text>
+<!-- Axis Labels X -->
+<text fill="#869397" font-family="JetBrains Mono" font-size="10" text-anchor="middle" x="60" y="228">11-18</text>
+<text fill="#869397" font-family="JetBrains Mono" font-size="10" text-anchor="middle" x="160" y="228">11-19</text>
+<text fill="#869397" font-family="JetBrains Mono" font-size="10" text-anchor="middle" x="260" y="228">11-20</text>
+<text fill="#869397" font-family="JetBrains Mono" font-size="10" text-anchor="middle" x="360" y="228">11-21</text>
+<text fill="#869397" font-family="JetBrains Mono" font-size="10" text-anchor="middle" x="460" y="228">11-22</text>
+<text fill="#869397" font-family="JetBrains Mono" font-size="10" text-anchor="middle" x="560" y="228">11-23</text>
+<text fill="#4cd7f6" font-family="JetBrains Mono" font-size="10" font-weight="bold" text-anchor="middle" x="660" y="228">今日 11-24</text>
+</svg>
+</div>
+<div class="mt-space-sm flex items-center justify-between text-on-surface-variant font-code-sm text-code-sm">
+<span>峰值采样：2024-11-24 15:00 ~ 15:30 (探测激增 4.8x)</span>
+
+</div>
+</div>
+<!-- Right Chart: v_rule_effectiveness (5 Columns) -->
+<div class="lg:col-span-5 flex flex-col p-space-lg rounded-xl bg-surface-container-low shadow-md">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">规则命中与意图分布</span>
+
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">攻击意图分析引擎命中量汇总</span>
+</div>
+<span class="px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-surface-container text-on-surface-variant">2,003 次命中</span>
+</div>
+<!-- Donut & Metric Distribution -->
+<div class="flex items-center gap-space-lg my-auto py-space-sm">
+<!-- Mini Donut SVG -->
+<div class="relative w-36 h-36 flex-shrink-0 flex items-center justify-center">
+<svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+<!-- Background Circle -->
+<circle cx="50" cy="50" fill="none" r="38" stroke="#122131" stroke-width="12"></circle>
+<!-- Segment 1: R02 Brute Force 42% (Perimeter = 2*PI*38 = 238.76 -> 42% = 100.2) -->
+<circle cx="50" cy="50" fill="none" r="38" stroke="#ef4444" stroke-dasharray="100.2 138.5" stroke-dashoffset="0" stroke-width="12"></circle>
+<!-- Segment 2: R04 Exfiltration 26% (= 62.0) -->
+<circle cx="50" cy="50" fill="none" r="38" stroke="#06b6d4" stroke-dasharray="62 176.7" stroke-dashoffset="-100.2" stroke-width="12"></circle>
+<!-- Segment 3: R03 Recon 18% (= 42.9) -->
+<circle cx="50" cy="50" fill="none" r="38" stroke="#f59e0b" stroke-dasharray="42.9 195.8" stroke-dashoffset="-162.2" stroke-width="12"></circle>
+<!-- Segment 4: R05 Destructive 9% (= 21.4) -->
+<circle cx="50" cy="50" fill="none" r="38" stroke="#c0c1ff" stroke-dasharray="21.4 217.3" stroke-dashoffset="-205.1" stroke-width="12"></circle>
+<!-- Segment 5: R01 Port Probe 5% (= 11.9) -->
+<circle cx="50" cy="50" fill="none" r="38" stroke="#4edea3" stroke-dasharray="11.9 226.8" stroke-dashoffset="-226.5" stroke-width="12"></circle>
+</svg>
+<div class="absolute flex flex-col items-center justify-center text-center">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface">5</span>
+<span class="font-label-badge text-label-badge text-outline">类规则</span>
+</div>
+</div>
+<!-- Breakdown List -->
+<div class="flex flex-col gap-space-xs flex-1">
+<!-- Item 1 -->
+<div class="flex flex-col">
+<div class="flex items-center justify-between font-code-sm text-code-sm">
+<span class="flex items-center gap-1.5 text-on-surface">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span>R02 认证爆破</span>
+</span>
+<span class="font-bold text-on-surface">42% <span class="text-outline font-normal">(842次)</span></span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full mt-1 overflow-hidden">
+<div class="h-full bg-error rounded-full" style="width: 42%;"></div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex flex-col">
+<div class="flex items-center justify-between font-code-sm text-code-sm">
+<span class="flex items-center gap-1.5 text-on-surface">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span>R04 批量拖库</span>
+</span>
+<span class="font-bold text-on-surface">26% <span class="text-outline font-normal">(521次)</span></span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full mt-1 overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 26%;"></div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="flex flex-col">
+<div class="flex items-center justify-between font-code-sm text-code-sm">
+<span class="flex items-center gap-1.5 text-on-surface">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>R03 数据库踩点</span>
+</span>
+<span class="font-bold text-on-surface">18% <span class="text-outline font-normal">(360次)</span></span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full mt-1 overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 18%;"></div>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="flex flex-col">
+<div class="flex items-center justify-between font-code-sm text-code-sm">
+<span class="flex items-center gap-1.5 text-on-surface">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span>R05 破坏性操作</span>
+</span>
+<span class="font-bold text-on-surface">9% <span class="text-outline font-normal">(180次)</span></span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full mt-1 overflow-hidden">
+<div class="h-full bg-tertiary rounded-full" style="width: 9%;"></div>
+</div>
+</div>
+<!-- Item 5 -->
+<div class="flex flex-col">
+<div class="flex items-center justify-between font-code-sm text-code-sm">
+<span class="flex items-center gap-1.5 text-on-surface">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+<span>R01 端口服务探测</span>
+</span>
+<span class="font-bold text-on-surface">5% <span class="text-outline font-normal">(100次)</span></span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full mt-1 overflow-hidden">
+<div class="h-full bg-outline rounded-full" style="width: 5%;"></div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+<!-- Bottom Table: 最近高风险攻击者 TOP 5 (v_attacker_profile_summary 实时排行) -->
+<div class="flex flex-col rounded-xl bg-surface-container-low shadow-md overflow-hidden">
+<!-- Table Header & Tools -->
+<div class="p-space-lg bg-surface-container-high flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">高风险攻击者实时榜单 TOP 5</span>
+<span class="px-space-xs py-0.5 rounded font-label-badge text-label-badge bg-error-container text-on-error-container font-bold">CRITICAL QUEUE</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">基于会话深度、提权意图与高危指令聚合评分 (v_attacker_profile_summary)</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<a class="flex items-center gap-space-xs px-space-md py-1.5 rounded bg-surface-container-lowest hover:bg-surface-container text-primary font-body-sm text-body-sm transition-all shadow-sm" data-path="attackers" href="#">
+<span>进入攻击者列表 (全部44位)</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- High-Contrast Forensic Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-lowest font-label-badge text-label-badge text-outline uppercase tracking-wider h-10">
+<th class="px-space-lg py-2">攻击源 IP (来源)</th>
+<th class="px-space-lg py-2">风险评分 (RISK SCORE)</th>
+<th class="px-space-lg py-2">识别意图标签</th>
+<th class="px-space-lg py-2">累计会话</th>
+<th class="px-space-lg py-2">最后活跃时间</th>
+<th class="px-space-lg py-2 text-right">处置与下钻</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<!-- Row 1: 192.168.10.84 -->
+<tr class="hover:bg-primary/5 transition-all group">
+<td class="px-space-lg py-space-md font-code-md text-code-md text-on-surface font-semibold flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
+<span>192.168.10.84</span>
+<span class="px-1 rounded bg-surface-container font-label-badge text-[10px] text-outline">局域网 DMZ-B</span>
+</td>
+<td class="px-space-lg py-space-md">
+<div class="flex items-center gap-space-sm">
+<span class="font-code-md text-code-md font-bold text-error">85</span>
+<div class="w-24 h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-error rounded-full" style="width: 85%;"></div>
+</div>
+<span class="px-1.5 py-0.5 rounded font-label-badge text-label-badge bg-error-container text-on-error-container font-bold">严重</span>
+</div>
+</td>
+<td class="px-space-lg py-space-md">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-space-xs py-0.5 rounded font-code-sm text-code-sm bg-error-container/40 text-error font-medium">🔓 爆破 R02</span>
+<span class="px-space-xs py-0.5 rounded font-code-sm text-code-sm bg-primary-container/20 text-primary font-medium">📦 拖库 R04</span>
+</div>
+</td>
+<td class="px-space-lg py-space-md font-code-md text-code-md text-on-surface">12 次</td>
+<td class="px-space-lg py-space-md font-code-sm text-code-sm text-on-surface-variant">2024-11-24 15:32:10</td>
+<td class="px-space-lg py-space-md text-right">
+<a class="inline-flex items-center gap-1 px-space-sm py-1 rounded bg-surface-container-high hover:bg-primary hover:text-on-primary text-primary font-body-sm text-body-sm transition-all" data-path="attacker-detail" href="#">
+<span>画像下钻</span>
+<span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</a>
+</td>
+</tr>
+<!-- Row 2: 10.0.8.129 -->
+<tr class="hover:bg-primary/5 transition-all group">
+<td class="px-space-lg py-space-md font-code-md text-code-md text-on-surface font-semibold flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span>10.0.8.129</span>
+<span class="px-1 rounded bg-surface-container font-label-badge text-[10px] text-outline">VPC-PEER</span>
+</td>
+<td class="px-space-lg py-space-md">
+<div class="flex items-center gap-space-sm">
+<span class="font-code-md text-code-md font-bold text-on-tertiary-fixed-variant">75</span>
+<div class="w-24 h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-on-tertiary-fixed-variant rounded-full" style="width: 75%;"></div>
+</div>
+<span class="px-1.5 py-0.5 rounded font-label-badge text-label-badge bg-surface-container text-tertiary font-bold">高危</span>
+</div>
+</td>
+<td class="px-space-lg py-space-md">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-space-xs py-0.5 rounded font-code-sm text-code-sm bg-primary-container/20 text-primary font-medium">📦 拖库 R04</span>
+<span class="px-space-xs py-0.5 rounded font-code-sm text-code-sm bg-surface-container text-on-surface font-medium">👁 踩点 R03</span>
+</div>
+</td>
+<td class="px-space-lg py-space-md font-code-md text-code-md text-on-surface">8 次</td>
+<td class="px-space-lg py-space-md font-code-sm text-code-sm text-on-surface-variant">2024-11-24 14:18:05</td>
+<td class="px-space-lg py-space-md text-right">
+<a class="inline-flex items-center gap-1 px-space-sm py-1 rounded bg-surface-container-high hover:bg-primary hover:text-on-primary text-primary font-body-sm text-body-sm transition-all" data-path="attacker-detail" href="#">
+<span>画像下钻</span>
+<span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</a>
+</td>
+</tr>
+<!-- Row 3: 172.16.4.22 -->
+<tr class="hover:bg-primary/5 transition-all group">
+<td class="px-space-lg py-space-md font-code-md text-code-md text-on-surface font-semibold flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span>172.16.4.22</span>
+<span class="px-1 rounded bg-surface-container font-label-badge text-[10px] text-outline">EXT-GATEWAY</span>
+</td>
+<td class="px-space-lg py-space-md">
+<div class="flex items-center gap-space-sm">
+<span class="font-code-md text-code-md font-bold text-on-tertiary-fixed-variant">68</span>
+<div class="w-24 h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-on-tertiary-fixed-variant rounded-full" style="width: 68%;"></div>
+</div>
+<span class="px-1.5 py-0.5 rounded font-label-badge text-label-badge bg-surface-container text-tertiary font-bold">高危</span>
+</div>
+</td>
+<td class="px-space-lg py-space-md">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-space-xs py-0.5 rounded font-code-sm text-code-sm bg-error-container/30 text-error font-medium">💥 破坏性 R05</span>
+</div>
+</td>
+<td class="px-space-lg py-space-md font-code-md text-code-md text-on-surface">5 次</td>
+<td class="px-space-lg py-space-md font-code-sm text-code-sm text-on-surface-variant">2024-11-24 13:05:40</td>
+<td class="px-space-lg py-space-md text-right">
+<a class="inline-flex items-center gap-1 px-space-sm py-1 rounded bg-surface-container-high hover:bg-primary hover:text-on-primary text-primary font-body-sm text-body-sm transition-all" data-path="attacker-detail" href="#">
+<span>画像下钻</span>
+<span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</a>
+</td>
+</tr>
+<!-- Row 4: 192.168.10.19 -->
+<tr class="hover:bg-primary/5 transition-all group">
+<td class="px-space-lg py-space-md font-code-md text-code-md text-on-surface font-semibold flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>192.168.10.19</span>
+<span class="px-1 rounded bg-surface-container font-label-badge text-[10px] text-outline">局域网 DMZ-A</span>
+</td>
+<td class="px-space-lg py-space-md">
+<div class="flex items-center gap-space-sm">
+<span class="font-code-md text-code-md font-bold text-on-tertiary-fixed-variant">60</span>
+<div class="w-24 h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-on-tertiary-fixed-variant rounded-full" style="width: 60%;"></div>
+</div>
+<span class="px-1.5 py-0.5 rounded font-label-badge text-label-badge bg-surface-container text-tertiary font-bold">高危</span>
+</div>
+</td>
+<td class="px-space-lg py-space-md">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-space-xs py-0.5 rounded font-code-sm text-code-sm bg-error-container/40 text-error font-medium">🔓 爆破 R02</span>
+</div>
+</td>
+<td class="px-space-lg py-space-md font-code-md text-code-md text-on-surface">9 次</td>
+<td class="px-space-lg py-space-md font-code-sm text-code-sm text-on-surface-variant">2024-11-24 11:45:22</td>
+<td class="px-space-lg py-space-md text-right">
+<a class="inline-flex items-center gap-1 px-space-sm py-1 rounded bg-surface-container-high hover:bg-primary hover:text-on-primary text-primary font-body-sm text-body-sm transition-all" data-path="attacker-detail" href="#">
+<span>画像下钻</span>
+<span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</a>
+</td>
+</tr>
+<!-- Row 5: 10.0.12.50 -->
+<tr class="hover:bg-primary/5 transition-all group">
+<td class="px-space-lg py-space-md font-code-md text-code-md text-on-surface font-semibold flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>10.0.12.50</span>
+<span class="px-1 rounded bg-surface-container font-label-badge text-[10px] text-outline">DEV-SUBNET</span>
+</td>
+<td class="px-space-lg py-space-md">
+<div class="flex items-center gap-space-sm">
+<span class="font-code-md text-code-md font-bold text-secondary">45</span>
+<div class="w-24 h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 45%;"></div>
+</div>
+<span class="px-1.5 py-0.5 rounded font-label-badge text-label-badge bg-secondary-container/30 text-secondary font-bold">中危</span>
+</div>
+</td>
+<td class="px-space-lg py-space-md">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-space-xs py-0.5 rounded font-code-sm text-code-sm bg-surface-container text-on-surface font-medium">👁 踩点 R03</span>
+<span class="px-space-xs py-0.5 rounded font-code-sm text-code-sm bg-surface-container text-outline font-medium">🔍 扫描 R01</span>
+</div>
+</td>
+<td class="px-space-lg py-space-md font-code-md text-code-md text-on-surface">4 次</td>
+<td class="px-space-lg py-space-md font-code-sm text-code-sm text-on-surface-variant">2024-11-24 09:20:15</td>
+<td class="px-space-lg py-space-md text-right">
+<a class="inline-flex items-center gap-1 px-space-sm py-1 rounded bg-surface-container-high hover:bg-primary hover:text-on-primary text-primary font-body-sm text-body-sm transition-all" data-path="attacker-detail" href="#">
+<span>画像下钻</span>
+<span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer Note -->
+
+</div>
+</div>
+<!-- FR-069 Zero-Data Empty State Container (Hidden by default, triggered by toggle) -->
+
+</div>
+<script>
+  (function () {
+    // Dynamic Time Filter selection
+    const timeButtons = document.querySelectorAll('.time-filter-btn');
+    timeButtons.forEach((btn) => {
+      btn.addEventListener('click', function () {
+        timeButtons.forEach((b) => {
+          b.classList.remove('bg-primary-container', 'text-on-primary-container', 'shadow-sm', 'font-semibold');
+          b.classList.add('text-on-surface-variant', 'font-normal');
+        });
+        this.classList.remove('text-on-surface-variant', 'font-normal');
+        this.classList.add('bg-primary-container', 'text-on-primary-container', 'shadow-sm', 'font-semibold');
+      });
+    });
+
+    // Toggle Empty State demo for FR-069 validation
+    const toggleBtn = document.getElementById('toggle-empty-demo');
+    const content = document.getElementById('dashboard-content');
+    const emptyState = document.getElementById('dashboard-empty-state');
+    const toggleLabel = document.getElementById('empty-state-label');
+    const seedReloadBtn = document.getElementById('btn-seed-reload');
+
+    function toggleView(showEmpty) {
+      if (showEmpty) {
+        content.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        emptyState.classList.add('flex');
+        toggleLabel.textContent = '返回演示数据视图';
+      } else {
+        emptyState.classList.add('hidden');
+        emptyState.classList.remove('flex');
+        content.classList.remove('hidden');
+        toggleLabel.textContent = '空态预览 (FR-069)';
+      }
+    }
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', function () {
+        const isCurrentlyEmpty = !emptyState.classList.contains('hidden');
+        toggleView(!isCurrentlyEmpty);
+      });
+    }
+
+    if (seedReloadBtn) {
+      seedReloadBtn.addEventListener('click', function () {
+        toggleView(false);
+      });
+    }
+  })();
+</script></main></div>
+
+</body></html>
