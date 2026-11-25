@@ -7,7 +7,9 @@ name: dbhoneypot
 
 services:
   mysql:
-    image: docker.1ms.run/library/mysql:8.0
+    # 默认锁定 MySQL 8.0（8.4 的默认认证/保留字差异会影响既有脚本）；
+    # 离线环境可用 MYSQL_IMAGE 指向本地已加载的同版本镜像。
+    image: ${MYSQL_IMAGE:-mysql:8.0}
     container_name: dbhoneypot-mysql
     restart: unless-stopped
     command:
@@ -25,8 +27,10 @@ services:
     ports:
       - "127.0.0.1:3306:3306"
     volumes:
+      # 命名卷保留数据：`docker compose down` 不删除，只有 `down -v` 才清空
       - dbhoneypot_mysql_data:/var/lib/mysql
-      - ./db/init:/docker-entrypoint-initdb.d:ro
+      # 初始化脚本位于 M1 模块（建库 + 四类最小权限账号），仅首次启动执行
+      - ./modules/m1-transaction-integration/db/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
       interval: 5s

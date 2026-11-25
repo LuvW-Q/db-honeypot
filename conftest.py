@@ -36,11 +36,20 @@ from dotenv import dotenv_values
 from sqlalchemy.engine import make_url
 
 # ---------------------------------------------------------------------------
-# 一、先固定测试连接串，再导入 app.*（app.config 在导入时读取环境变量）
+# 一、先固定测试连接串，再导入 shared.*（shared.config 在导入时读取环境变量）
 # ---------------------------------------------------------------------------
 
-BACKEND_DIR = Path(__file__).resolve().parents[1]
-REPO_ROOT = BACKEND_DIR.parent
+REPO_ROOT = Path(__file__).resolve().parent
+BACKEND_DIR = REPO_ROOT  # 兼容旧变量名：仓库根即子进程工作目录
+
+# 子进程（alembic / seed CLI）必须显式带上各模块目录：editable 安装的 .pth
+# 在部分 macOS 文件系统上会被标记 hidden 而被 site 跳过，不能作为唯一依赖。
+MODULE_PATHS: tuple[str, ...] = (
+    "modules/m1-transaction-integration",
+    "modules/m2-decoy-capture",
+    "modules/m4-rules-derived",
+    "modules/m5-views-console",
+)
 
 
 def _resolve_test_database_url() -> str:
@@ -75,14 +84,16 @@ os.environ["DATABASE_URL"] = TEST_DATABASE_URL
 os.environ["READONLY_DATABASE_URL"] = TEST_DATABASE_URL
 os.environ["AI_ENABLED"] = "false"
 
-# app.config 使用 lru_cache 单例；确保导入前环境变量已就绪（防御性清理）
-if "app.config" in sys.modules:  # pragma: no cover - 正常测试收集顺序下不会触发
-    from app.config import get_settings
+# shared.config 使用 lru_cache 单例；确保导入前环境变量已就绪（防御性清理）
+if "shared.config" in sys.modules:  # pragma: no cover - 正常测试收集顺序下不会触发
+    from shared.config import get_settings
 
     get_settings.cache_clear()
 
 import asyncmy  # noqa: E402  # 在环境变量的安全设定之后导入
 from sqlalchemy import text  # noqa: E402
+
+from tests.support import EXPECTED_TABLES, EXPECTED_VIEWS  # noqa: E402
 
 # 业务表清理顺序：严格遵守 RESTRICT 外键依赖（子表在前、父表在后）
 DELETE_ORDER: tuple[str, ...] = (
@@ -97,34 +108,7 @@ DELETE_ORDER: tuple[str, ...] = (
     "audit_log",
 )
 
-# 迁移后应存在的 11 张物理表（不含视图与 alembic_version）
-EXPECTED_TABLES: frozenset[str] = frozenset(
-    {
-        "sessions",
-        "attack_log",
-        "attacker_profile",
-        "attacker_intent",
-        "detection_rules",
-        "rule_hits",
-        "alerts",
-        "fake_users",
-        "fake_orders",
-        "fake_config",
-        "audit_log",
-    }
-)
-
-# 4 个只读分析视图
-EXPECTED_VIEWS: frozenset[str] = frozenset(
-    {
-        "v_session_risk_summary",
-        "v_attacker_profile_summary",
-        "v_daily_attack_trend",
-        "v_rule_effectiveness",
-    }
-)
-
-# 规则种子 upsert（与迁移 0004 / app.cli.seed 的 R01–R05 v1 定义一致）
+# 规则种子 upsert（与迁移 0004 / m2_decoy_capture.cli.seed_decoy 的 R01–R05 v1 定义一致）
 _RULE_UPSERT_SQL = text(
     """
     INSERT INTO detection_rules (
@@ -152,7 +136,9 @@ def _subprocess_env() -> dict[str, str]:
     env["MIGRATE_DATABASE_URL"] = TEST_DATABASE_URL
     env["DATABASE_URL"] = TEST_DATABASE_URL
     env["READONLY_DATABASE_URL"] = TEST_DATABASE_URL
-    env["PYTHONPATH"] = str(BACKEND_DIR)
+    env["PYTHONPATH"] = os.pathsep.join(
+        [str(REPO_ROOT), *[str(REPO_ROOT / path) for path in MODULE_PATHS]]
+    )
     return env
 
 
@@ -160,7 +146,7 @@ def _run_python_module(module: str, *args: str) -> None:
     """在 backend 目录下以当前解释器运行模块（alembic / seed）。"""
     completed = subprocess.run(
         [sys.executable, "-m", module, *args],
-        cwd=str(BACKEND_DIR),
+        cwd=str(REPO_ROOT),
         env=_subprocess_env(),
         capture_output=True,
         text=True,
@@ -227,8 +213,9 @@ def _drop_all_objects_sync() -> None:
 
 async def _cleanup_business_data() -> None:
     """按外键顺序清理观测数据，并恢复规则 v1 基线（保持 fake_* 诱饵数据）。"""
-    from app.cli.seed import RULE_SEEDS
-    from app.db.session import get_rw_factory
+    from m4_rules_derived.rules.seed_data import RULE_SEEDS
+
+    from shared.db.session import get_rw_factory
 
     async with get_rw_factory()() as session:
         for table in DELETE_ORDER:
@@ -263,7 +250,7 @@ async def _cleanup_business_data() -> None:
 
 async def _dispose_app_engines() -> None:
     """释放应用全局引擎连接池（每个用例结束时调用，避免跨事件循环复用连接）。"""
-    from app.db import session as app_session
+    from shared.db import session as app_session
 
     for name in ("_rw_engine", "_ro_engine", "_migrate_engine"):
         engine = getattr(app_session, name, None)
@@ -333,7 +320,7 @@ def prepare_test_database() -> Iterator[None]:
         try:
             _drop_all_objects_sync()
             _run_alembic_upgrade()
-            _run_python_module("app.cli.seed", "--all")
+            _run_python_module("m2_decoy_capture.cli.seed_decoy", "--all")
             if _verify_schema_sync():
                 break
             last_error = RuntimeError("迁移后结构校验未通过")
@@ -364,7 +351,7 @@ async def database_isolation() -> AsyncIterator[None]:
 @pytest.fixture
 async def db_session() -> AsyncIterator[Any]:
     """应用读写会话（真实数据库，不 Mock）；用例结束回滚未提交事务。"""
-    from app.db.session import get_rw_factory
+    from shared.db.session import get_rw_factory
 
     async with get_rw_factory()() as session:
         try:
@@ -379,7 +366,7 @@ async def db_session() -> AsyncIterator[Any]:
 @pytest.fixture
 async def ro_session() -> AsyncIterator[Any]:
     """只读会话夹具；测试库中同样使用迁移账号连接（环境限制见模块说明）。"""
-    from app.db.session import get_ro_factory
+    from shared.db.session import get_ro_factory
 
     async with get_ro_factory()() as session:
         try:
@@ -394,8 +381,8 @@ async def ro_session() -> AsyncIterator[Any]:
 @pytest.fixture
 def event_factory() -> Callable[..., object]:
     """构造 ``CapturedEvent`` 的辅助工厂：默认 UUID 唯一、时间为当前 UTC 秒。"""
-    from app.schemas.events import EventStatus, EventType
-    from app.services.event_builder import build_event
+    from shared.events.builder import build_event
+    from shared.events.schema import EventStatus, EventType
 
     def _factory(
         *,
@@ -435,7 +422,7 @@ def event_factory() -> Callable[..., object]:
 @pytest.fixture
 async def ingest_event(db_session) -> Callable[..., object]:
     """使用 ``IngestService`` 在当前测试会话中写入一条事件并返回 IngestResult。"""
-    from app.services.ingest import IngestService
+    from m1_transaction_integration.services.ingest import IngestService
 
     async def _ingest(event):
         return await IngestService(db_session).ingest(event)
@@ -473,8 +460,7 @@ def seed_sequences():
 async def client() -> AsyncIterator[object]:
     """httpx.AsyncClient + ASGITransport，直接调用 FastAPI 应用（真实测试库）。"""
     from httpx import ASGITransport, AsyncClient
-
-    from app.main import app
+    from m1_transaction_integration.api.app import app
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as http:

@@ -1,0 +1,65 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "db-honeypot"
+version = "1.1.0"
+description = "基于 MySQL 协议模拟的数据库蜜罐与攻击行为分析系统（单发行版多包）"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi==0.165.0",
+  "uvicorn[standard]==0.54.0",
+  "sqlalchemy[asyncio]==2.1.9",
+  "asyncmy==0.2.18",
+  "alembic==1.20.1",
+  "pydantic==2.14.4",
+  "pydantic-settings==2.16.3",
+  "python-dotenv==1.2.2",
+  "mysql-mimic==3.0.5",
+  "structlog==26.1.0",
+  "cryptography>=45.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest==9.2.0",
+  "pytest-asyncio==1.5.0",
+  "httpx==0.28.1",
+  "ruff==0.17.5",
+]
+
+[tool.uv]
+package = true
+
+[tool.hatch.build.targets.wheel]
+# 新布局：`shared/` 目录本身即 Python 包根（`shared/__init__.py`），不再有 `shared/shared/`
+packages = [
+  "shared",
+  "modules/m1-transaction-integration/m1_transaction_integration",
+  "modules/m2-decoy-capture/m2_decoy_capture",
+  "modules/m4-rules-derived/m4_rules_derived",
+  "modules/m5-views-console/m5_views_console",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+addopts = "--import-mode=importlib"
+pythonpath = [
+  ".",
+  "modules/m1-transaction-integration",
+  "modules/m2-decoy-capture",
+  "modules/m4-rules-derived",
+  "modules/m5-views-console",
+]
+testpaths = ["tests", "shared/tests", "modules"]
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+extend-exclude = [".venv", "node_modules", "dist", ".pnpm-store"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501", "B008"]
