@@ -1,0 +1,111 @@
+{
+  "coverage": 100,
+  "present": 82,
+  "expected": 82,
+  "rows": [
+    {
+      "page": "overview",
+      "route": "/",
+      "viewport": "1440x900",
+      "expected": 10,
+      "present": 10,
+      "missing": [],
+      "extra": [],
+      "overlaps": [],
+      "overflow": false,
+      "theme_toggle": true,
+      "background": "rgb(5, 20, 36)"
+    },
+    {
+      "page": "attackers",
+      "route": "/attackers",
+      "viewport": "1440x900",
+      "expected": 9,
+      "present": 9,
+      "missing": [],
+      "extra": [],
+      "overlaps": [],
+      "overflow": false,
+      "theme_toggle": true,
+      "background": "rgb(5, 20, 36)"
+    },
+    {
+      "page": "attacker-detail",
+      "route": "/attackers/198.51.100.17",
+      "viewport": "1440x900",
+      "expected": 12,
+      "present": 12,
+      "missing": [],
+      "extra": [],
+      "overlaps": [],
+      "overflow": false,
+      "theme_toggle": true,
+      "background": "rgb(5, 20, 36)"
+    },
+    {
+      "page": "alerts",
+      "route": "/alerts",
+      "viewport": "1440x900",
+      "expected": 10,
+      "present": 10,
+      "missing": [],
+      "extra": [],
+      "overlaps": [],
+      "overflow": false,
+      "theme_toggle": true,
+      "background": "rgb(5, 20, 36)"
+    },
+    {
+      "page": "overview",
+      "route": "/",
+      "viewport": "1920x1080",
+      "expected": 10,
+      "present": 10,
+      "missing": [],
+      "extra": [],
+      "overlaps": [],
+      "overflow": false,
+      "theme_toggle": true,
+      "background": "rgb(5, 20, 36)"
+    },
+    {
+      "page": "attackers",
+      "route": "/attackers",
+      "viewport": "1920x1080",
+      "expected": 9,
+      "present": 9,
+      "missing": [],
+      "extra": [],
+      "overlaps": [],
+      "overflow": false,
+      "theme_toggle": true,
+      "background": "rgb(5, 20, 36)"
+    },
+    {
+      "page": "attacker-detail",
+      "route": "/attackers/198.51.100.17",
+      "viewport": "1920x1080",
+      "expected": 12,
+      "present": 12,
+      "missing": [],
+      "extra": [],
+      "overlaps": [],
+      "overflow": false,
+      "theme_toggle": true,
+      "background": "rgb(5, 20, 36)"
+    },
+    {
+      "page": "alerts",
+      "route": "/alerts",
+      "viewport": "1920x1080",
+      "expected": 10,
+      "present": 10,
+      "missing": [],
+      "extra": [],
+      "overlaps": [],
+      "overflow": false,
+      "theme_toggle": true,
+      "background": "rgb(5, 20, 36)"
+    }
+  ]
+}

@@ -1,0 +1,368 @@
+{
+  "tool": "m5_views_console.cli.verify_views",
+  "checked_at": "2026-11-25T09:05:52+00:00",
+  "database": {
+    "driver": "mysql+asyncmy",
+    "host": "127.0.0.1",
+    "port": 3306,
+    "database": "honeypot_dev",
+    "account": "honeypot_app_ro",
+    "read_only": true
+  },
+  "views": [
+    "v_session_risk_summary",
+    "v_attacker_profile_summary",
+    "v_daily_attack_trend",
+    "v_rule_effectiveness"
+  ],
+  "assertions": [
+    {
+      "group": "v_session_risk_summary",
+      "name": "行数 = sessions 行数",
+      "sql": "SELECT (SELECT COUNT(*) FROM v_session_risk_summary) - (SELECT COUNT(*) FROM sessions)",
+      "db_value": 0,
+      "ok": true,
+      "expected": 0
+    },
+    {
+      "group": "v_session_risk_summary",
+      "name": "主键/来源列无 NULL",
+      "sql": "SELECT COUNT(*) FROM v_session_risk_summary WHERE session_id IS NULL OR source_ip IS NULL",
+      "db_value": 0,
+      "ok": true,
+      "expected": 0
+    },
+    {
+      "group": "v_session_risk_summary",
+      "name": "事件总数 = attack_log 行数",
+      "sql": "SELECT (SELECT COALESCE(SUM(event_count), 0) FROM v_session_risk_summary) - (SELECT COUNT(*) FROM attack_log)",
+      "db_value": 0,
+      "ok": true,
+      "expected": 0
+    },
+    {
+      "group": "v_session_risk_summary",
+      "name": "重算风险分与存储分无漂移",
+      "sql": "SELECT COUNT(*) FROM v_session_risk_summary WHERE stored_max_risk_score <> calculated_risk_score",
+      "db_value": 0,
+      "ok": true,
+      "expected": 0
+    },
+    {
+      "group": "v_attacker_profile_summary",
+      "name": "行数 = attacker_profile 行数",
+      "sql": "SELECT (SELECT COUNT(*) FROM v_attacker_profile_summary) - (SELECT COUNT(*) FROM attacker_profile)",
+      "db_value": 0,
+      "ok": true,
+      "expected": 0
+    },
+    {
+      "group": "v_attacker_profile_summary",
+      "name": "画像/来源列无 NULL",
+      "sql": "SELECT COUNT(*) FROM v_attacker_profile_summary WHERE attacker_id IS NULL OR source_ip IS NULL",
+      "db_value": 0,
+      "ok": true,
+      "expected": 0
+    },
+    {
+      "group": "v_attacker_profile_summary",
+      "name": "risk_level 与重算分数阈值一致",
+      "sql": "SELECT COUNT(*) FROM v_attacker_profile_summary WHERE CASE WHEN calculated_risk_score >= 80 THEN 'critical' WHEN calculated_risk_score >= 60 THEN 'high' WHEN calculated_risk_score >= 30 THEN 'medium' ELSE 'low' END <> risk_level",
+      "db_value": 0,
+      "ok": true,
+      "expected": 0
+    },
+    {
+      "group": "v_attacker_profile_summary",
+      "name": "重算风险分与存储分无漂移",
+      "sql": "SELECT COUNT(*) FROM v_attacker_profile_summary WHERE stored_risk_score <> calculated_risk_score",
+      "db_value": 0,
+      "ok": true,
+      "expected": 0
+    },
+    {
+      "group": "v_daily_attack_trend",
+      "name": "行数 = attack_log 有事件日期数",
+      "sql": "SELECT (SELECT COUNT(*) FROM v_daily_attack_trend) - (SELECT COUNT(DISTINCT DATE(event_time)) FROM attack_log)",
+      "db_value": 0,
+      "ok": true,
+      "expected": 0
+    },
+    {
+      "group": "v_daily_attack_trend",
+      "name": "日期列无 NULL",
+      "sql": "SELECT COUNT(*) FROM v_daily_attack_trend WHERE stat_date IS NULL",
+      "db_value": 0,
+      "ok": true,
+      "expected": 0
+    },
+    {
+      "group": "v_daily_attack_trend",
+      "name": "逐日事件数与 attack_log 按日聚合同值",
+      "sql": "SELECT (SELECT COUNT(*) FROM ( SELECT DATE(event_time) AS d, COUNT(*) AS c FROM attack_log GROUP BY DATE(event_time) ) AS l LEFT JOIN v_daily_attack_trend AS v ON v.stat_date = l.d WHERE v.stat_date IS NULL OR v.event_count <> l.c) + (SELECT COUNT(*) FROM v_daily_attack_trend AS v LEFT JOIN ( SELECT DATE(event_time) AS d, COUNT(*) AS c FROM attack_log GROUP BY DATE(event_time) ) AS l ON l.d = v.stat_date WHERE l.d IS NULL)",
+      "db_value": 0,
+      "ok": true,
+      "expected": 0
+    },
+    {
+      "group": "v_daily_attack_trend",
+      "name": "查询事件总数 = attack_log 查询行数",
+      "sql": "SELECT (SELECT COALESCE(SUM(query_count), 0) FROM v_daily_attack_trend) - (SELECT COUNT(*) FROM attack_log WHERE event_type = 'query')",
+      "db_value": 0,
+      "ok": true,
+      "expected": 0
+    },
+    {
+      "group": "v_rule_effectiveness",
+      "name": "行数 = 规则编码数",
+      "sql": "SELECT (SELECT COUNT(*) FROM v_rule_effectiveness) - (SELECT COUNT(DISTINCT rule_code) FROM detection_rules)",
+      "db_value": 0,
+      "ok": true,
+      "expected": 0
+    },
+    {
+      "group": "v_rule_effectiveness",
+      "name": "规则编码无 NULL",
+      "sql": "SELECT COUNT(*) FROM v_rule_effectiveness WHERE rule_code IS NULL",
+      "db_value": 0,
+      "ok": true,
+      "expected": 0
+    },
+    {
+      "group": "v_rule_effectiveness",
+      "name": "命中总数 = rule_hits 行数",
+      "sql": "SELECT (SELECT COALESCE(SUM(hit_count), 0) FROM v_rule_effectiveness) - (SELECT COUNT(*) FROM rule_hits)",
+      "db_value": 0,
+      "ok": true,
+      "expected": 0
+    },
+    {
+      "group": "v_rule_effectiveness",
+      "name": "告警总数 = alerts 行数",
+      "sql": "SELECT (SELECT COALESCE(SUM(alert_count), 0) FROM v_rule_effectiveness) - (SELECT COUNT(*) FROM alerts)",
+      "db_value": 0,
+      "ok": true,
+      "expected": 0
+    }
+  ],
+  "summary": {
+    "assertions_total": 16,
+    "assertions_passed": 16,
+    "page_checks_total": 21,
+    "page_checks_passed": 21,
+    "failed": []
+  },
+  "result": "pass",
+  "page_checks": [
+    {
+      "group": "overview",
+      "name": "sessions（页面「连接数」）",
+      "sql": "SELECT COUNT(*) FROM sessions WHERE started_at <= :upper",
+      "db_value": 214,
+      "ok": true,
+      "expected": 214,
+      "api_value": 214,
+      "api": "GET /api/overview?range=all"
+    },
+    {
+      "group": "overview",
+      "name": "queries（页面「查询数」）",
+      "sql": "SELECT COUNT(*) FROM attack_log WHERE event_type = 'query' AND event_time <= :upper",
+      "db_value": 1222,
+      "ok": true,
+      "expected": 1222,
+      "api_value": 1222,
+      "api": "GET /api/overview?range=all"
+    },
+    {
+      "group": "overview",
+      "name": "alerts（概览告警总数）",
+      "sql": "SELECT COUNT(*) FROM alerts WHERE created_at <= :upper",
+      "db_value": 8,
+      "ok": true,
+      "expected": 8,
+      "api_value": 8,
+      "api": "GET /api/overview?range=all"
+    },
+    {
+      "group": "overview",
+      "name": "high_risk_attackers（页面「高风险攻击者」）",
+      "sql": "SELECT COUNT(*) FROM v_attacker_profile_summary WHERE risk_level IN ('high', 'critical') AND last_seen <= :upper",
+      "db_value": 1,
+      "ok": true,
+      "expected": 1,
+      "api_value": 1,
+      "api": "GET /api/overview?range=all"
+    },
+    {
+      "group": "overview",
+      "name": "attackers_total（页面「/ N 总量」）",
+      "sql": "SELECT COUNT(*) FROM v_attacker_profile_summary WHERE last_seen <= :upper",
+      "db_value": 14,
+      "ok": true,
+      "expected": 14,
+      "api_value": 14,
+      "api": "GET /api/overview?range=all"
+    },
+    {
+      "group": "overview",
+      "name": "alerts_unread（页面「未处理告警」）",
+      "sql": "SELECT COALESCE(SUM(is_read = 0), 0) FROM alerts WHERE created_at <= :upper",
+      "db_value": 8,
+      "ok": true,
+      "expected": 8,
+      "api_value": 8,
+      "api": "GET /api/overview?range=all"
+    },
+    {
+      "group": "alerts",
+      "name": "total（页面「告警总数」）",
+      "sql": "SELECT COUNT(*) FROM alerts WHERE created_at < :upper",
+      "db_value": 8,
+      "ok": true,
+      "expected": 8,
+      "api_value": 8,
+      "api": "GET /api/alerts/summary"
+    },
+    {
+      "group": "alerts",
+      "name": "unread（页面「未读告警」）",
+      "sql": "SELECT COALESCE(SUM(is_read = 0), 0) FROM alerts WHERE created_at < :upper",
+      "db_value": 8,
+      "ok": true,
+      "expected": 8,
+      "api_value": 8,
+      "api": "GET /api/alerts/summary"
+    },
+    {
+      "group": "alerts",
+      "name": "read（页面「已读 / 共」的已读）",
+      "sql": "SELECT COUNT(*) - COALESCE(SUM(is_read = 0), 0) FROM alerts WHERE created_at < :upper",
+      "db_value": 0,
+      "ok": true,
+      "expected": 0,
+      "api_value": 0,
+      "api": "GET /api/alerts/summary"
+    },
+    {
+      "group": "alerts",
+      "name": "resolution_rate（页面「处置完成率」）",
+      "sql": "SELECT CASE WHEN COUNT(*) = 0 THEN 0.0000 ELSE ROUND((COUNT(*) - COALESCE(SUM(is_read = 0), 0)) / COUNT(*), 4) END FROM alerts WHERE created_at < :upper",
+      "db_value": 0,
+      "ok": true,
+      "expected": 0.0,
+      "api_value": 0.0,
+      "api": "GET /api/alerts/summary"
+    },
+    {
+      "group": "attackers",
+      "name": "total（页面「/ N IP」与列表总数）",
+      "sql": "SELECT COUNT(*) FROM v_attacker_profile_summary",
+      "db_value": 14,
+      "ok": true,
+      "expected": 14,
+      "api_value": 14,
+      "api": "GET /api/attackers?page_size=1"
+    },
+    {
+      "group": "attackers",
+      "name": "high_risk_count（页面「高危及严重攻击源」）",
+      "sql": "SELECT COALESCE(SUM(risk_level IN ('high', 'critical')), 0) FROM v_attacker_profile_summary",
+      "db_value": 1,
+      "ok": true,
+      "expected": 1,
+      "api_value": 1,
+      "api": "GET /api/attackers/summary"
+    },
+    {
+      "group": "attackers",
+      "name": "首行 198.51.100.17 risk_score",
+      "sql": "SELECT stored_risk_score FROM v_attacker_profile_summary WHERE source_ip = :ip",
+      "db_value": 85,
+      "ok": true,
+      "expected": 85,
+      "api_value": 85,
+      "api": "GET /api/attackers?page_size=1"
+    },
+    {
+      "group": "attackers",
+      "name": "首行 198.51.100.17 total_connections",
+      "sql": "SELECT total_connections FROM v_attacker_profile_summary WHERE source_ip = :ip",
+      "db_value": 1,
+      "ok": true,
+      "expected": 1,
+      "api_value": 1,
+      "api": "GET /api/attackers?page_size=1"
+    },
+    {
+      "group": "attackers",
+      "name": "首行 198.51.100.17 total_queries",
+      "sql": "SELECT total_queries FROM v_attacker_profile_summary WHERE source_ip = :ip",
+      "db_value": 6,
+      "ok": true,
+      "expected": 6,
+      "api_value": 6,
+      "api": "GET /api/attackers?page_size=1"
+    },
+    {
+      "group": "attacker-detail",
+      "name": "198.51.100.17 total_connections（累计会话）",
+      "sql": "SELECT total_connections FROM v_attacker_profile_summary WHERE source_ip = :ip",
+      "db_value": 1,
+      "ok": true,
+      "expected": 1,
+      "api_value": 1,
+      "api": "GET /api/attackers/198.51.100.17"
+    },
+    {
+      "group": "attacker-detail",
+      "name": "198.51.100.17 total_queries（执行查询）",
+      "sql": "SELECT total_queries FROM v_attacker_profile_summary WHERE source_ip = :ip",
+      "db_value": 6,
+      "ok": true,
+      "expected": 6,
+      "api_value": 6,
+      "api": "GET /api/attackers/198.51.100.17"
+    },
+    {
+      "group": "attacker-detail",
+      "name": "198.51.100.17 session_count（页面「累计会话」）",
+      "sql": "SELECT session_count FROM v_attacker_profile_summary WHERE source_ip = :ip",
+      "db_value": 1,
+      "ok": true,
+      "expected": 1,
+      "api_value": 1,
+      "api": "GET /api/attackers/198.51.100.17"
+    },
+    {
+      "group": "attacker-detail",
+      "name": "198.51.100.17 risk_score（页面「综合风险分」）",
+      "sql": "SELECT stored_risk_score FROM v_attacker_profile_summary WHERE source_ip = :ip",
+      "db_value": 85,
+      "ok": true,
+      "expected": 85,
+      "api_value": 85,
+      "api": "GET /api/attackers/198.51.100.17"
+    },
+    {
+      "group": "attacker-detail",
+      "name": "198.51.100.17 alert_count（告警数）",
+      "sql": "SELECT alert_count FROM v_attacker_profile_summary WHERE source_ip = :ip",
+      "db_value": 3,
+      "ok": true,
+      "expected": 3,
+      "api_value": 3,
+      "api": "GET /api/attackers/198.51.100.17"
+    },
+    {
+      "group": "attacker-detail",
+      "name": "198.51.100.17 v_session_risk_summary 会话行数",
+      "sql": "SELECT COUNT(*) FROM v_session_risk_summary WHERE source_ip = :ip",
+      "db_value": 1,
+      "ok": true,
+      "expected": 1,
+      "api_value": 1,
+      "api": "GET /api/attackers/198.51.100.17"
+    }
+  ]
+}

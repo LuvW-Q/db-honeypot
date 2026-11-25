@@ -1,0 +1,13 @@
+1	前置检查	ok	docker/python/node/playwright/端口就绪
+2	启动数据库	ok	MySQL 健康
+3	数据库迁移	ok	alembic upgrade head
+4	固定种子数据	ok	reset → gen(200/2400) → demo_basic；digest=53a2be97f12e…
+5	构建前端	skip	复用已有 dist（--skip-build，调试模式）
+6	启动后端	ok	uvicorn factory（PID 45065）
+7	健康检查与静态资源	ok	health 200；SPA 入口 + 本地资源 200/content-type；四页 favicon 200
+8	浏览器检查	ok	四页 × 两视口；browser.json result=pass
+9	令牌审计	ok	violations=0
+10	页面-数据库抽样	skip	verify2 模式跳过（由 make verify 执行）
+11	降级验证	skip	verify2 模式跳过（由 make verify 执行）
+12	写证据	ok	modules/m5-views-console/evidence/visual/verify-run-1
+13	清理	ok	后端已停止；MySQL 保持运行

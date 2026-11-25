@@ -1,0 +1,1030 @@
+{
+  "rate": 100,
+  "hit": 100,
+  "total": 100,
+  "results": [
+    {
+      "theme": "dark",
+      "page": "overview",
+      "route": "/#/",
+      "rows": [
+        {
+          "selector": "body",
+          "property": "backgroundColor",
+          "value": "rgb(5, 20, 36)",
+          "tokens": [
+            "c-background",
+            "c-surface",
+            "c-surface-dim"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "body",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "aside",
+          "property": "backgroundColor",
+          "value": "rgb(13, 28, 45)",
+          "tokens": [
+            "c-surface-container-low"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "aside",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "header",
+          "property": "backgroundColor",
+          "value": "rgba(5, 20, 36, 0.85)",
+          "tokens": [
+            "c-background @85%",
+            "c-surface @85%",
+            "c-surface-dim @85%"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "header",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "main",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "footer",
+          "property": "color",
+          "value": "rgb(134, 147, 151)",
+          "tokens": [
+            "c-outline"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "h1",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "h2",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "[data-region$=\"-HEAD\"]",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "[data-region$=\"-KPI\"]",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "table th",
+          "property": "backgroundColor",
+          "value": "rgb(1, 15, 31)",
+          "tokens": [
+            "c-surface-container-lowest"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "table th",
+          "property": "color",
+          "value": "rgb(134, 147, 151)",
+          "tokens": [
+            "c-outline"
+          ],
+          "ok": true
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "page": "attackers",
+      "route": "/#/attackers",
+      "rows": [
+        {
+          "selector": "body",
+          "property": "backgroundColor",
+          "value": "rgb(5, 20, 36)",
+          "tokens": [
+            "c-background",
+            "c-surface",
+            "c-surface-dim"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "body",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "aside",
+          "property": "backgroundColor",
+          "value": "rgb(13, 28, 45)",
+          "tokens": [
+            "c-surface-container-low"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "aside",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "header",
+          "property": "backgroundColor",
+          "value": "rgba(5, 20, 36, 0.85)",
+          "tokens": [
+            "c-background @85%",
+            "c-surface @85%",
+            "c-surface-dim @85%"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "header",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "main",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "footer",
+          "property": "color",
+          "value": "rgb(134, 147, 151)",
+          "tokens": [
+            "c-outline"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "h1",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "[data-region$=\"-HEAD\"]",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "table th",
+          "property": "backgroundColor",
+          "value": "rgb(1, 15, 31)",
+          "tokens": [
+            "c-surface-container-lowest"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "table th",
+          "property": "color",
+          "value": "rgb(134, 147, 151)",
+          "tokens": [
+            "c-outline"
+          ],
+          "ok": true
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "page": "attacker-detail",
+      "route": "/#/attackers/198.51.100.17",
+      "rows": [
+        {
+          "selector": "body",
+          "property": "backgroundColor",
+          "value": "rgb(5, 20, 36)",
+          "tokens": [
+            "c-background",
+            "c-surface",
+            "c-surface-dim"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "body",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "aside",
+          "property": "backgroundColor",
+          "value": "rgb(13, 28, 45)",
+          "tokens": [
+            "c-surface-container-low"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "aside",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "header",
+          "property": "backgroundColor",
+          "value": "rgba(5, 20, 36, 0.85)",
+          "tokens": [
+            "c-background @85%",
+            "c-surface @85%",
+            "c-surface-dim @85%"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "header",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "main",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "footer",
+          "property": "color",
+          "value": "rgb(134, 147, 151)",
+          "tokens": [
+            "c-outline"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "h1",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "h2",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "[data-region$=\"-HEAD\"]",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "table th",
+          "property": "backgroundColor",
+          "value": "rgb(1, 15, 31)",
+          "tokens": [
+            "c-surface-container-lowest"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "table th",
+          "property": "color",
+          "value": "rgb(134, 147, 151)",
+          "tokens": [
+            "c-outline"
+          ],
+          "ok": true
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "page": "alerts",
+      "route": "/#/alerts",
+      "rows": [
+        {
+          "selector": "body",
+          "property": "backgroundColor",
+          "value": "rgb(5, 20, 36)",
+          "tokens": [
+            "c-background",
+            "c-surface",
+            "c-surface-dim"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "body",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "aside",
+          "property": "backgroundColor",
+          "value": "rgb(13, 28, 45)",
+          "tokens": [
+            "c-surface-container-low"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "aside",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "header",
+          "property": "backgroundColor",
+          "value": "rgba(5, 20, 36, 0.85)",
+          "tokens": [
+            "c-background @85%",
+            "c-surface @85%",
+            "c-surface-dim @85%"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "header",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "main",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "footer",
+          "property": "color",
+          "value": "rgb(134, 147, 151)",
+          "tokens": [
+            "c-outline"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "h1",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "h2",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "[data-region$=\"-HEAD\"]",
+          "property": "color",
+          "value": "rgb(212, 228, 250)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "page": "overview",
+      "route": "/#/",
+      "rows": [
+        {
+          "selector": "body",
+          "property": "backgroundColor",
+          "value": "rgb(248, 250, 252)",
+          "tokens": [
+            "c-background",
+            "c-surface",
+            "c-surface-container"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "body",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "aside",
+          "property": "backgroundColor",
+          "value": "rgb(255, 255, 255)",
+          "tokens": [
+            "c-surface-bright",
+            "c-surface-container-lowest",
+            "c-surface-container-low",
+            "c-on-primary",
+            "c-on-primary-container",
+            "c-on-secondary"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "aside",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "header",
+          "property": "backgroundColor",
+          "value": "rgba(248, 250, 252, 0.85)",
+          "tokens": [
+            "c-background @85%",
+            "c-surface @85%",
+            "c-surface-container @85%"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "header",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "main",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "footer",
+          "property": "color",
+          "value": "rgb(148, 163, 184)",
+          "tokens": [
+            "c-outline"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "h1",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "h2",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "[data-region$=\"-HEAD\"]",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "[data-region$=\"-KPI\"]",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "table th",
+          "property": "backgroundColor",
+          "value": "rgb(255, 255, 255)",
+          "tokens": [
+            "c-surface-bright",
+            "c-surface-container-lowest",
+            "c-surface-container-low",
+            "c-on-primary",
+            "c-on-primary-container",
+            "c-on-secondary"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "table th",
+          "property": "color",
+          "value": "rgb(148, 163, 184)",
+          "tokens": [
+            "c-outline"
+          ],
+          "ok": true
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "page": "attackers",
+      "route": "/#/attackers",
+      "rows": [
+        {
+          "selector": "body",
+          "property": "backgroundColor",
+          "value": "rgb(248, 250, 252)",
+          "tokens": [
+            "c-background",
+            "c-surface",
+            "c-surface-container"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "body",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "aside",
+          "property": "backgroundColor",
+          "value": "rgb(255, 255, 255)",
+          "tokens": [
+            "c-surface-bright",
+            "c-surface-container-lowest",
+            "c-surface-container-low",
+            "c-on-primary",
+            "c-on-primary-container",
+            "c-on-secondary"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "aside",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "header",
+          "property": "backgroundColor",
+          "value": "rgba(248, 250, 252, 0.85)",
+          "tokens": [
+            "c-background @85%",
+            "c-surface @85%",
+            "c-surface-container @85%"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "header",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "main",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "footer",
+          "property": "color",
+          "value": "rgb(148, 163, 184)",
+          "tokens": [
+            "c-outline"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "h1",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "[data-region$=\"-HEAD\"]",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "table th",
+          "property": "backgroundColor",
+          "value": "rgb(255, 255, 255)",
+          "tokens": [
+            "c-surface-bright",
+            "c-surface-container-lowest",
+            "c-surface-container-low",
+            "c-on-primary",
+            "c-on-primary-container",
+            "c-on-secondary"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "table th",
+          "property": "color",
+          "value": "rgb(148, 163, 184)",
+          "tokens": [
+            "c-outline"
+          ],
+          "ok": true
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "page": "attacker-detail",
+      "route": "/#/attackers/198.51.100.17",
+      "rows": [
+        {
+          "selector": "body",
+          "property": "backgroundColor",
+          "value": "rgb(248, 250, 252)",
+          "tokens": [
+            "c-background",
+            "c-surface",
+            "c-surface-container"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "body",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "aside",
+          "property": "backgroundColor",
+          "value": "rgb(255, 255, 255)",
+          "tokens": [
+            "c-surface-bright",
+            "c-surface-container-lowest",
+            "c-surface-container-low",
+            "c-on-primary",
+            "c-on-primary-container",
+            "c-on-secondary"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "aside",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "header",
+          "property": "backgroundColor",
+          "value": "rgba(248, 250, 252, 0.85)",
+          "tokens": [
+            "c-background @85%",
+            "c-surface @85%",
+            "c-surface-container @85%"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "header",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "main",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "footer",
+          "property": "color",
+          "value": "rgb(148, 163, 184)",
+          "tokens": [
+            "c-outline"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "h1",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "h2",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "[data-region$=\"-HEAD\"]",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "table th",
+          "property": "backgroundColor",
+          "value": "rgb(255, 255, 255)",
+          "tokens": [
+            "c-surface-bright",
+            "c-surface-container-lowest",
+            "c-surface-container-low",
+            "c-on-primary",
+            "c-on-primary-container",
+            "c-on-secondary"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "table th",
+          "property": "color",
+          "value": "rgb(148, 163, 184)",
+          "tokens": [
+            "c-outline"
+          ],
+          "ok": true
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "page": "alerts",
+      "route": "/#/alerts",
+      "rows": [
+        {
+          "selector": "body",
+          "property": "backgroundColor",
+          "value": "rgb(248, 250, 252)",
+          "tokens": [
+            "c-background",
+            "c-surface",
+            "c-surface-container"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "body",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "aside",
+          "property": "backgroundColor",
+          "value": "rgb(255, 255, 255)",
+          "tokens": [
+            "c-surface-bright",
+            "c-surface-container-lowest",
+            "c-surface-container-low",
+            "c-on-primary",
+            "c-on-primary-container",
+            "c-on-secondary"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "aside",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "header",
+          "property": "backgroundColor",
+          "value": "rgba(248, 250, 252, 0.85)",
+          "tokens": [
+            "c-background @85%",
+            "c-surface @85%",
+            "c-surface-container @85%"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "header",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "main",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "footer",
+          "property": "color",
+          "value": "rgb(148, 163, 184)",
+          "tokens": [
+            "c-outline"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "h1",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "h2",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        },
+        {
+          "selector": "[data-region$=\"-HEAD\"]",
+          "property": "color",
+          "value": "rgb(15, 23, 42)",
+          "tokens": [
+            "c-on-surface"
+          ],
+          "ok": true
+        }
+      ]
+    }
+  ]
+}

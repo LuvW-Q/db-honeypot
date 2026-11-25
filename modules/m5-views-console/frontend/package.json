@@ -1,0 +1,34 @@
+{
+  "name": "db-honeypot-console",
+  "version": "1.1.0",
+  "private": true,
+  "description": "数据库蜜罐分析控制台（Vue 3.5 + Vite 8 + Tailwind CSS 3.4，深色 M3 令牌）",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "verify:check": "node verify/run-check.mjs",
+    "verify:token": "node verify/token-audit.mjs",
+    "verify:interactions": "node verify/interaction-check.mjs",
+    "verify:capture": "node verify/capture-baseline.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "5.3.0",
+    "@fontsource-variable/jetbrains-mono": "5.3.0",
+    "material-symbols": "0.49.0",
+    "vue": "^3.5.45",
+    "vue-router": "^4.6.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.1",
+    "@vitejs/plugin-vue": "^6.0.11",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "3.4.19",
+    "typescript": "~5.9.3",
+    "vite": "^8.3.8",
+    "vue-tsc": "^3.1.4"
+  },
+  "packageManager": "pnpm@10.18.3"
+}

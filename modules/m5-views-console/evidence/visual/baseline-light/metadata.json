@@ -1,0 +1,124 @@
+{
+  "generated_at": "2026-11-25T06:56:16.543Z",
+  "started_at": "2026-11-25T06:55:48.048Z",
+  "base_url": "http://127.0.0.1:8000",
+  "viewports": [
+    "1440x900",
+    "1920x1080"
+  ],
+  "seed_command": "reset_demo --yes && gen_demo_data --sessions 200 --events 2400 && import_samples --group demo_basic",
+  "build": {
+    "name": "db-honeypot-console",
+    "version": "1.1.0",
+    "dist_index_mtime": "2026-11-25T06:53:01.657Z"
+  },
+  "timezone": "Asia/Shanghai (UTC+8)",
+  "screenshots": [
+    {
+      "page": "overview",
+      "route": "#/",
+      "viewport": "1440x900",
+      "file": "overview-1440x900-light.png",
+      "title": "首页概览 · DB Honeypot",
+      "fonts_ready": true,
+      "fonts": {
+        "inter": true,
+        "jetbrains": true,
+        "symbols": true
+      }
+    },
+    {
+      "page": "attackers",
+      "route": "#/attackers",
+      "viewport": "1440x900",
+      "file": "attackers-1440x900-light.png",
+      "title": "攻击者列表 · DB Honeypot",
+      "fonts_ready": true,
+      "fonts": {
+        "inter": true,
+        "jetbrains": true,
+        "symbols": true
+      }
+    },
+    {
+      "page": "attacker-detail",
+      "route": "#/attackers/198.51.100.17",
+      "source_ip": "198.51.100.17",
+      "viewport": "1440x900",
+      "file": "attacker-detail-1440x900-light.png",
+      "title": "198.51.100.17 攻击者详情 · DB Honeypot",
+      "fonts_ready": true,
+      "fonts": {
+        "inter": true,
+        "jetbrains": true,
+        "symbols": true
+      }
+    },
+    {
+      "page": "alerts",
+      "route": "#/alerts",
+      "viewport": "1440x900",
+      "file": "alerts-1440x900-light.png",
+      "title": "告警列表 · DB Honeypot",
+      "fonts_ready": true,
+      "fonts": {
+        "inter": true,
+        "jetbrains": true,
+        "symbols": true
+      }
+    },
+    {
+      "page": "overview",
+      "route": "#/",
+      "viewport": "1920x1080",
+      "file": "overview-1920x1080-light.png",
+      "title": "首页概览 · DB Honeypot",
+      "fonts_ready": true,
+      "fonts": {
+        "inter": true,
+        "jetbrains": true,
+        "symbols": true
+      }
+    },
+    {
+      "page": "attackers",
+      "route": "#/attackers",
+      "viewport": "1920x1080",
+      "file": "attackers-1920x1080-light.png",
+      "title": "攻击者列表 · DB Honeypot",
+      "fonts_ready": true,
+      "fonts": {
+        "inter": true,
+        "jetbrains": true,
+        "symbols": true
+      }
+    },
+    {
+      "page": "attacker-detail",
+      "route": "#/attackers/198.51.100.17",
+      "source_ip": "198.51.100.17",
+      "viewport": "1920x1080",
+      "file": "attacker-detail-1920x1080-light.png",
+      "title": "198.51.100.17 攻击者详情 · DB Honeypot",
+      "fonts_ready": true,
+      "fonts": {
+        "inter": true,
+        "jetbrains": true,
+        "symbols": true
+      }
+    },
+    {
+      "page": "alerts",
+      "route": "#/alerts",
+      "viewport": "1920x1080",
+      "file": "alerts-1920x1080-light.png",
+      "title": "告警列表 · DB Honeypot",
+      "fonts_ready": true,
+      "fonts": {
+        "inter": true,
+        "jetbrains": true,
+        "symbols": true
+      }
+    }
+  ]
+}

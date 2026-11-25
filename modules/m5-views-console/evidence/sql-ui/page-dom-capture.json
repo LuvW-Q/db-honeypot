@@ -1,0 +1,136 @@
+{
+  "base_url": "http://127.0.0.1:8000",
+  "captured_at": "2026-11-25T05:22:26.014Z",
+  "tool": "playwright chromium (headless)",
+  "pages": {
+    "overview": {
+      "title": "首页概览 · DB Honeypot",
+      "url": "http://127.0.0.1:8000/#/",
+      "kpis": [
+        {
+          "label": "连接数 · SESSIONS",
+          "value": "214",
+          "text": "连接数 · SESSIONS hub 214 今日新增 +0 会话 SRC: sessions"
+        },
+        {
+          "label": "查询数 · QUERIES",
+          "value": "1,222",
+          "text": "查询数 · QUERIES terminal 1,222 arrow_downward 19.8% 拦截 今日执行 +0 次 SRC: attack_log"
+        },
+        {
+          "label": "未处理告警 · ALERTS",
+          "value": "8",
+          "text": "未处理告警 · ALERTS warning 8 arrow_upward 需立即复核 严重 2 · 高危 3 SRC: alerts 未读"
+        },
+        {
+          "label": "高风险攻击者 · RISK >= 60",
+          "value": "1",
+          "text": "高风险攻击者 · RISK >= 60 security 1 arrow_upward / 14 总量 占比 7.1% (阈值超标) SRC: v_attacker_profile"
+        }
+      ],
+      "api_calls": [
+        {
+          "status": 200,
+          "url": "/api/health"
+        },
+        {
+          "status": 200,
+          "url": "/api/alerts/summary"
+        },
+        {
+          "status": 200,
+          "url": "/api/rules/effectiveness?limit=20"
+        },
+        {
+          "status": 200,
+          "url": "/api/attackers?page=1&page_size=5&sort=risk_score&order=desc"
+        },
+        {
+          "status": 200,
+          "url": "/api/trend?days=7"
+        },
+        {
+          "status": 200,
+          "url": "/api/overview?range=all"
+        }
+      ]
+    },
+    "alerts": {
+      "title": "告警列表 · DB Honeypot",
+      "url": "http://127.0.0.1:8000/#/alerts",
+      "stats": [
+        {
+          "label": "告警总数",
+          "value": "—",
+          "text": "告警总数 — 今日 +0 (—)"
+        },
+        {
+          "label": "未读告警",
+          "value": "—",
+          "text": "未读告警 — 待处理 (PENDING)"
+        },
+        {
+          "label": "处置完成率",
+          "value": "—",
+          "text": "处置完成率 — 已读 0 / 共 0"
+        },
+        {
+          "label": "今日告警峰值",
+          "value": "0",
+          "text": "今日告警峰值 0 暂无今日高峰"
+        }
+      ],
+      "error_banner": [
+        "请求参数校验失败（错误码 VALIDATION_ERROR，请求编号 bdce912e-f705-4d47-ad01-723c7b37685b） 重试"
+      ],
+      "api_calls": [
+        {
+          "status": 422,
+          "url": "/api/alerts/summary?from=2026-11-18T16%3A00%3A00.000Z"
+        },
+        {
+          "status": 200,
+          "url": "/api/alerts?page=1&page_size=20&from=2026-11-18T16%3A00%3A00.000Z&sort=created_at&order=desc"
+        }
+      ]
+    },
+    "attackers": {
+      "title": "攻击者列表 · DB Honeypot",
+      "url": "http://127.0.0.1:8000/#/attackers",
+      "head": "攻击者列表 ATTACKER LIST 高危及严重攻击源 warning 1 / 14 IP 最近活跃意图 bolt R04 批量拖库 IP: 198.51.100.23 · 11-18 15:50",
+      "summary_line": "筛选结果：14 个实",
+      "first_rows": [
+        "198.51.100.17 文档保留 / reserved 2026-11-18 14:00:00 2026-11-18 14:00:15 爆破 R02 R02 拖库 R04 R04 破坏 R05 R05 1 会话 6 次查询 85 严重 画像详情 open_in_new",
+        "198.51.100.15 文档保留 / reserved 2026-11-18 12:00:00 2026-11-18 12:00:03 破坏 R05 R05 1 会话 1 次查询 35 中风险 画像详情 open_in_new",
+        "198.51.100.23 文档保留 / reserved 2026-11-18 15:50:00 2026-11-18 15:50:06 拖库 R04 R04 1 会话 5 次查询 25 低风险 画像详情 open_in_new"
+      ],
+      "api_calls": [
+        {
+          "status": 200,
+          "url": "/api/attackers/summary"
+        },
+        {
+          "status": 200,
+          "url": "/api/attackers?page=1&page_size=20&sort=risk_score&order=desc"
+        }
+      ]
+    },
+    "attacker_detail": {
+      "ip": "198.51.100.17",
+      "title": "攻击者详情与时间线 · DB Honeypot",
+      "url": "http://127.0.0.1:8000/#/attackers/198.51.100.17",
+      "head": "arrow_back 返回攻击者列表 / TARGET IP: 198.51.100.17 文档保留 198.51.100.17 85 严重 综合风险分85 累计会话1 执行查询6 认证尝试8(失败 8 / 成功 0) verified_user 安全脱敏保证：系统已对凭据与个人隐私进行脱敏处理，所有口令均以 *** 展示 · 不展示明文口令 · 不执行任何采集 SQL AUTO-MASKED",
+      "profile": "person 攻击者实体画像 (Profile) v_attacker_profile_summary 来源 IP 归属 198.51.100.17（文档保留） 首次出现时间 2026-11-18 14:00:00 最近活跃时间 2026-11-18 14:00:15 累计连接与会话 1 次 (平均时长 15 秒) 认证尝试行为 8 次 (失败 8, 成功 0) 敏感查询捕获量 6 条 (高危操作 2 次) 高危操作次数 2 次 THREAT LEVEL: CRITICAL 风险评分: 85（严重威胁） 系统检测到高对抗性威胁，建议立即排查该源地址相关会话并复核高危操作。 block 联动 DMZ 隔离 演示未开放：系统仅分析，不执行主动反制",
+      "api_calls": [
+        {
+          "status": 200,
+          "url": "/api/attackers/198.51.100.17?session_limit=30&hit_limit=20"
+        },
+        {
+          "status": 200,
+          "url": "/api/sessions/5a060001-0000-4000-8000-000000000001/timeline"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "checked_files": 28,
+  "checked_lines": 4087,
+  "token_usage": {},
+  "themes": {
+    "dark_tokens": 44,
+    "light_tokens": 44,
+    "missing": []
+  },
+  "violations": [],
+  "result": "pass"
+}

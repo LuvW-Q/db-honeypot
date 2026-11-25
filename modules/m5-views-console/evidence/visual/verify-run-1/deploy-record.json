@@ -1,0 +1,209 @@
+{
+  "started_at": "2026-11-25T15:27:07+0800",
+  "finished_at": "2026-11-25T15:37:46+0800",
+  "base_url": "http://127.0.0.1:8001",
+  "steps": [
+    {
+      "name": "前置检查",
+      "status": "ok",
+      "detail": "docker/python/node/playwright/端口就绪",
+      "index": 1
+    },
+    {
+      "name": "启动数据库",
+      "status": "ok",
+      "detail": "MySQL 健康",
+      "index": 2
+    },
+    {
+      "name": "数据库迁移",
+      "status": "ok",
+      "detail": "alembic upgrade head",
+      "index": 3
+    },
+    {
+      "name": "固定种子数据",
+      "status": "ok",
+      "detail": "reset → gen(200/2400) → demo_basic；digest=53a2be97f12e…",
+      "index": 4
+    },
+    {
+      "name": "构建前端",
+      "status": "skip",
+      "detail": "复用已有 dist（--skip-build，调试模式）",
+      "index": 5
+    },
+    {
+      "name": "启动后端",
+      "status": "ok",
+      "detail": "uvicorn factory（PID 45065）",
+      "index": 6
+    },
+    {
+      "name": "健康检查与静态资源",
+      "status": "ok",
+      "detail": "health 200；SPA 入口 + 本地资源 200/content-type；四页 favicon 200",
+      "index": 7
+    },
+    {
+      "name": "浏览器检查",
+      "status": "ok",
+      "detail": "四页 × 两视口；browser.json result=pass",
+      "index": 8
+    },
+    {
+      "name": "令牌审计",
+      "status": "ok",
+      "detail": "violations=0",
+      "index": 9
+    },
+    {
+      "name": "页面-数据库抽样",
+      "status": "skip",
+      "detail": "verify2 模式跳过（由 make verify 执行）",
+      "index": 10
+    },
+    {
+      "name": "降级验证",
+      "status": "skip",
+      "detail": "verify2 模式跳过（由 make verify 执行）",
+      "index": 11
+    }
+  ],
+  "pages": [
+    {
+      "route": "#/",
+      "page": "overview",
+      "status": "ok",
+      "viewport": "1440x900",
+      "console_errors": 0,
+      "failed_requests": 0,
+      "http_errors": 0,
+      "external_requests": 0,
+      "horizontal_overflow": false,
+      "fonts_ready": true,
+      "screenshots": [
+        "screenshots/overview-1440x900.png"
+      ]
+    },
+    {
+      "route": "#/attackers",
+      "page": "attackers",
+      "status": "ok",
+      "viewport": "1440x900",
+      "console_errors": 0,
+      "failed_requests": 0,
+      "http_errors": 0,
+      "external_requests": 0,
+      "horizontal_overflow": false,
+      "fonts_ready": true,
+      "screenshots": [
+        "screenshots/attackers-1440x900.png"
+      ]
+    },
+    {
+      "route": "#/attackers/198.51.100.17",
+      "page": "attacker-detail",
+      "status": "ok",
+      "viewport": "1440x900",
+      "console_errors": 0,
+      "failed_requests": 0,
+      "http_errors": 0,
+      "external_requests": 0,
+      "horizontal_overflow": false,
+      "fonts_ready": true,
+      "screenshots": [
+        "screenshots/attacker-detail-1440x900.png"
+      ]
+    },
+    {
+      "route": "#/alerts",
+      "page": "alerts",
+      "status": "ok",
+      "viewport": "1440x900",
+      "console_errors": 0,
+      "failed_requests": 0,
+      "http_errors": 0,
+      "external_requests": 0,
+      "horizontal_overflow": false,
+      "fonts_ready": true,
+      "screenshots": [
+        "screenshots/alerts-1440x900.png"
+      ]
+    },
+    {
+      "route": "#/",
+      "page": "overview",
+      "status": "ok",
+      "viewport": "1920x1080",
+      "console_errors": 0,
+      "failed_requests": 0,
+      "http_errors": 0,
+      "external_requests": 0,
+      "horizontal_overflow": false,
+      "fonts_ready": true,
+      "screenshots": [
+        "screenshots/overview-1920x1080.png"
+      ]
+    },
+    {
+      "route": "#/attackers",
+      "page": "attackers",
+      "status": "ok",
+      "viewport": "1920x1080",
+      "console_errors": 0,
+      "failed_requests": 0,
+      "http_errors": 0,
+      "external_requests": 0,
+      "horizontal_overflow": false,
+      "fonts_ready": true,
+      "screenshots": [
+        "screenshots/attackers-1920x1080.png"
+      ]
+    },
+    {
+      "route": "#/attackers/198.51.100.17",
+      "page": "attacker-detail",
+      "status": "ok",
+      "viewport": "1920x1080",
+      "console_errors": 0,
+      "failed_requests": 0,
+      "http_errors": 0,
+      "external_requests": 0,
+      "horizontal_overflow": false,
+      "fonts_ready": true,
+      "screenshots": [
+        "screenshots/attacker-detail-1920x1080.png"
+      ]
+    },
+    {
+      "route": "#/alerts",
+      "page": "alerts",
+      "status": "ok",
+      "viewport": "1920x1080",
+      "console_errors": 0,
+      "failed_requests": 0,
+      "http_errors": 0,
+      "external_requests": 0,
+      "horizontal_overflow": false,
+      "fonts_ready": true,
+      "screenshots": [
+        "screenshots/alerts-1920x1080.png"
+      ]
+    }
+  ],
+  "token_audit": {
+    "violations": 0,
+    "checked_files": 28
+  },
+  "sql_ui": {
+    "result": null,
+    "assertions_total": null,
+    "assertions_passed": null,
+    "page_checks_total": null,
+    "page_checks_passed": null,
+    "failed": [],
+    "page_errors": []
+  },
+  "result": "pass"
+}

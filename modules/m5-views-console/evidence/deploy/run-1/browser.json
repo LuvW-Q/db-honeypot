@@ -1,0 +1,562 @@
+{
+  "base_url": "http://127.0.0.1:8001",
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "started_at": "2026-11-25T09:05:00.753Z",
+  "pages": [
+    {
+      "route": "#/",
+      "page": "overview",
+      "viewport": "1440x900",
+      "console_errors": [],
+      "page_errors": [],
+      "failed_requests": [],
+      "http_errors": [],
+      "external_requests": [],
+      "overflow": false,
+      "overlaps": [],
+      "missing_regions": [],
+      "fonts_ready": true,
+      "fonts": {
+        "inter": true,
+        "jetbrains": true,
+        "symbols": true
+      },
+      "title": "首页概览 · DB Honeypot",
+      "favicon": "/favicon-overview.svg",
+      "nav": {
+        "links": [
+          {
+            "href": "#/",
+            "current": "page",
+            "text": "grid_view首页概览01"
+          },
+          {
+            "href": "#/attackers",
+            "current": null,
+            "text": "person_alert攻击者列表02"
+          },
+          {
+            "href": "#/alerts",
+            "current": null,
+            "text": "notifications_active告警列表8"
+          }
+        ],
+        "disabled": [
+          "troubleshoot攻击者详情与时间线03"
+        ]
+      },
+      "screenshot": "screenshots/overview-1440x900.png",
+      "skeleton_sha256": "300bd2519b833092a64fefb823f87e98617f432e7a65439d0a194d65a1a1440a"
+    },
+    {
+      "route": "#/attackers",
+      "page": "attackers",
+      "viewport": "1440x900",
+      "console_errors": [],
+      "page_errors": [],
+      "failed_requests": [],
+      "http_errors": [],
+      "external_requests": [],
+      "overflow": false,
+      "overlaps": [],
+      "missing_regions": [],
+      "fonts_ready": true,
+      "fonts": {
+        "inter": true,
+        "jetbrains": true,
+        "symbols": true
+      },
+      "title": "攻击者列表 · DB Honeypot",
+      "favicon": "/favicon-attackers.svg",
+      "nav": {
+        "links": [
+          {
+            "href": "#/",
+            "current": null,
+            "text": "grid_view首页概览01"
+          },
+          {
+            "href": "#/attackers",
+            "current": "page",
+            "text": "person_alert攻击者列表02"
+          },
+          {
+            "href": "#/alerts",
+            "current": null,
+            "text": "notifications_active告警列表8"
+          }
+        ],
+        "disabled": [
+          "troubleshoot攻击者详情与时间线03"
+        ]
+      },
+      "screenshot": "screenshots/attackers-1440x900.png",
+      "skeleton_sha256": "090713526e593c3a1c18a249563bc4113644713362a6a4ab51246b534752424a"
+    },
+    {
+      "route": "#/attackers/198.51.100.17",
+      "page": "attacker-detail",
+      "viewport": "1440x900",
+      "console_errors": [],
+      "page_errors": [],
+      "failed_requests": [],
+      "http_errors": [],
+      "external_requests": [],
+      "overflow": false,
+      "overlaps": [],
+      "missing_regions": [],
+      "fonts_ready": true,
+      "fonts": {
+        "inter": true,
+        "jetbrains": true,
+        "symbols": true
+      },
+      "title": "198.51.100.17 攻击者详情 · DB Honeypot",
+      "favicon": "/favicon-detail.svg",
+      "nav": {
+        "links": [
+          {
+            "href": "#/",
+            "current": null,
+            "text": "grid_view首页概览01"
+          },
+          {
+            "href": "#/attackers",
+            "current": "page",
+            "text": "person_alert攻击者列表02"
+          },
+          {
+            "href": "#/attackers/198.51.100.17",
+            "current": "page",
+            "text": "troubleshoot攻击者详情与时间线03"
+          },
+          {
+            "href": "#/alerts",
+            "current": null,
+            "text": "notifications_active告警列表8"
+          }
+        ],
+        "disabled": []
+      },
+      "screenshot": "screenshots/attacker-detail-1440x900.png",
+      "skeleton_sha256": "368471638260a698afaaac89f73414ba17010220b7feced68e620ec23207d64c"
+    },
+    {
+      "route": "#/alerts",
+      "page": "alerts",
+      "viewport": "1440x900",
+      "console_errors": [],
+      "page_errors": [],
+      "failed_requests": [],
+      "http_errors": [],
+      "external_requests": [],
+      "overflow": false,
+      "overlaps": [],
+      "missing_regions": [],
+      "fonts_ready": true,
+      "fonts": {
+        "inter": true,
+        "jetbrains": true,
+        "symbols": true
+      },
+      "title": "告警列表 · DB Honeypot",
+      "favicon": "/favicon-alerts.svg",
+      "nav": {
+        "links": [
+          {
+            "href": "#/",
+            "current": null,
+            "text": "grid_view首页概览01"
+          },
+          {
+            "href": "#/attackers",
+            "current": null,
+            "text": "person_alert攻击者列表02"
+          },
+          {
+            "href": "#/attackers/198.51.100.17",
+            "current": null,
+            "text": "troubleshoot攻击者详情与时间线03"
+          },
+          {
+            "href": "#/alerts",
+            "current": "page",
+            "text": "notifications_active告警列表8"
+          }
+        ],
+        "disabled": []
+      },
+      "screenshot": "screenshots/alerts-1440x900.png",
+      "skeleton_sha256": "88291a31d59bf3ef3b23ed09fd88e008b9b30b26be2aee5eb8ebf4a2feef9833"
+    },
+    {
+      "route": "#/",
+      "page": "overview",
+      "viewport": "1920x1080",
+      "console_errors": [],
+      "page_errors": [],
+      "failed_requests": [],
+      "http_errors": [],
+      "external_requests": [],
+      "overflow": false,
+      "overlaps": [],
+      "missing_regions": [],
+      "fonts_ready": true,
+      "fonts": {
+        "inter": true,
+        "jetbrains": true,
+        "symbols": true
+      },
+      "title": "首页概览 · DB Honeypot",
+      "favicon": "/favicon-overview.svg",
+      "nav": {
+        "links": [
+          {
+            "href": "#/",
+            "current": "page",
+            "text": "grid_view首页概览01"
+          },
+          {
+            "href": "#/attackers",
+            "current": null,
+            "text": "person_alert攻击者列表02"
+          },
+          {
+            "href": "#/alerts",
+            "current": null,
+            "text": "notifications_active告警列表8"
+          }
+        ],
+        "disabled": [
+          "troubleshoot攻击者详情与时间线03"
+        ]
+      },
+      "screenshot": "screenshots/overview-1920x1080.png",
+      "skeleton_sha256": "300bd2519b833092a64fefb823f87e98617f432e7a65439d0a194d65a1a1440a"
+    },
+    {
+      "route": "#/attackers",
+      "page": "attackers",
+      "viewport": "1920x1080",
+      "console_errors": [],
+      "page_errors": [],
+      "failed_requests": [],
+      "http_errors": [],
+      "external_requests": [],
+      "overflow": false,
+      "overlaps": [],
+      "missing_regions": [],
+      "fonts_ready": true,
+      "fonts": {
+        "inter": true,
+        "jetbrains": true,
+        "symbols": true
+      },
+      "title": "攻击者列表 · DB Honeypot",
+      "favicon": "/favicon-attackers.svg",
+      "nav": {
+        "links": [
+          {
+            "href": "#/",
+            "current": null,
+            "text": "grid_view首页概览01"
+          },
+          {
+            "href": "#/attackers",
+            "current": "page",
+            "text": "person_alert攻击者列表02"
+          },
+          {
+            "href": "#/alerts",
+            "current": null,
+            "text": "notifications_active告警列表8"
+          }
+        ],
+        "disabled": [
+          "troubleshoot攻击者详情与时间线03"
+        ]
+      },
+      "screenshot": "screenshots/attackers-1920x1080.png",
+      "skeleton_sha256": "090713526e593c3a1c18a249563bc4113644713362a6a4ab51246b534752424a"
+    },
+    {
+      "route": "#/attackers/198.51.100.17",
+      "page": "attacker-detail",
+      "viewport": "1920x1080",
+      "console_errors": [],
+      "page_errors": [],
+      "failed_requests": [],
+      "http_errors": [],
+      "external_requests": [],
+      "overflow": false,
+      "overlaps": [],
+      "missing_regions": [],
+      "fonts_ready": true,
+      "fonts": {
+        "inter": true,
+        "jetbrains": true,
+        "symbols": true
+      },
+      "title": "198.51.100.17 攻击者详情 · DB Honeypot",
+      "favicon": "/favicon-detail.svg",
+      "nav": {
+        "links": [
+          {
+            "href": "#/",
+            "current": null,
+            "text": "grid_view首页概览01"
+          },
+          {
+            "href": "#/attackers",
+            "current": "page",
+            "text": "person_alert攻击者列表02"
+          },
+          {
+            "href": "#/attackers/198.51.100.17",
+            "current": "page",
+            "text": "troubleshoot攻击者详情与时间线03"
+          },
+          {
+            "href": "#/alerts",
+            "current": null,
+            "text": "notifications_active告警列表8"
+          }
+        ],
+        "disabled": []
+      },
+      "screenshot": "screenshots/attacker-detail-1920x1080.png",
+      "skeleton_sha256": "368471638260a698afaaac89f73414ba17010220b7feced68e620ec23207d64c"
+    },
+    {
+      "route": "#/alerts",
+      "page": "alerts",
+      "viewport": "1920x1080",
+      "console_errors": [],
+      "page_errors": [],
+      "failed_requests": [],
+      "http_errors": [],
+      "external_requests": [],
+      "overflow": false,
+      "overlaps": [],
+      "missing_regions": [],
+      "fonts_ready": true,
+      "fonts": {
+        "inter": true,
+        "jetbrains": true,
+        "symbols": true
+      },
+      "title": "告警列表 · DB Honeypot",
+      "favicon": "/favicon-alerts.svg",
+      "nav": {
+        "links": [
+          {
+            "href": "#/",
+            "current": null,
+            "text": "grid_view首页概览01"
+          },
+          {
+            "href": "#/attackers",
+            "current": null,
+            "text": "person_alert攻击者列表02"
+          },
+          {
+            "href": "#/attackers/198.51.100.17",
+            "current": null,
+            "text": "troubleshoot攻击者详情与时间线03"
+          },
+          {
+            "href": "#/alerts",
+            "current": "page",
+            "text": "notifications_active告警列表8"
+          }
+        ],
+        "disabled": []
+      },
+      "screenshot": "screenshots/alerts-1920x1080.png",
+      "skeleton_sha256": "88291a31d59bf3ef3b23ed09fd88e008b9b30b26be2aee5eb8ebf4a2feef9833"
+    }
+  ],
+  "interactions": {
+    "mark_read_patch": {
+      "alert_id": 149,
+      "patch_status": 200,
+      "patch_result_is_read": true,
+      "unread_before": 8,
+      "unread_after": 7,
+      "restore_status": 200,
+      "ok": true
+    },
+    "theme": {
+      "ok": true,
+      "steps": [
+        {
+          "step": "system-dark",
+          "resolved": "dark",
+          "classes": "dark",
+          "colorScheme": "dark",
+          "buttonMode": "system",
+          "buttonLabel": "主题：跟随系统（深色）",
+          "stored": "system",
+          "background": "rgb(5, 20, 36)"
+        },
+        {
+          "step": "system-follows-light",
+          "resolved": "light",
+          "classes": "light",
+          "colorScheme": "light",
+          "buttonMode": "system",
+          "buttonLabel": "主题：跟随系统（浅色）",
+          "stored": "system",
+          "background": "rgb(248, 250, 252)"
+        },
+        {
+          "step": "override-light",
+          "resolved": "light",
+          "classes": "light",
+          "colorScheme": "light",
+          "buttonMode": "light",
+          "buttonLabel": "主题：浅色（浅色）",
+          "stored": "light",
+          "background": "rgb(248, 250, 252)"
+        },
+        {
+          "step": "override-dark",
+          "resolved": "dark",
+          "classes": "dark",
+          "colorScheme": "dark",
+          "buttonMode": "dark",
+          "buttonLabel": "主题：深色（深色）",
+          "stored": "dark",
+          "background": "rgb(5, 20, 36)"
+        },
+        {
+          "step": "override-system",
+          "resolved": "light",
+          "classes": "light",
+          "colorScheme": "light",
+          "buttonMode": "system",
+          "buttonLabel": "主题：跟随系统（浅色）",
+          "stored": "system",
+          "background": "rgb(248, 250, 252)"
+        },
+        {
+          "step": "persisted-after-reload",
+          "resolved": "light",
+          "classes": "light",
+          "colorScheme": "light",
+          "buttonMode": "system",
+          "buttonLabel": "主题：跟随系统（浅色）",
+          "stored": "system",
+          "background": "rgb(248, 250, 252)"
+        }
+      ],
+      "errors": []
+    },
+    "nav": {
+      "ok": true,
+      "links": [
+        {
+          "href": "#/",
+          "current": null,
+          "text": "grid_view首页概览01"
+        },
+        {
+          "href": "#/attackers",
+          "current": "page",
+          "text": "person_alert攻击者列表02"
+        },
+        {
+          "href": "#/alerts",
+          "current": null,
+          "text": "notifications_active告警列表8"
+        }
+      ],
+      "disabled": [
+        "troubleshoot攻击者详情与时间线03"
+      ]
+    }
+  },
+  "stable": true,
+  "result": "pass",
+  "light_pages": [
+    {
+      "page": "overview",
+      "route": "/#/",
+      "theme": {
+        "resolved": "light",
+        "classes": "light",
+        "colorScheme": "light",
+        "background": "rgb(248, 250, 252)"
+      },
+      "console_errors": [],
+      "http_errors": [],
+      "missing_regions": [],
+      "overflow": false,
+      "title": "首页概览 · DB Honeypot",
+      "expected_title": "首页概览 · DB Honeypot",
+      "screenshot": "screenshots/overview-1440x900-light.png"
+    },
+    {
+      "page": "attackers",
+      "route": "/#/attackers",
+      "theme": {
+        "resolved": "light",
+        "classes": "light",
+        "colorScheme": "light",
+        "background": "rgb(248, 250, 252)"
+      },
+      "console_errors": [],
+      "http_errors": [],
+      "missing_regions": [],
+      "overflow": false,
+      "title": "攻击者列表 · DB Honeypot",
+      "expected_title": "攻击者列表 · DB Honeypot",
+      "screenshot": "screenshots/attackers-1440x900-light.png"
+    },
+    {
+      "page": "attacker-detail",
+      "route": "/#/attackers/198.51.100.17",
+      "theme": {
+        "resolved": "light",
+        "classes": "light",
+        "colorScheme": "light",
+        "background": "rgb(248, 250, 252)"
+      },
+      "console_errors": [],
+      "http_errors": [],
+      "missing_regions": [],
+      "overflow": false,
+      "title": "198.51.100.17 攻击者详情 · DB Honeypot",
+      "expected_title": "198.51.100.17 攻击者详情 · DB Honeypot",
+      "screenshot": "screenshots/attacker-detail-1440x900-light.png"
+    },
+    {
+      "page": "alerts",
+      "route": "/#/alerts",
+      "theme": {
+        "resolved": "light",
+        "classes": "light",
+        "colorScheme": "light",
+        "background": "rgb(248, 250, 252)"
+      },
+      "console_errors": [],
+      "http_errors": [],
+      "missing_regions": [],
+      "overflow": false,
+      "title": "告警列表 · DB Honeypot",
+      "expected_title": "告警列表 · DB Honeypot",
+      "screenshot": "screenshots/alerts-1440x900-light.png"
+    }
+  ],
+  "failures": [],
+  "finished_at": "2026-11-25T09:05:13.894Z"
+}

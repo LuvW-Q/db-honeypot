@@ -1,0 +1,209 @@
+{
+  "base_url": "http://127.0.0.1:8000",
+  "finished_at": "2026-11-25T07:12:03.824Z",
+  "restored_alerts": 1,
+  "results": [
+    {
+      "name": "overview-range-7d",
+      "ok": true,
+      "detail": {
+        "url7d": true,
+        "rangeRequests": [
+          "GET /api/overview?range=all",
+          "GET /api/overview?range=7d"
+        ],
+        "allSessions": "214",
+        "kpi7d": "5"
+      }
+    },
+    {
+      "name": "overview-range-all",
+      "ok": true
+    },
+    {
+      "name": "overview-refresh",
+      "ok": true,
+      "detail": [
+        "GET /api/overview?range=all",
+        "GET /api/trend?days=30",
+        "GET /api/rules/effectiveness?limit=20",
+        "GET /api/attackers?page=1&page_size=5&sort=risk_score&order=desc"
+      ]
+    },
+    {
+      "name": "overview-top5-drilldown",
+      "ok": true,
+      "detail": "http://127.0.0.1:8000/#/attackers/198.51.100.17"
+    },
+    {
+      "name": "detail-timeline-filter",
+      "ok": true,
+      "detail": {
+        "allCards": 16,
+        "authCards": 8
+      }
+    },
+    {
+      "name": "detail-disabled-controls",
+      "ok": true,
+      "detail": [
+        {
+          "text": "block联动 DMZ 隔离",
+          "title": "演示未开放：系统仅分析，不执行主动反制"
+        },
+        {
+          "text": "导出取证报告 (JSON/CSV)",
+          "title": "演示未开放：导出功能不在本版范围"
+        },
+        {
+          "text": "同步证据链至防御规则库",
+          "title": "演示未开放：需要规则下发通道"
+        }
+      ]
+    },
+    {
+      "name": "attackers-search",
+      "ok": true,
+      "detail": {
+        "url": "http://127.0.0.1:8000/#/attackers?q=198.51.100.17",
+        "rowsAfterSearch": 1
+      }
+    },
+    {
+      "name": "attackers-risk-filter",
+      "ok": true,
+      "detail": "http://127.0.0.1:8000/#/attackers?q=198.51.100.17&risk_level=critical"
+    },
+    {
+      "name": "attackers-sort-total-connections",
+      "ok": true,
+      "detail": "http://127.0.0.1:8000/#/attackers?q=198.51.100.17&sort=total_connections"
+    },
+    {
+      "name": "attackers-disabled-export",
+      "ok": true,
+      "detail": [
+        {
+          "text": "download导出遥测 CSV",
+          "title": "演示未开放：导出功能不在本版范围"
+        }
+      ]
+    },
+    {
+      "name": "alerts-tab-unread",
+      "ok": true,
+      "detail": "http://127.0.0.1:8000/#/alerts?is_read=false"
+    },
+    {
+      "name": "alerts-severity-filter",
+      "ok": true,
+      "detail": "http://127.0.0.1:8000/#/alerts?is_read=false&severity=high"
+    },
+    {
+      "name": "alerts-type-filter",
+      "ok": true,
+      "detail": "http://127.0.0.1:8000/#/alerts?is_read=false&alert_type=bruteforce"
+    },
+    {
+      "name": "alerts-time-preset",
+      "ok": true,
+      "detail": "http://127.0.0.1:8000/#/alerts?is_read=false&days=3"
+    },
+    {
+      "name": "alerts-single-mark-read",
+      "ok": true,
+      "detail": {
+        "status": 200,
+        "patchTarget": 109,
+        "toast": "verified\n\n告警 #109 已标记已读\n\nclose"
+      }
+    },
+    {
+      "name": "alerts-batch-mark-read",
+      "ok": true,
+      "detail": {
+        "patches": 2,
+        "unreadAfter": 6
+      }
+    },
+    {
+      "name": "a11y-h1-nav-labels",
+      "ok": true,
+      "detail": {
+        "h1Count": 1,
+        "navCurrent": 1,
+        "iconButtons": 3,
+        "missingLabel": 0
+      }
+    },
+    {
+      "name": "page-errors",
+      "ok": true,
+      "detail": []
+    }
+  ],
+  "console_requests": [
+    "GET /api/sessions/5a060001-0000-4000-8000-000000000001/timeline",
+    "GET /api/attackers?page=1&page_size=20&sort=risk_score&order=desc",
+    "GET /api/attackers/summary",
+    "GET /api/attackers?page=1&page_size=20&q=198.51.100.17&sort=risk_score&order=desc",
+    "GET /api/attackers/summary",
+    "GET /api/attackers?page=1&page_size=20&q=198.51.100.17&sort=risk_score&order=desc",
+    "GET /api/attackers/summary",
+    "GET /api/attackers?page=1&page_size=20&q=198.51.100.17&risk_level=critical&sort=risk_score&order=desc",
+    "GET /api/attackers/summary",
+    "GET /api/attackers?page=1&page_size=20&q=198.51.100.17&risk_level=critical&sort=risk_score&order=desc",
+    "GET /api/attackers/summary",
+    "GET /api/attackers?page=1&page_size=20&q=198.51.100.17&sort=risk_score&order=desc",
+    "GET /api/attackers/summary",
+    "GET /api/attackers?page=1&page_size=20&q=198.51.100.17&sort=risk_score&order=desc",
+    "GET /api/attackers/summary",
+    "GET /api/attackers?page=1&page_size=20&q=198.51.100.17&sort=total_connections&order=desc",
+    "GET /api/attackers/summary",
+    "GET /api/attackers?page=1&page_size=20&q=198.51.100.17&sort=total_connections&order=desc",
+    "GET /api/attackers/summary",
+    "GET /api/alerts?page=1&page_size=20&from=2026-11-18T16%3A00%3A00.000Z&sort=created_at&order=desc",
+    "GET /api/alerts/summary?from=2026-11-18T16%3A00%3A00.000Z&to=2026-11-25T16%3A00%3A00.000Z",
+    "GET /api/alerts?page=1&page_size=20&is_read=false&from=2026-11-18T16%3A00%3A00.000Z&sort=created_at&order=desc",
+    "GET /api/alerts/summary?from=2026-11-18T16%3A00%3A00.000Z&to=2026-11-25T16%3A00%3A00.000Z",
+    "GET /api/alerts?page=1&page_size=20&is_read=false&from=2026-11-18T16%3A00%3A00.000Z&sort=created_at&order=desc",
+    "GET /api/alerts/summary?from=2026-11-18T16%3A00%3A00.000Z&to=2026-11-25T16%3A00%3A00.000Z",
+    "GET /api/alerts?page=1&page_size=20&severity=high&is_read=false&from=2026-11-18T16%3A00%3A00.000Z&sort=created_at&order=desc",
+    "GET /api/alerts/summary?from=2026-11-18T16%3A00%3A00.000Z&to=2026-11-25T16%3A00%3A00.000Z",
+    "GET /api/alerts?page=1&page_size=20&severity=high&is_read=false&from=2026-11-18T16%3A00%3A00.000Z&sort=created_at&order=desc",
+    "GET /api/alerts/summary?from=2026-11-18T16%3A00%3A00.000Z&to=2026-11-25T16%3A00%3A00.000Z",
+    "GET /api/alerts?page=1&page_size=20&is_read=false&from=2026-11-18T16%3A00%3A00.000Z&sort=created_at&order=desc",
+    "GET /api/alerts/summary?from=2026-11-18T16%3A00%3A00.000Z&to=2026-11-25T16%3A00%3A00.000Z",
+    "GET /api/alerts?page=1&page_size=20&is_read=false&from=2026-11-18T16%3A00%3A00.000Z&sort=created_at&order=desc",
+    "GET /api/alerts/summary?from=2026-11-18T16%3A00%3A00.000Z&to=2026-11-25T16%3A00%3A00.000Z",
+    "GET /api/alerts?page=1&page_size=20&alert_type=bruteforce&is_read=false&from=2026-11-18T16%3A00%3A00.000Z&sort=created_at&order=desc",
+    "GET /api/alerts/summary?from=2026-11-18T16%3A00%3A00.000Z&to=2026-11-25T16%3A00%3A00.000Z",
+    "GET /api/alerts?page=1&page_size=20&alert_type=bruteforce&is_read=false&from=2026-11-18T16%3A00%3A00.000Z&sort=created_at&order=desc",
+    "GET /api/alerts/summary?from=2026-11-18T16%3A00%3A00.000Z&to=2026-11-25T16%3A00%3A00.000Z",
+    "GET /api/alerts?page=1&page_size=20&is_read=false&from=2026-11-18T16%3A00%3A00.000Z&sort=created_at&order=desc",
+    "GET /api/alerts/summary?from=2026-11-18T16%3A00%3A00.000Z&to=2026-11-25T16%3A00%3A00.000Z",
+    "GET /api/alerts?page=1&page_size=20&is_read=false&from=2026-11-18T16%3A00%3A00.000Z&sort=created_at&order=desc",
+    "GET /api/alerts/summary?from=2026-11-18T16%3A00%3A00.000Z&to=2026-11-25T16%3A00%3A00.000Z",
+    "GET /api/alerts?page=1&page_size=20&is_read=false&from=2026-11-22T16%3A00%3A00.000Z&sort=created_at&order=desc",
+    "GET /api/alerts/summary?from=2026-11-22T16%3A00%3A00.000Z&to=2026-11-25T16%3A00%3A00.000Z",
+    "GET /api/alerts?page=1&page_size=20&is_read=false&from=2026-11-22T16%3A00%3A00.000Z&sort=created_at&order=desc",
+    "GET /api/alerts/summary?from=2026-11-22T16%3A00%3A00.000Z&to=2026-11-25T16%3A00%3A00.000Z",
+    "GET /api/alerts?page=1&page_size=20&is_read=false&from=2026-11-18T16%3A00%3A00.000Z&sort=created_at&order=desc",
+    "GET /api/alerts/summary?from=2026-11-18T16%3A00%3A00.000Z&to=2026-11-25T16%3A00%3A00.000Z",
+    "GET /api/alerts?page=1&page_size=20&is_read=false&from=2026-11-18T16%3A00%3A00.000Z&sort=created_at&order=desc",
+    "GET /api/alerts/summary?from=2026-11-18T16%3A00%3A00.000Z&to=2026-11-25T16%3A00%3A00.000Z",
+    "GET /api/alerts?page=1&page_size=20&from=2026-11-18T16%3A00%3A00.000Z&sort=created_at&order=desc",
+    "GET /api/alerts/summary?from=2026-11-18T16%3A00%3A00.000Z&to=2026-11-25T16%3A00%3A00.000Z",
+    "GET /api/alerts?page=1&page_size=20&from=2026-11-18T16%3A00%3A00.000Z&sort=created_at&order=desc",
+    "GET /api/alerts/summary?from=2026-11-18T16%3A00%3A00.000Z&to=2026-11-25T16%3A00%3A00.000Z",
+    "PATCH /api/alerts/109",
+    "GET /api/alerts?page=1&page_size=20&from=2026-11-18T16%3A00%3A00.000Z&sort=created_at&order=desc",
+    "GET /api/alerts/summary?from=2026-11-18T16%3A00%3A00.000Z&to=2026-11-25T16%3A00%3A00.000Z",
+    "PATCH /api/alerts/109",
+    "PATCH /api/alerts/108",
+    "GET /api/alerts?page=1&page_size=20&from=2026-11-18T16%3A00%3A00.000Z&sort=created_at&order=desc",
+    "GET /api/alerts/summary?from=2026-11-18T16%3A00%3A00.000Z&to=2026-11-25T16%3A00%3A00.000Z"
+  ],
+  "result": "pass",
+  "failures": []
+}

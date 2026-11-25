@@ -1,0 +1,30 @@
+<!doctype html>
+<html class="dark" lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 主题首屏无闪烁：在 CSS/JS 之前按「localStorage 覆盖 > 系统偏好」设置 html.light/dark。
+         令牌本身只在 src/assets/main.css 定义，这里只切 class，不写任何色值。 -->
+    <script>
+      ;(function () {
+        try {
+          var stored = localStorage.getItem('dbh-theme')
+          var override = stored === 'light' || stored === 'dark' ? stored : null
+          var dark = override ? override === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches
+          var root = document.documentElement
+          root.classList.remove('light', 'dark')
+          root.classList.add(dark ? 'dark' : 'light')
+          root.style.colorScheme = dark ? 'dark' : 'light'
+          root.dataset.theme = dark ? 'dark' : 'light'
+        } catch (error) {}
+      })()
+    </script>
+    <link id="page-favicon" rel="icon" type="image/svg+xml" href="/favicon-overview.svg" />
+    <title>首页概览 · DB Honeypot</title>
+    <script type="module" crossorigin src="/assets/index-DtzD2NMw.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DTPwW4iV.css">
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
