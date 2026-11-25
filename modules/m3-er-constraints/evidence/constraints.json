@@ -1,0 +1,4252 @@
+{
+  "meta": {
+    "tool": "m3-introspect-constraints/1.0",
+    "collected_at": "2026-11-25T05:22:50+00:00",
+    "schema": "honeypot_dev",
+    "database_url": "mysql+asyncmy://honeypot_app_rw:***@127.0.0.1:3306/honeypot_dev?charset=utf8mb4",
+    "server_version": "8.0.46",
+    "session_time_zone": "+00:00",
+    "connection_charset": "utf8mb4",
+    "connection_collation": "utf8mb4_0900_ai_ci",
+    "sql_mode": "ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
+  },
+  "summary": {
+    "schema": "honeypot_dev",
+    "base_tables": 12,
+    "business_tables": 11,
+    "business_table_names": [
+      "alerts",
+      "attack_log",
+      "attacker_intent",
+      "attacker_profile",
+      "audit_log",
+      "detection_rules",
+      "fake_config",
+      "fake_orders",
+      "fake_users",
+      "rule_hits",
+      "sessions"
+    ],
+    "views": 4,
+    "view_names": [
+      "v_attacker_profile_summary",
+      "v_daily_attack_trend",
+      "v_rule_effectiveness",
+      "v_session_risk_summary"
+    ],
+    "foreign_keys": 10,
+    "unique_constraints": 12,
+    "check_constraints": 38,
+    "indexes": 45,
+    "generated_columns": 2,
+    "rows_total": 2964
+  },
+  "tables": {
+    "alembic_version": {
+      "table_type": "BASE TABLE",
+      "business_table": false,
+      "engine": "InnoDB",
+      "row_format": "Dynamic",
+      "table_collation": "utf8mb4_0900_ai_ci",
+      "table_comment": "",
+      "row_count": 1,
+      "columns": [
+        {
+          "name": "version_num",
+          "position": 1,
+          "column_type": "varchar(32)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "PRI",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": ""
+        }
+      ],
+      "primary_key": {
+        "name": "PRIMARY",
+        "columns": [
+          "version_num"
+        ]
+      },
+      "foreign_keys": [],
+      "unique_constraints": [],
+      "check_constraints": [],
+      "indexes": [
+        {
+          "name": "PRIMARY",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "version_num"
+          ],
+          "cardinality": 1,
+          "visible": "YES",
+          "comment": ""
+        }
+      ]
+    },
+    "alerts": {
+      "table_type": "BASE TABLE",
+      "business_table": true,
+      "engine": "InnoDB",
+      "row_format": "Dynamic",
+      "table_collation": "utf8mb4_0900_ai_ci",
+      "table_comment": "告警表：爆破/拖库/破坏性操作首次命中生成，dedup_key 唯一约束实现同日同规则同来源去重；重复触发更新次数与最近时间",
+      "row_count": 8,
+      "columns": [
+        {
+          "name": "alert_id",
+          "position": 1,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": null,
+          "extra": "auto_increment",
+          "key": "PRI",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "告警编号"
+        },
+        {
+          "name": "dedup_key",
+          "position": 2,
+          "column_type": "varchar(160)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "UNI",
+          "character_set": "ascii",
+          "collation": "ascii_bin",
+          "generation_expression": "",
+          "comment": "告警去重键，格式 <rule_code>:<source_ip>:<UTC 日期>，如 R05:192.0.2.10:2026-11-19；唯一约束保证同一触发条件同日只有一条告警"
+        },
+        {
+          "name": "session_id",
+          "position": 3,
+          "column_type": "char(36)",
+          "data_type": "char",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "MUL",
+          "character_set": "ascii",
+          "collation": "ascii_bin",
+          "generation_expression": "",
+          "comment": "关联会话编号，引用 sessions.session_id；取首次触发告警的会话"
+        },
+        {
+          "name": "attacker_id",
+          "position": 4,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "MUL",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "关联攻击者画像编号，引用 attacker_profile.attacker_id"
+        },
+        {
+          "name": "rule_id",
+          "position": 5,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "MUL",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "首次触发告警的规则行编号，引用 detection_rules.rule_id"
+        },
+        {
+          "name": "rule_code",
+          "position": 6,
+          "column_type": "varchar(16)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "ascii",
+          "collation": "ascii_bin",
+          "generation_expression": "",
+          "comment": "触发规则编码快照，供列表展示与视图聚合，避免回连规则表"
+        },
+        {
+          "name": "latest_hit_id",
+          "position": 7,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "MUL",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "最近一次触发该告警的规则命中编号，引用 rule_hits.hit_id；证据可定位"
+        },
+        {
+          "name": "alert_type",
+          "position": 8,
+          "column_type": "varchar(16)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "MUL",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "告警类型枚举：bruteforce 爆破 / data_dump 拖库 / destructive 破坏性操作；仅这三类意图生成告警"
+        },
+        {
+          "name": "severity",
+          "position": 9,
+          "column_type": "varchar(8)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "MUL",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "告警等级：low 低 / medium 中 / high 高 / critical 严重；映射规则见 data-model 9.4"
+        },
+        {
+          "name": "title",
+          "position": 10,
+          "column_type": "varchar(200)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "告警标题（中文），如“疑似拖库：来自 192.0.2.10 的会话累计返回 1200 行”"
+        },
+        {
+          "name": "evidence_summary",
+          "position": 11,
+          "column_type": "varchar(1024)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "告警证据摘要：规则编码、命中时间、代表性语句与统计值，禁止只给标签"
+        },
+        {
+          "name": "first_seen_at",
+          "position": 12,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "首次触发时间（UTC）；插入告警时写入"
+        },
+        {
+          "name": "last_seen_at",
+          "position": 13,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "最近触发时间（UTC）；重复触发时以 GREATEST 更新"
+        },
+        {
+          "name": "occurrence_count",
+          "position": 14,
+          "column_type": "int unsigned",
+          "data_type": "int",
+          "nullable": false,
+          "default": "1",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "触发次数；首次为 1，重复触发原子自增"
+        },
+        {
+          "name": "is_read",
+          "position": 15,
+          "column_type": "tinyint(1)",
+          "data_type": "tinyint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "MUL",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "已读标记：0 未读 / 1 已读；已读更新是独立写操作"
+        },
+        {
+          "name": "read_at",
+          "position": 16,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "标记已读的时间（UTC）；未读时为 NULL；与 is_read 的一致性由检查约束保证"
+        },
+        {
+          "name": "created_at",
+          "position": 17,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP(6)",
+          "extra": "DEFAULT_GENERATED",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "行创建（首次告警）时间（UTC），等于 first_seen_at 的落库时刻"
+        },
+        {
+          "name": "updated_at",
+          "position": 18,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP(6)",
+          "extra": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP(6)",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "行最近更新时间（UTC），重复触发与已读操作都会更新"
+        }
+      ],
+      "primary_key": {
+        "name": "PRIMARY",
+        "columns": [
+          "alert_id"
+        ]
+      },
+      "foreign_keys": [
+        {
+          "name": "fk_alert_attacker",
+          "columns": [
+            "attacker_id"
+          ],
+          "referenced_table": "attacker_profile",
+          "referenced_columns": [
+            "attacker_id"
+          ],
+          "on_update": "RESTRICT",
+          "on_delete": "RESTRICT"
+        },
+        {
+          "name": "fk_alert_latest_hit",
+          "columns": [
+            "latest_hit_id"
+          ],
+          "referenced_table": "rule_hits",
+          "referenced_columns": [
+            "hit_id"
+          ],
+          "on_update": "RESTRICT",
+          "on_delete": "RESTRICT"
+        },
+        {
+          "name": "fk_alert_rule",
+          "columns": [
+            "rule_id"
+          ],
+          "referenced_table": "detection_rules",
+          "referenced_columns": [
+            "rule_id"
+          ],
+          "on_update": "RESTRICT",
+          "on_delete": "RESTRICT"
+        },
+        {
+          "name": "fk_alert_session",
+          "columns": [
+            "session_id"
+          ],
+          "referenced_table": "sessions",
+          "referenced_columns": [
+            "session_id"
+          ],
+          "on_update": "RESTRICT",
+          "on_delete": "RESTRICT"
+        }
+      ],
+      "unique_constraints": [
+        {
+          "name": "uk_alerts_dedup_key",
+          "columns": [
+            "dedup_key"
+          ]
+        }
+      ],
+      "check_constraints": [
+        {
+          "name": "ck_alert_is_read",
+          "clause": "(`is_read` in (0,1))"
+        },
+        {
+          "name": "ck_alert_occurrence_count",
+          "clause": "(`occurrence_count` >= 1)"
+        },
+        {
+          "name": "ck_alert_read_at",
+          "clause": "((`read_at` is null) or (`is_read` = 1))"
+        },
+        {
+          "name": "ck_alert_seen_order",
+          "clause": "(`last_seen_at` >= `first_seen_at`)"
+        },
+        {
+          "name": "ck_alert_severity",
+          "clause": "(`severity` in (_utf8mb4\\'low\\',_utf8mb4\\'medium\\',_utf8mb4\\'high\\',_utf8mb4\\'critical\\'))"
+        },
+        {
+          "name": "ck_alert_type",
+          "clause": "(`alert_type` in (_utf8mb4\\'bruteforce\\',_utf8mb4\\'data_dump\\',_utf8mb4\\'destructive\\'))"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "PRIMARY",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "alert_id"
+          ],
+          "cardinality": 8,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_alert_attacker_time",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "attacker_id",
+            "created_at"
+          ],
+          "cardinality": 6,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_alert_latest_hit",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "latest_hit_id"
+          ],
+          "cardinality": 8,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_alert_level_time",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "severity",
+            "created_at"
+          ],
+          "cardinality": 3,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_alert_read_time",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "is_read",
+            "created_at"
+          ],
+          "cardinality": 1,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_alert_rule",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "rule_id"
+          ],
+          "cardinality": 3,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_alert_session_time",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "session_id",
+            "created_at"
+          ],
+          "cardinality": 6,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_alert_type_time",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "alert_type",
+            "created_at"
+          ],
+          "cardinality": 3,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "uk_alerts_dedup_key",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "dedup_key"
+          ],
+          "cardinality": 8,
+          "visible": "YES",
+          "comment": ""
+        }
+      ]
+    },
+    "attack_log": {
+      "table_type": "BASE TABLE",
+      "business_table": true,
+      "engine": "InnoDB",
+      "row_format": "Dynamic",
+      "table_collation": "utf8mb4_0900_ai_ci",
+      "table_comment": "标准事件表：一次连接/认证/查询/断开一行；event_uuid 唯一约束实现采集幂等；SQL 与用户名为不可信数据，只存储不执行",
+      "row_count": 2525,
+      "columns": [
+        {
+          "name": "event_id",
+          "position": 1,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": null,
+          "extra": "auto_increment",
+          "key": "PRI",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "事件序号；全局单调递增，用于同时间戳事件的稳定排序"
+        },
+        {
+          "name": "event_uuid",
+          "position": 2,
+          "column_type": "char(36)",
+          "data_type": "char",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "UNI",
+          "character_set": "ascii",
+          "collation": "ascii_bin",
+          "generation_expression": "",
+          "comment": "采集事件幂等键（UUID v4 文本），重复提交时由唯一约束阻止重复入库并返回已有 event_id"
+        },
+        {
+          "name": "session_id",
+          "position": 3,
+          "column_type": "char(36)",
+          "data_type": "char",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "MUL",
+          "character_set": "ascii",
+          "collation": "ascii_bin",
+          "generation_expression": "",
+          "comment": "所属会话编号，引用 sessions.session_id"
+        },
+        {
+          "name": "event_type",
+          "position": 4,
+          "column_type": "varchar(16)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "事件类型：connect 连接 / auth 认证 / query 查询或写操作 / disconnect 断开；无法识别的报文归入 query 且 status=error"
+        },
+        {
+          "name": "source_ip",
+          "position": 5,
+          "column_type": "varchar(45)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "MUL",
+          "character_set": "ascii",
+          "collation": "ascii_general_ci",
+          "generation_expression": "",
+          "comment": "测试端来源地址；与会话行保持一致（写入事务内从会话复制，属受控反规范化）"
+        },
+        {
+          "name": "username",
+          "position": 6,
+          "column_type": "varchar(128)",
+          "data_type": "varchar",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "认证或查询使用的用户名；来自不可信输入，按 128 字符上限截断，超长时置 payload_truncated=1"
+        },
+        {
+          "name": "credential_test_id",
+          "position": 7,
+          "column_type": "varchar(64)",
+          "data_type": "varchar",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "合成凭据测试标识（如 TEST-ONLY-ACC-01），仅标识测试样本，任何情况下不保存口令明文或可逆凭据"
+        },
+        {
+          "name": "sql_statement",
+          "position": 8,
+          "column_type": "mediumtext",
+          "data_type": "mediumtext",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "原始 SQL 文本，只存储不执行；超过 65535 字符时截断并置 payload_truncated=1"
+        },
+        {
+          "name": "normalized_sql",
+          "position": 9,
+          "column_type": "mediumtext",
+          "data_type": "mediumtext",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "标准化 SQL（字面量替换为占位符、空白折叠、统一大小写）；供规则匹配与去重比较，不参与索引"
+        },
+        {
+          "name": "event_time",
+          "position": 10,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "事件发生时间（UTC），由捕获层在事件生成时确定并显式写入"
+        },
+        {
+          "name": "returned_rows",
+          "position": 11,
+          "column_type": "int unsigned",
+          "data_type": "int",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "本次查询返回给客户端的行数；非查询事件为 0"
+        },
+        {
+          "name": "response_ms",
+          "position": 12,
+          "column_type": "int unsigned",
+          "data_type": "int",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "模拟响应耗时（毫秒）；受控延迟场景记录实际等待时间"
+        },
+        {
+          "name": "status",
+          "position": 13,
+          "column_type": "varchar(16)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "处理结果枚举：success 成功 / failure 认证失败或模拟失败 / denied 权限不足 / error 协议或语句错误"
+        },
+        {
+          "name": "payload_truncated",
+          "position": 14,
+          "column_type": "tinyint(1)",
+          "data_type": "tinyint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "载荷是否被截断：1 表示 SQL 或用户名超过长度上限并按策略截断，便于审计输入防线是否生效"
+        },
+        {
+          "name": "created_at",
+          "position": 15,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP(6)",
+          "extra": "DEFAULT_GENERATED",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "行落库时间（UTC），与 event_time 的差值可用于评估写入延迟"
+        }
+      ],
+      "primary_key": {
+        "name": "PRIMARY",
+        "columns": [
+          "event_id"
+        ]
+      },
+      "foreign_keys": [
+        {
+          "name": "fk_log_session",
+          "columns": [
+            "session_id"
+          ],
+          "referenced_table": "sessions",
+          "referenced_columns": [
+            "session_id"
+          ],
+          "on_update": "RESTRICT",
+          "on_delete": "RESTRICT"
+        }
+      ],
+      "unique_constraints": [
+        {
+          "name": "uk_attack_log_event_session",
+          "columns": [
+            "event_id",
+            "session_id"
+          ]
+        },
+        {
+          "name": "uk_attack_log_event_uuid",
+          "columns": [
+            "event_uuid"
+          ]
+        }
+      ],
+      "check_constraints": [
+        {
+          "name": "ck_attack_log_event_type",
+          "clause": "(`event_type` in (_utf8mb4\\'connect\\',_utf8mb4\\'auth\\',_utf8mb4\\'query\\',_utf8mb4\\'disconnect\\'))"
+        },
+        {
+          "name": "ck_attack_log_normalized_length",
+          "clause": "((`normalized_sql` is null) or (char_length(`normalized_sql`) <= 65535))"
+        },
+        {
+          "name": "ck_attack_log_sql_length",
+          "clause": "((`sql_statement` is null) or (char_length(`sql_statement`) <= 65535))"
+        },
+        {
+          "name": "ck_attack_log_status",
+          "clause": "(`status` in (_utf8mb4\\'success\\',_utf8mb4\\'failure\\',_utf8mb4\\'denied\\',_utf8mb4\\'error\\'))"
+        },
+        {
+          "name": "ck_attack_log_truncated_flag",
+          "clause": "(`payload_truncated` in (0,1))"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "PRIMARY",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "event_id"
+          ],
+          "cardinality": 2472,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_log_session_time",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "session_id",
+            "event_time"
+          ],
+          "cardinality": 214,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_log_source_time",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "source_ip",
+            "event_time"
+          ],
+          "cardinality": 39,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "uk_attack_log_event_session",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "event_id",
+            "session_id"
+          ],
+          "cardinality": 2472,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "uk_attack_log_event_uuid",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "event_uuid"
+          ],
+          "cardinality": 2472,
+          "visible": "YES",
+          "comment": ""
+        }
+      ]
+    },
+    "attacker_intent": {
+      "table_type": "BASE TABLE",
+      "business_table": true,
+      "engine": "InnoDB",
+      "row_format": "Dynamic",
+      "table_collation": "utf8mb4_0900_ai_ci",
+      "table_comment": "攻击意图聚合表：一行一条攻击者意图，按画像编号与意图类型复合唯一；命中新证据时更新分数与首末识别时间",
+      "row_count": 11,
+      "columns": [
+        {
+          "name": "intent_id",
+          "position": 1,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": null,
+          "extra": "auto_increment",
+          "key": "PRI",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "意图记录编号"
+        },
+        {
+          "name": "attacker_id",
+          "position": 2,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "MUL",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "所属画像编号，引用 attacker_profile.attacker_id"
+        },
+        {
+          "name": "intent_type",
+          "position": 3,
+          "column_type": "varchar(16)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "MUL",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "意图类型：scanning 扫描 / bruteforce 爆破 / recon 踩点 / data_dump 拖库 / destructive 破坏性操作"
+        },
+        {
+          "name": "intent_score",
+          "position": 4,
+          "column_type": "tinyint unsigned",
+          "data_type": "tinyint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "该意图累计可信分 0-100，按 9.2 公式（该意图下按 rule_code 去重取最大权重后求和并封顶）计算"
+        },
+        {
+          "name": "evidence_count",
+          "position": 5,
+          "column_type": "int unsigned",
+          "data_type": "int",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "支持该意图的规则命中条数（rule_hits 计数），用于排序与解释"
+        },
+        {
+          "name": "first_detected_at",
+          "position": 6,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "首次识别该意图的时间（UTC）"
+        },
+        {
+          "name": "last_detected_at",
+          "position": 7,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "最近识别该意图的时间（UTC）；主要意图排序的次级键"
+        },
+        {
+          "name": "created_at",
+          "position": 8,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP(6)",
+          "extra": "DEFAULT_GENERATED",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "行创建时间（UTC）"
+        },
+        {
+          "name": "updated_at",
+          "position": 9,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP(6)",
+          "extra": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP(6)",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "行最近更新时间（UTC）"
+        }
+      ],
+      "primary_key": {
+        "name": "PRIMARY",
+        "columns": [
+          "intent_id"
+        ]
+      },
+      "foreign_keys": [
+        {
+          "name": "fk_intent_profile",
+          "columns": [
+            "attacker_id"
+          ],
+          "referenced_table": "attacker_profile",
+          "referenced_columns": [
+            "attacker_id"
+          ],
+          "on_update": "RESTRICT",
+          "on_delete": "RESTRICT"
+        }
+      ],
+      "unique_constraints": [
+        {
+          "name": "uk_attacker_intent_attacker_type",
+          "columns": [
+            "attacker_id",
+            "intent_type"
+          ]
+        }
+      ],
+      "check_constraints": [
+        {
+          "name": "ck_intent_detected_order",
+          "clause": "(`last_detected_at` >= `first_detected_at`)"
+        },
+        {
+          "name": "ck_intent_score",
+          "clause": "(`intent_score` <= 100)"
+        },
+        {
+          "name": "ck_intent_type",
+          "clause": "(`intent_type` in (_utf8mb4\\'scanning\\',_utf8mb4\\'bruteforce\\',_utf8mb4\\'recon\\',_utf8mb4\\'data_dump\\',_utf8mb4\\'destructive\\'))"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "PRIMARY",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "intent_id"
+          ],
+          "cardinality": 11,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_intent_type_score",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "intent_type",
+            "intent_score"
+          ],
+          "cardinality": 5,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "uk_attacker_intent_attacker_type",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "attacker_id",
+            "intent_type"
+          ],
+          "cardinality": 9,
+          "visible": "YES",
+          "comment": ""
+        }
+      ]
+    },
+    "attacker_profile": {
+      "table_type": "BASE TABLE",
+      "business_table": true,
+      "engine": "InnoDB",
+      "row_format": "Dynamic",
+      "table_collation": "utf8mb4_0900_ai_ci",
+      "table_comment": "攻击者画像表：按来源地址聚合的画像，一行一个来源；不保存意图列表，主要意图由 v_attacker_profile_summary 计算",
+      "row_count": 14,
+      "columns": [
+        {
+          "name": "attacker_id",
+          "position": 1,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": null,
+          "extra": "auto_increment",
+          "key": "PRI",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "画像编号；被 attacker_intent 与 alerts 引用"
+        },
+        {
+          "name": "source_ip",
+          "position": 2,
+          "column_type": "varchar(45)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "UNI",
+          "character_set": "ascii",
+          "collation": "ascii_general_ci",
+          "generation_expression": "",
+          "comment": "攻击者聚合键（来源地址），唯一；同一来源仅一行画像"
+        },
+        {
+          "name": "first_seen",
+          "position": 3,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "该来源首次出现时间（UTC），取首次会话开始时间"
+        },
+        {
+          "name": "last_seen",
+          "position": 4,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "该来源最近出现时间（UTC），取最新事件时间"
+        },
+        {
+          "name": "total_connections",
+          "position": 5,
+          "column_type": "int unsigned",
+          "data_type": "int",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "累计连接次数（connect 事件数）"
+        },
+        {
+          "name": "total_auth_attempts",
+          "position": 6,
+          "column_type": "int unsigned",
+          "data_type": "int",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "累计认证尝试次数（auth 事件数，含成功与失败）"
+        },
+        {
+          "name": "total_auth_failures",
+          "position": 7,
+          "column_type": "int unsigned",
+          "data_type": "int",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "累计认证失败次数（auth 且 status 为 failure/denied），供爆破意图解释"
+        },
+        {
+          "name": "total_queries",
+          "position": 8,
+          "column_type": "int unsigned",
+          "data_type": "int",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "累计 SQL 数量（query 事件数）"
+        },
+        {
+          "name": "risk_score",
+          "position": 9,
+          "column_type": "tinyint unsigned",
+          "data_type": "tinyint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "MUL",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "来源画像风险分 0-100，按 9.2 公式（按 rule_code 去重取最大权重后求和并封顶）计算"
+        },
+        {
+          "name": "risk_level",
+          "position": 10,
+          "column_type": "varchar(16)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "VIRTUAL GENERATED",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "(case when (`risk_score` >= 80) then _utf8mb4\\'critical\\' when (`risk_score` >= 60) then _utf8mb4\\'high\\' when (`risk_score` >= 30) then _utf8mb4\\'medium\\' else _utf8mb4\\'low\\' end)",
+          "comment": "风险等级生成列：critical 严重(80-100) / high 高(60-79) / medium 中(30-59) / low 低(0-29)；由 risk_score 自动推导，禁止手工写入"
+        },
+        {
+          "name": "evidence_summary",
+          "position": 11,
+          "column_type": "varchar(1024)",
+          "data_type": "varchar",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "最近一次计算的证据摘要（命中的规则编码与代表性语句类型），供列表页与答辩解释"
+        },
+        {
+          "name": "last_calculated_at",
+          "position": 12,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP(6)",
+          "extra": "DEFAULT_GENERATED",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "最近一次风险重算时间（UTC），用于判断画像是否为最新口径"
+        },
+        {
+          "name": "created_at",
+          "position": 13,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP(6)",
+          "extra": "DEFAULT_GENERATED",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "行创建时间（UTC）"
+        },
+        {
+          "name": "updated_at",
+          "position": 14,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP(6)",
+          "extra": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP(6)",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "行最近更新时间（UTC）"
+        }
+      ],
+      "primary_key": {
+        "name": "PRIMARY",
+        "columns": [
+          "attacker_id"
+        ]
+      },
+      "foreign_keys": [],
+      "unique_constraints": [
+        {
+          "name": "uk_attacker_profile_source_ip",
+          "columns": [
+            "source_ip"
+          ]
+        }
+      ],
+      "check_constraints": [
+        {
+          "name": "ck_profile_risk_score",
+          "clause": "(`risk_score` <= 100)"
+        },
+        {
+          "name": "ck_profile_seen_order",
+          "clause": "(`last_seen` >= `first_seen`)"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "PRIMARY",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "attacker_id"
+          ],
+          "cardinality": 14,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_profile_risk",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "risk_score",
+            "last_seen"
+          ],
+          "cardinality": 6,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "uk_attacker_profile_source_ip",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "source_ip"
+          ],
+          "cardinality": 14,
+          "visible": "YES",
+          "comment": ""
+        }
+      ]
+    },
+    "audit_log": {
+      "table_type": "BASE TABLE",
+      "business_table": true,
+      "engine": "InnoDB",
+      "row_format": "Dynamic",
+      "table_collation": "utf8mb4_0900_ai_ci",
+      "table_comment": "审计日志表：仅追加重放记录关键写操作（重置、规则变更、告警已读、导出、迁移）；业务账号仅可插入与查询，不可修改删除",
+      "row_count": 20,
+      "columns": [
+        {
+          "name": "audit_id",
+          "position": 1,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": null,
+          "extra": "auto_increment",
+          "key": "PRI",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "审计编号"
+        },
+        {
+          "name": "occurred_at",
+          "position": 2,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP(6)",
+          "extra": "DEFAULT_GENERATED",
+          "key": "MUL",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "操作发生时间（UTC）"
+        },
+        {
+          "name": "account_name",
+          "position": 3,
+          "column_type": "varchar(64)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "ascii",
+          "collation": "ascii_bin",
+          "generation_expression": "",
+          "comment": "执行操作的数据库账号名（非应用用户），如 honeypot_app_rw"
+        },
+        {
+          "name": "operation",
+          "position": 4,
+          "column_type": "varchar(32)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "MUL",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "操作类型：reset 演示重置 / rule_change 规则版本变更 / alert_ack 告警已读 / export 数据导出 / migration 迁移执行 / manual_query 人工查询 / login_failed 连接失败"
+        },
+        {
+          "name": "target_table",
+          "position": 5,
+          "column_type": "varchar(64)",
+          "data_type": "varchar",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "涉及的业务表名，如 attack_log"
+        },
+        {
+          "name": "target_key",
+          "position": 6,
+          "column_type": "varchar(128)",
+          "data_type": "varchar",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "涉及的主键或去重键（脱敏后），如告警去重键或规则编码"
+        },
+        {
+          "name": "result",
+          "position": 7,
+          "column_type": "varchar(16)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "操作结果：success 成功 / failure 失败"
+        },
+        {
+          "name": "detail",
+          "position": 8,
+          "column_type": "varchar(1000)",
+          "data_type": "varchar",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "结构化说明；禁止写入口令、完整 SQL 原文或任何真实凭据"
+        },
+        {
+          "name": "request_id",
+          "position": 9,
+          "column_type": "char(36)",
+          "data_type": "char",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "ascii",
+          "collation": "ascii_bin",
+          "generation_expression": "",
+          "comment": "一次业务操作的关联编号（UUID v4 文本），用于串联同一操作的多条审计记录"
+        }
+      ],
+      "primary_key": {
+        "name": "PRIMARY",
+        "columns": [
+          "audit_id"
+        ]
+      },
+      "foreign_keys": [],
+      "unique_constraints": [],
+      "check_constraints": [
+        {
+          "name": "ck_audit_operation",
+          "clause": "(`operation` in (_utf8mb4\\'reset\\',_utf8mb4\\'rule_change\\',_utf8mb4\\'alert_ack\\',_utf8mb4\\'export\\',_utf8mb4\\'migration\\',_utf8mb4\\'manual_query\\',_utf8mb4\\'login_failed\\'))"
+        },
+        {
+          "name": "ck_audit_result",
+          "clause": "(`result` in (_utf8mb4\\'success\\',_utf8mb4\\'failure\\'))"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "PRIMARY",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "audit_id"
+          ],
+          "cardinality": 19,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_audit_operation_time",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "operation",
+            "occurred_at"
+          ],
+          "cardinality": 3,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_audit_time",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "occurred_at"
+          ],
+          "cardinality": 19,
+          "visible": "YES",
+          "comment": ""
+        }
+      ]
+    },
+    "detection_rules": {
+      "table_type": "BASE TABLE",
+      "business_table": true,
+      "engine": "InnoDB",
+      "row_format": "Dynamic",
+      "table_collation": "utf8mb4_0900_ai_ci",
+      "table_comment": "检测规则配置表：一行一条规则的一个版本；分析层只执行 enabled=1 的版本，历史命中保留命中时的版本与权重快照",
+      "row_count": 5,
+      "columns": [
+        {
+          "name": "rule_id",
+          "position": 1,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": null,
+          "extra": "auto_increment",
+          "key": "PRI",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "规则行编号；每行代表一条规则的一个版本"
+        },
+        {
+          "name": "rule_code",
+          "position": 2,
+          "column_type": "varchar(16)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "MUL",
+          "character_set": "ascii",
+          "collation": "ascii_bin",
+          "generation_expression": "",
+          "comment": "稳定规则编码（R01-R05），跨版本不变，禁止复用"
+        },
+        {
+          "name": "rule_name",
+          "position": 3,
+          "column_type": "varchar(100)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "规则显示名称，如“短时高频连接扫描”"
+        },
+        {
+          "name": "rule_type",
+          "position": 4,
+          "column_type": "varchar(16)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "规则类型枚举：frequency 频率统计 / keyword 关键词 / sequence 序列 / volume 体量"
+        },
+        {
+          "name": "intent_type",
+          "position": 5,
+          "column_type": "varchar(16)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "MUL",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "命中后归属的攻击意图：scanning/bruteforce/recon/data_dump/destructive"
+        },
+        {
+          "name": "parameters_json",
+          "position": 6,
+          "column_type": "json",
+          "data_type": "json",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "单条规则内部的阈值与时间窗口参数，结构见 data-model.md 第 10 章"
+        },
+        {
+          "name": "risk_weight",
+          "position": 7,
+          "column_type": "tinyint unsigned",
+          "data_type": "tinyint",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "命中计入的风险权重 1-100；按 rule_code 去重后求和"
+        },
+        {
+          "name": "rule_version",
+          "position": 8,
+          "column_type": "smallint unsigned",
+          "data_type": "smallint",
+          "nullable": false,
+          "default": "1",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "规则版本号，从 1 递增；与 rule_code 复合唯一"
+        },
+        {
+          "name": "enabled",
+          "position": 9,
+          "column_type": "tinyint(1)",
+          "data_type": "tinyint",
+          "nullable": false,
+          "default": "1",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "是否参与检测：1 启用 / 0 停用；同一 rule_code 至多一个启用版本"
+        },
+        {
+          "name": "enabled_rule_code",
+          "position": 10,
+          "column_type": "varchar(16)",
+          "data_type": "varchar",
+          "nullable": true,
+          "default": null,
+          "extra": "STORED GENERATED",
+          "key": "UNI",
+          "character_set": "ascii",
+          "collation": "ascii_bin",
+          "generation_expression": "(case when (`enabled` = 1) then `rule_code` else NULL end)",
+          "comment": "生成列：启用时等于 rule_code，停用时为 NULL；用于唯一约束保证同一规则至多一个启用版本"
+        },
+        {
+          "name": "description",
+          "position": 11,
+          "column_type": "varchar(500)",
+          "data_type": "varchar",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "规则说明、阈值依据与已知误报，供管理员与答辩解释使用"
+        },
+        {
+          "name": "created_at",
+          "position": 12,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP(6)",
+          "extra": "DEFAULT_GENERATED",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "创建时间（UTC）"
+        },
+        {
+          "name": "updated_at",
+          "position": 13,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP(6)",
+          "extra": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP(6)",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "最近更新时间（UTC）"
+        }
+      ],
+      "primary_key": {
+        "name": "PRIMARY",
+        "columns": [
+          "rule_id"
+        ]
+      },
+      "foreign_keys": [],
+      "unique_constraints": [
+        {
+          "name": "uk_detection_rules_code_version",
+          "columns": [
+            "rule_code",
+            "rule_version"
+          ]
+        },
+        {
+          "name": "uk_detection_rules_enabled_code",
+          "columns": [
+            "enabled_rule_code"
+          ]
+        }
+      ],
+      "check_constraints": [
+        {
+          "name": "ck_detection_rules_enabled",
+          "clause": "(`enabled` in (0,1))"
+        },
+        {
+          "name": "ck_detection_rules_intent_type",
+          "clause": "(`intent_type` in (_utf8mb4\\'scanning\\',_utf8mb4\\'bruteforce\\',_utf8mb4\\'recon\\',_utf8mb4\\'data_dump\\',_utf8mb4\\'destructive\\'))"
+        },
+        {
+          "name": "ck_detection_rules_risk_weight",
+          "clause": "(`risk_weight` between 1 and 100)"
+        },
+        {
+          "name": "ck_detection_rules_rule_type",
+          "clause": "(`rule_type` in (_utf8mb4\\'frequency\\',_utf8mb4\\'keyword\\',_utf8mb4\\'sequence\\',_utf8mb4\\'volume\\'))"
+        },
+        {
+          "name": "ck_detection_rules_rule_version",
+          "clause": "(`rule_version` >= 1)"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "PRIMARY",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "rule_id"
+          ],
+          "cardinality": 5,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_detection_rules_intent",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "intent_type",
+            "enabled",
+            "rule_code"
+          ],
+          "cardinality": 5,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "uk_detection_rules_code_version",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "rule_code",
+            "rule_version"
+          ],
+          "cardinality": 5,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "uk_detection_rules_enabled_code",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "enabled_rule_code"
+          ],
+          "cardinality": 5,
+          "visible": "YES",
+          "comment": ""
+        }
+      ]
+    },
+    "fake_config": {
+      "table_type": "BASE TABLE",
+      "business_table": true,
+      "engine": "InnoDB",
+      "row_format": "Dynamic",
+      "table_collation": "utf8mb4_0900_ai_ci",
+      "table_comment": "诱饵配置表：看似敏感但完全无效的配置项；检查约束强制 config_value 以 TEST-ONLY 开头，禁止真实凭据入库",
+      "row_count": 5,
+      "columns": [
+        {
+          "name": "config_id",
+          "position": 1,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": null,
+          "extra": "auto_increment",
+          "key": "PRI",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "诱饵配置编号"
+        },
+        {
+          "name": "config_key",
+          "position": 2,
+          "column_type": "varchar(64)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "UNI",
+          "character_set": "ascii",
+          "collation": "ascii_bin",
+          "generation_expression": "",
+          "comment": "配置项键名，如 db.primary.connection_string"
+        },
+        {
+          "name": "config_value",
+          "position": 3,
+          "column_type": "varchar(512)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "无效的诱饵值，必须以 TEST-ONLY 开头；连接串只指向本机无效端口，密钥为占位串"
+        },
+        {
+          "name": "category",
+          "position": 4,
+          "column_type": "varchar(32)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "配置分类：database 数据库 / mail 邮件 / api 第三方接口 / storage 对象存储"
+        },
+        {
+          "name": "description",
+          "position": 5,
+          "column_type": "varchar(200)",
+          "data_type": "varchar",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "配置项说明（中文），说明这是测试数据"
+        },
+        {
+          "name": "is_invalid",
+          "position": 6,
+          "column_type": "tinyint(1)",
+          "data_type": "tinyint",
+          "nullable": false,
+          "default": "1",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "无效标记，强制恒为 1"
+        },
+        {
+          "name": "created_at",
+          "position": 7,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP(6)",
+          "extra": "DEFAULT_GENERATED",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "行创建时间（UTC）"
+        },
+        {
+          "name": "updated_at",
+          "position": 8,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP(6)",
+          "extra": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP(6)",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "行最近更新时间（UTC）"
+        }
+      ],
+      "primary_key": {
+        "name": "PRIMARY",
+        "columns": [
+          "config_id"
+        ]
+      },
+      "foreign_keys": [],
+      "unique_constraints": [
+        {
+          "name": "uk_fake_config_config_key",
+          "columns": [
+            "config_key"
+          ]
+        }
+      ],
+      "check_constraints": [
+        {
+          "name": "ck_fake_config_category",
+          "clause": "(`category` in (_utf8mb4\\'database\\',_utf8mb4\\'mail\\',_utf8mb4\\'api\\',_utf8mb4\\'storage\\'))"
+        },
+        {
+          "name": "ck_fake_config_invalid",
+          "clause": "(`is_invalid` = 1)"
+        },
+        {
+          "name": "ck_fake_config_test_only",
+          "clause": "(`config_value` like _utf8mb4\\'TEST-ONLY%\\')"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "PRIMARY",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "config_id"
+          ],
+          "cardinality": 5,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "uk_fake_config_config_key",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "config_key"
+          ],
+          "cardinality": 5,
+          "visible": "YES",
+          "comment": ""
+        }
+      ]
+    },
+    "fake_orders": {
+      "table_type": "BASE TABLE",
+      "business_table": true,
+      "engine": "InnoDB",
+      "row_format": "Dynamic",
+      "table_collation": "utf8mb4_0900_ai_ci",
+      "table_comment": "诱饵订单表：完全虚构的业务数据，含 120 条种子记录用于构造大结果集；仅用于诱饵层展示，不参与检测",
+      "row_count": 120,
+      "columns": [
+        {
+          "name": "order_id",
+          "position": 1,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": null,
+          "extra": "auto_increment",
+          "key": "PRI",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "诱饵订单编号"
+        },
+        {
+          "name": "order_no",
+          "position": 2,
+          "column_type": "varchar(32)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "UNI",
+          "character_set": "ascii",
+          "collation": "ascii_bin",
+          "generation_expression": "",
+          "comment": "虚构订单号，形如 FAKE-202611-00001"
+        },
+        {
+          "name": "user_id",
+          "position": 3,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "MUL",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "所属诱饵用户编号，引用 fake_users.id"
+        },
+        {
+          "name": "amount",
+          "position": 4,
+          "column_type": "decimal(12,2)",
+          "data_type": "decimal",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "虚构订单金额（元），精确小数，非负"
+        },
+        {
+          "name": "currency",
+          "position": 5,
+          "column_type": "char(3)",
+          "data_type": "char",
+          "nullable": false,
+          "default": "CNY",
+          "extra": "",
+          "key": "",
+          "character_set": "ascii",
+          "collation": "ascii_bin",
+          "generation_expression": "",
+          "comment": "币种代码，默认 CNY"
+        },
+        {
+          "name": "order_status",
+          "position": 6,
+          "column_type": "varchar(16)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": "paid",
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "订单状态：pending 待支付 / paid 已支付 / shipped 已发货 / cancelled 已取消 / refunded 已退款"
+        },
+        {
+          "name": "remark",
+          "position": 7,
+          "column_type": "varchar(200)",
+          "data_type": "varchar",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "虚构备注，用于构造更真实的大结果集响应"
+        },
+        {
+          "name": "is_synthetic",
+          "position": 8,
+          "column_type": "tinyint(1)",
+          "data_type": "tinyint",
+          "nullable": false,
+          "default": "1",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "合成标记，强制恒为 1"
+        },
+        {
+          "name": "created_at",
+          "position": 9,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP(6)",
+          "extra": "DEFAULT_GENERATED",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "虚构下单时间（UTC）"
+        }
+      ],
+      "primary_key": {
+        "name": "PRIMARY",
+        "columns": [
+          "order_id"
+        ]
+      },
+      "foreign_keys": [
+        {
+          "name": "fk_fake_orders_user",
+          "columns": [
+            "user_id"
+          ],
+          "referenced_table": "fake_users",
+          "referenced_columns": [
+            "id"
+          ],
+          "on_update": "RESTRICT",
+          "on_delete": "RESTRICT"
+        }
+      ],
+      "unique_constraints": [
+        {
+          "name": "uk_fake_orders_order_no",
+          "columns": [
+            "order_no"
+          ]
+        }
+      ],
+      "check_constraints": [
+        {
+          "name": "ck_fake_orders_amount",
+          "clause": "(`amount` >= 0)"
+        },
+        {
+          "name": "ck_fake_orders_status",
+          "clause": "(`order_status` in (_utf8mb4\\'pending\\',_utf8mb4\\'paid\\',_utf8mb4\\'shipped\\',_utf8mb4\\'cancelled\\',_utf8mb4\\'refunded\\'))"
+        },
+        {
+          "name": "ck_fake_orders_synthetic",
+          "clause": "(`is_synthetic` = 1)"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "PRIMARY",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "order_id"
+          ],
+          "cardinality": 120,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_fake_orders_user",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "user_id",
+            "created_at"
+          ],
+          "cardinality": 30,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "uk_fake_orders_order_no",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "order_no"
+          ],
+          "cardinality": 120,
+          "visible": "YES",
+          "comment": ""
+        }
+      ]
+    },
+    "fake_users": {
+      "table_type": "BASE TABLE",
+      "business_table": true,
+      "engine": "InnoDB",
+      "row_format": "Dynamic",
+      "table_collation": "utf8mb4_0900_ai_ci",
+      "table_comment": "诱饵用户表：完全虚构的展示数据，仅用于诱饵层返回；password_hash 为不可用伪哈希，检查约束强制 TEST-ONLY$ 前缀",
+      "row_count": 30,
+      "columns": [
+        {
+          "name": "id",
+          "position": 1,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": null,
+          "extra": "auto_increment",
+          "key": "PRI",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "诱饵用户编号"
+        },
+        {
+          "name": "username",
+          "position": 2,
+          "column_type": "varchar(64)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "UNI",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "虚构诱饵账号，形如 demo_user_01，明显非真实人员"
+        },
+        {
+          "name": "email",
+          "position": 3,
+          "column_type": "varchar(120)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "UNI",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "虚构邮箱，统一使用 example.test 保留域名"
+        },
+        {
+          "name": "phone",
+          "position": 4,
+          "column_type": "varchar(32)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "虚构手机号，统一使用 199-0000-00NN 号段，明显非真实号码"
+        },
+        {
+          "name": "password_hash",
+          "position": 5,
+          "column_type": "varchar(120)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "不可用的伪哈希，必须以 TEST-ONLY$ 开头（检查约束强制），不参与任何真实认证"
+        },
+        {
+          "name": "display_name",
+          "position": 6,
+          "column_type": "varchar(64)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "虚构显示名，形如 演示用户01"
+        },
+        {
+          "name": "is_synthetic",
+          "position": 7,
+          "column_type": "tinyint(1)",
+          "data_type": "tinyint",
+          "nullable": false,
+          "default": "1",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "合成标记，检查约束强制恒为 1，保证所有诱饵数据可识别为人工生成"
+        },
+        {
+          "name": "created_at",
+          "position": 8,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP(6)",
+          "extra": "DEFAULT_GENERATED",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "行创建时间（UTC）"
+        }
+      ],
+      "primary_key": {
+        "name": "PRIMARY",
+        "columns": [
+          "id"
+        ]
+      },
+      "foreign_keys": [],
+      "unique_constraints": [
+        {
+          "name": "uk_fake_users_email",
+          "columns": [
+            "email"
+          ]
+        },
+        {
+          "name": "uk_fake_users_username",
+          "columns": [
+            "username"
+          ]
+        }
+      ],
+      "check_constraints": [
+        {
+          "name": "ck_fake_users_password_hash",
+          "clause": "(`password_hash` like _utf8mb4\\'TEST-ONLY$%\\')"
+        },
+        {
+          "name": "ck_fake_users_synthetic",
+          "clause": "(`is_synthetic` = 1)"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "PRIMARY",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "id"
+          ],
+          "cardinality": 30,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "uk_fake_users_email",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "email"
+          ],
+          "cardinality": 30,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "uk_fake_users_username",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "username"
+          ],
+          "cardinality": 30,
+          "visible": "YES",
+          "comment": ""
+        }
+      ]
+    },
+    "rule_hits": {
+      "table_type": "BASE TABLE",
+      "business_table": true,
+      "engine": "InnoDB",
+      "row_format": "Dynamic",
+      "table_collation": "utf8mb4_0900_ai_ci",
+      "table_comment": "规则命中表：一次命中一行，保存命中时的规则版本、权重与意图快照；与攻击日志、会话、规则构成可回溯证据链",
+      "row_count": 11,
+      "columns": [
+        {
+          "name": "hit_id",
+          "position": 1,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": null,
+          "extra": "auto_increment",
+          "key": "PRI",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "命中编号；被 alerts.latest_hit_id 引用"
+        },
+        {
+          "name": "event_id",
+          "position": 2,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "MUL",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "命中的事件编号，引用 attack_log.event_id；与 session_id 组成复合外键保证同源"
+        },
+        {
+          "name": "session_id",
+          "position": 3,
+          "column_type": "char(36)",
+          "data_type": "char",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "MUL",
+          "character_set": "ascii",
+          "collation": "ascii_bin",
+          "generation_expression": "",
+          "comment": "命中所属会话编号，引用 sessions.session_id"
+        },
+        {
+          "name": "rule_id",
+          "position": 4,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "MUL",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "命中的规则行编号，引用 detection_rules.rule_id"
+        },
+        {
+          "name": "rule_code",
+          "position": 5,
+          "column_type": "varchar(16)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "ascii",
+          "collation": "ascii_bin",
+          "generation_expression": "",
+          "comment": "命中时的规则编码快照（R01-R05），便于证据展示、视图聚合而不必回连规则表"
+        },
+        {
+          "name": "intent_type",
+          "position": 6,
+          "column_type": "varchar(16)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "命中时的目标意图快照；意图分与画像分据此按历史口径复算"
+        },
+        {
+          "name": "rule_version",
+          "position": 7,
+          "column_type": "smallint unsigned",
+          "data_type": "smallint",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "命中时实际采用的规则版本快照"
+        },
+        {
+          "name": "risk_weight",
+          "position": 8,
+          "column_type": "tinyint unsigned",
+          "data_type": "tinyint",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "命中时的风险权重快照 1-100；本次命中的计分贡献即该值，规则后续调整不影响历史"
+        },
+        {
+          "name": "evidence_summary",
+          "position": 9,
+          "column_type": "varchar(1024)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "可解释证据摘要，如“会话内出现 SHOW TABLES 语句”或“5 分钟内认证 9 次、凭据组合 6 组”"
+        },
+        {
+          "name": "triggered_at",
+          "position": 10,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "命中时间（UTC），由分析层写入；与 event_time 可能不同（窗口统计型规则在窗口结束时触发）"
+        },
+        {
+          "name": "created_at",
+          "position": 11,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP(6)",
+          "extra": "DEFAULT_GENERATED",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "行落库时间（UTC）"
+        }
+      ],
+      "primary_key": {
+        "name": "PRIMARY",
+        "columns": [
+          "hit_id"
+        ]
+      },
+      "foreign_keys": [
+        {
+          "name": "fk_hit_log",
+          "columns": [
+            "event_id",
+            "session_id"
+          ],
+          "referenced_table": "attack_log",
+          "referenced_columns": [
+            "event_id",
+            "session_id"
+          ],
+          "on_update": "RESTRICT",
+          "on_delete": "RESTRICT"
+        },
+        {
+          "name": "fk_hit_rule",
+          "columns": [
+            "rule_id"
+          ],
+          "referenced_table": "detection_rules",
+          "referenced_columns": [
+            "rule_id"
+          ],
+          "on_update": "RESTRICT",
+          "on_delete": "RESTRICT"
+        },
+        {
+          "name": "fk_hit_session",
+          "columns": [
+            "session_id"
+          ],
+          "referenced_table": "sessions",
+          "referenced_columns": [
+            "session_id"
+          ],
+          "on_update": "RESTRICT",
+          "on_delete": "RESTRICT"
+        }
+      ],
+      "unique_constraints": [
+        {
+          "name": "uk_rule_hits_event_rule_version",
+          "columns": [
+            "event_id",
+            "rule_id",
+            "rule_version"
+          ]
+        }
+      ],
+      "check_constraints": [
+        {
+          "name": "ck_hit_intent_type",
+          "clause": "(`intent_type` in (_utf8mb4\\'scanning\\',_utf8mb4\\'bruteforce\\',_utf8mb4\\'recon\\',_utf8mb4\\'data_dump\\',_utf8mb4\\'destructive\\'))"
+        },
+        {
+          "name": "ck_hit_risk_weight",
+          "clause": "(`risk_weight` between 1 and 100)"
+        },
+        {
+          "name": "ck_hit_rule_version",
+          "clause": "(`rule_version` >= 1)"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "PRIMARY",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "hit_id"
+          ],
+          "cardinality": 11,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_hit_event_session",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "event_id",
+            "session_id"
+          ],
+          "cardinality": 11,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_hit_rule_time",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "rule_id",
+            "created_at"
+          ],
+          "cardinality": 5,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_hit_session_time",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "session_id",
+            "triggered_at"
+          ],
+          "cardinality": 9,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "uk_rule_hits_event_rule_version",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "event_id",
+            "rule_id",
+            "rule_version"
+          ],
+          "cardinality": 11,
+          "visible": "YES",
+          "comment": ""
+        }
+      ]
+    },
+    "sessions": {
+      "table_type": "BASE TABLE",
+      "business_table": true,
+      "engine": "InnoDB",
+      "row_format": "Dynamic",
+      "table_collation": "utf8mb4_0900_ai_ci",
+      "table_comment": "会话主表：一次诱饵连接一行，记录来源、起止时间、状态与事件计数；数据来源为捕获层的连接与断开事件",
+      "row_count": 214,
+      "columns": [
+        {
+          "name": "session_id",
+          "position": 1,
+          "column_type": "char(36)",
+          "data_type": "char",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "PRI",
+          "character_set": "ascii",
+          "collation": "ascii_bin",
+          "generation_expression": "",
+          "comment": "会话唯一标识，UUID v4 文本（36 字符），由捕获层在连接建立时生成，全局唯一且不可复用"
+        },
+        {
+          "name": "source_ip",
+          "position": 2,
+          "column_type": "varchar(45)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "MUL",
+          "character_set": "ascii",
+          "collation": "ascii_general_ci",
+          "generation_expression": "",
+          "comment": "测试端来源地址，IPv4 或 IPv6 文本规范形式（如 192.0.2.10、2001:db8::10），写入前统一小写"
+        },
+        {
+          "name": "source_port",
+          "position": 3,
+          "column_type": "smallint unsigned",
+          "data_type": "smallint",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "测试端源端口 1-65535；报文缺失或 NAT 重写导致不可知时为 NULL"
+        },
+        {
+          "name": "target_service",
+          "position": 4,
+          "column_type": "varchar(64)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": "mysql-honeypot",
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "被访问的诱饵服务标识，形如 mysql-honeypot:13306，用于多端口演示时区分诱饵实例"
+        },
+        {
+          "name": "client_fingerprint",
+          "position": 5,
+          "column_type": "varchar(255)",
+          "data_type": "varchar",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "客户端特征摘要（协议版本、客户端能力标志等），已脱敏，不保存原始可识别信息"
+        },
+        {
+          "name": "started_at",
+          "position": 6,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "MUL",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "会话开始时间（UTC），由捕获层显式写入，不使用数据库默认时间"
+        },
+        {
+          "name": "ended_at",
+          "position": 7,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "会话结束时间（UTC）；未结束或异常断连未回填时为 NULL；不得早于开始时间"
+        },
+        {
+          "name": "session_status",
+          "position": 8,
+          "column_type": "varchar(16)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": "active",
+          "extra": "",
+          "key": "MUL",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "会话状态枚举：active 进行中 / closed 正常断开 / timeout 空闲超时 / error 协议错误终止"
+        },
+        {
+          "name": "request_count",
+          "position": 9,
+          "column_type": "int unsigned",
+          "data_type": "int",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "会话内事件计数（connect/auth/query/disconnect 均计 1）；由事件写入事务原子自增"
+        },
+        {
+          "name": "max_risk_score",
+          "position": 10,
+          "column_type": "tinyint unsigned",
+          "data_type": "tinyint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "本会话最高风险分 0-100，写入事件时以 GREATEST 更新；权威值由 v_session_risk_summary 重算校验"
+        },
+        {
+          "name": "created_at",
+          "position": 11,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP(6)",
+          "extra": "DEFAULT_GENERATED",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "行创建时间（UTC），由数据库默认值填充，仅用于运维排查"
+        },
+        {
+          "name": "updated_at",
+          "position": 12,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP(6)",
+          "extra": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP(6)",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "行最近更新时间（UTC），用于排查计数是否停滞"
+        }
+      ],
+      "primary_key": {
+        "name": "PRIMARY",
+        "columns": [
+          "session_id"
+        ]
+      },
+      "foreign_keys": [],
+      "unique_constraints": [],
+      "check_constraints": [
+        {
+          "name": "ck_sessions_ended_after_started",
+          "clause": "((`ended_at` is null) or (`ended_at` >= `started_at`))"
+        },
+        {
+          "name": "ck_sessions_max_risk_score",
+          "clause": "(`max_risk_score` <= 100)"
+        },
+        {
+          "name": "ck_sessions_source_port",
+          "clause": "((`source_port` is null) or (`source_port` between 1 and 65535))"
+        },
+        {
+          "name": "ck_sessions_status",
+          "clause": "(`session_status` in (_utf8mb4\\'active\\',_utf8mb4\\'closed\\',_utf8mb4\\'timeout\\',_utf8mb4\\'error\\'))"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "PRIMARY",
+          "unique": true,
+          "type": "BTREE",
+          "columns": [
+            "session_id"
+          ],
+          "cardinality": 214,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_sessions_source_started",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "source_ip",
+            "started_at"
+          ],
+          "cardinality": 39,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_sessions_started",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "started_at"
+          ],
+          "cardinality": 214,
+          "visible": "YES",
+          "comment": ""
+        },
+        {
+          "name": "idx_sessions_status_started",
+          "unique": false,
+          "type": "BTREE",
+          "columns": [
+            "session_status",
+            "started_at"
+          ],
+          "cardinality": 2,
+          "visible": "YES",
+          "comment": ""
+        }
+      ]
+    },
+    "v_attacker_profile_summary": {
+      "table_type": "VIEW",
+      "business_table": false,
+      "engine": null,
+      "row_format": null,
+      "table_collation": null,
+      "table_comment": "VIEW",
+      "row_count": null,
+      "columns": [
+        {
+          "name": "attacker_id",
+          "position": 1,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "画像编号；被 attacker_intent 与 alerts 引用"
+        },
+        {
+          "name": "source_ip",
+          "position": 2,
+          "column_type": "varchar(45)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "ascii",
+          "collation": "ascii_general_ci",
+          "generation_expression": "",
+          "comment": "攻击者聚合键（来源地址），唯一；同一来源仅一行画像"
+        },
+        {
+          "name": "first_seen",
+          "position": 3,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "该来源首次出现时间（UTC），取首次会话开始时间"
+        },
+        {
+          "name": "last_seen",
+          "position": 4,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "该来源最近出现时间（UTC），取最新事件时间"
+        },
+        {
+          "name": "total_connections",
+          "position": 5,
+          "column_type": "int unsigned",
+          "data_type": "int",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "累计连接次数（connect 事件数）"
+        },
+        {
+          "name": "total_auth_attempts",
+          "position": 6,
+          "column_type": "int unsigned",
+          "data_type": "int",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "累计认证尝试次数（auth 事件数，含成功与失败）"
+        },
+        {
+          "name": "total_auth_failures",
+          "position": 7,
+          "column_type": "int unsigned",
+          "data_type": "int",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "累计认证失败次数（auth 且 status 为 failure/denied），供爆破意图解释"
+        },
+        {
+          "name": "total_queries",
+          "position": 8,
+          "column_type": "int unsigned",
+          "data_type": "int",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "累计 SQL 数量（query 事件数）"
+        },
+        {
+          "name": "stored_risk_score",
+          "position": 9,
+          "column_type": "tinyint unsigned",
+          "data_type": "tinyint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "来源画像风险分 0-100，按 9.2 公式（按 rule_code 去重取最大权重后求和并封顶）计算"
+        },
+        {
+          "name": "calculated_risk_score",
+          "position": 10,
+          "column_type": "decimal(25,0)",
+          "data_type": "decimal",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "risk_level",
+          "position": 11,
+          "column_type": "varchar(8)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": "",
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "session_count",
+          "position": 12,
+          "column_type": "bigint",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "high_risk_session_count",
+          "position": 13,
+          "column_type": "decimal(23,0)",
+          "data_type": "decimal",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "alert_count",
+          "position": 14,
+          "column_type": "bigint",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "unread_alert_count",
+          "position": 15,
+          "column_type": "decimal(23,0)",
+          "data_type": "decimal",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "primary_intent_type",
+          "position": 16,
+          "column_type": "varchar(16)",
+          "data_type": "varchar",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "意图类型：scanning 扫描 / bruteforce 爆破 / recon 踩点 / data_dump 拖库 / destructive 破坏性操作"
+        },
+        {
+          "name": "primary_intent_score",
+          "position": 17,
+          "column_type": "tinyint unsigned",
+          "data_type": "tinyint",
+          "nullable": true,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "该意图累计可信分 0-100，按 9.2 公式（该意图下按 rule_code 去重取最大权重后求和并封顶）计算"
+        },
+        {
+          "name": "primary_intent_last_detected_at",
+          "position": 18,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "最近识别该意图的时间（UTC）；主要意图排序的次级键"
+        },
+        {
+          "name": "intent_labels",
+          "position": 19,
+          "column_type": "mediumtext",
+          "data_type": "mediumtext",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "triggered_rule_codes",
+          "position": 20,
+          "column_type": "text",
+          "data_type": "text",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "ascii",
+          "collation": "ascii_bin",
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "evidence_summary",
+          "position": 21,
+          "column_type": "varchar(1024)",
+          "data_type": "varchar",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "最近一次计算的证据摘要（命中的规则编码与代表性语句类型），供列表页与答辩解释"
+        }
+      ],
+      "primary_key": null,
+      "foreign_keys": [],
+      "unique_constraints": [],
+      "check_constraints": [],
+      "indexes": []
+    },
+    "v_daily_attack_trend": {
+      "table_type": "VIEW",
+      "business_table": false,
+      "engine": null,
+      "row_format": null,
+      "table_collation": null,
+      "table_comment": "VIEW",
+      "row_count": null,
+      "columns": [
+        {
+          "name": "stat_date",
+          "position": 1,
+          "column_type": "date",
+          "data_type": "date",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "day_seq",
+          "position": 2,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "event_count",
+          "position": 3,
+          "column_type": "bigint",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "session_count",
+          "position": 4,
+          "column_type": "bigint",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "source_count",
+          "position": 5,
+          "column_type": "bigint",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "connect_count",
+          "position": 6,
+          "column_type": "decimal(23,0)",
+          "data_type": "decimal",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "auth_attempt_count",
+          "position": 7,
+          "column_type": "decimal(23,0)",
+          "data_type": "decimal",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "auth_failure_count",
+          "position": 8,
+          "column_type": "decimal(23,0)",
+          "data_type": "decimal",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "query_count",
+          "position": 9,
+          "column_type": "decimal(23,0)",
+          "data_type": "decimal",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "denied_count",
+          "position": 10,
+          "column_type": "decimal(23,0)",
+          "data_type": "decimal",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "returned_rows_total",
+          "position": 11,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "prev_event_count",
+          "position": 12,
+          "column_type": "bigint",
+          "data_type": "bigint",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "event_count_delta",
+          "position": 13,
+          "column_type": "bigint",
+          "data_type": "bigint",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "event_change_pct",
+          "position": 14,
+          "column_type": "decimal(27,2)",
+          "data_type": "decimal",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "prev_session_count",
+          "position": 15,
+          "column_type": "bigint",
+          "data_type": "bigint",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "cumulative_event_count",
+          "position": 16,
+          "column_type": "decimal(42,0)",
+          "data_type": "decimal",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "busy_day_rank",
+          "position": 17,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "alert_count",
+          "position": 18,
+          "column_type": "bigint",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "high_level_alert_count",
+          "position": 19,
+          "column_type": "decimal(23,0)",
+          "data_type": "decimal",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        }
+      ],
+      "primary_key": null,
+      "foreign_keys": [],
+      "unique_constraints": [],
+      "check_constraints": [],
+      "indexes": []
+    },
+    "v_rule_effectiveness": {
+      "table_type": "VIEW",
+      "business_table": false,
+      "engine": null,
+      "row_format": null,
+      "table_collation": null,
+      "table_comment": "VIEW",
+      "row_count": null,
+      "columns": [
+        {
+          "name": "rule_code",
+          "position": 1,
+          "column_type": "varchar(16)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "ascii",
+          "collation": "ascii_bin",
+          "generation_expression": "",
+          "comment": "稳定规则编码（R01-R05），跨版本不变，禁止复用"
+        },
+        {
+          "name": "rule_name",
+          "position": 2,
+          "column_type": "varchar(100)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "规则显示名称，如“短时高频连接扫描”"
+        },
+        {
+          "name": "rule_type",
+          "position": 3,
+          "column_type": "varchar(16)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "规则类型枚举：frequency 频率统计 / keyword 关键词 / sequence 序列 / volume 体量"
+        },
+        {
+          "name": "intent_type",
+          "position": 4,
+          "column_type": "varchar(16)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "命中后归属的攻击意图：scanning/bruteforce/recon/data_dump/destructive"
+        },
+        {
+          "name": "risk_weight",
+          "position": 5,
+          "column_type": "tinyint unsigned",
+          "data_type": "tinyint",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "命中计入的风险权重 1-100；按 rule_code 去重后求和"
+        },
+        {
+          "name": "current_version",
+          "position": 6,
+          "column_type": "smallint unsigned",
+          "data_type": "smallint",
+          "nullable": false,
+          "default": "1",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "规则版本号，从 1 递增；与 rule_code 复合唯一"
+        },
+        {
+          "name": "is_enabled",
+          "position": 7,
+          "column_type": "tinyint(1)",
+          "data_type": "tinyint",
+          "nullable": false,
+          "default": "1",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "是否参与检测：1 启用 / 0 停用；同一 rule_code 至多一个启用版本"
+        },
+        {
+          "name": "hit_count",
+          "position": 8,
+          "column_type": "bigint",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "affected_session_count",
+          "position": 9,
+          "column_type": "bigint",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "affected_event_count",
+          "position": 10,
+          "column_type": "bigint",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "affected_attacker_count",
+          "position": 11,
+          "column_type": "bigint",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "used_version_count",
+          "position": 12,
+          "column_type": "bigint",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "first_hit_at",
+          "position": 13,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "命中时间（UTC），由分析层写入；与 event_time 可能不同（窗口统计型规则在窗口结束时触发）"
+        },
+        {
+          "name": "last_hit_at",
+          "position": 14,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "命中时间（UTC），由分析层写入；与 event_time 可能不同（窗口统计型规则在窗口结束时触发）"
+        },
+        {
+          "name": "alert_count",
+          "position": 15,
+          "column_type": "bigint",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "unread_alert_count",
+          "position": 16,
+          "column_type": "decimal(23,0)",
+          "data_type": "decimal",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "alert_per_hit_ratio",
+          "position": 17,
+          "column_type": "decimal(24,4)",
+          "data_type": "decimal",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "hit_rank",
+          "position": 18,
+          "column_type": "bigint unsigned",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        }
+      ],
+      "primary_key": null,
+      "foreign_keys": [],
+      "unique_constraints": [],
+      "check_constraints": [],
+      "indexes": []
+    },
+    "v_session_risk_summary": {
+      "table_type": "VIEW",
+      "business_table": false,
+      "engine": null,
+      "row_format": null,
+      "table_collation": null,
+      "table_comment": "VIEW",
+      "row_count": null,
+      "columns": [
+        {
+          "name": "session_id",
+          "position": 1,
+          "column_type": "char(36)",
+          "data_type": "char",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "ascii",
+          "collation": "ascii_bin",
+          "generation_expression": "",
+          "comment": "会话唯一标识，UUID v4 文本（36 字符），由捕获层在连接建立时生成，全局唯一且不可复用"
+        },
+        {
+          "name": "source_ip",
+          "position": 2,
+          "column_type": "varchar(45)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "ascii",
+          "collation": "ascii_general_ci",
+          "generation_expression": "",
+          "comment": "测试端来源地址，IPv4 或 IPv6 文本规范形式（如 192.0.2.10、2001:db8::10），写入前统一小写"
+        },
+        {
+          "name": "source_port",
+          "position": 3,
+          "column_type": "smallint unsigned",
+          "data_type": "smallint",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "测试端源端口 1-65535；报文缺失或 NAT 重写导致不可知时为 NULL"
+        },
+        {
+          "name": "target_service",
+          "position": 4,
+          "column_type": "varchar(64)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": "mysql-honeypot",
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "被访问的诱饵服务标识，形如 mysql-honeypot:13306，用于多端口演示时区分诱饵实例"
+        },
+        {
+          "name": "started_at",
+          "position": 5,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": false,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "会话开始时间（UTC），由捕获层显式写入，不使用数据库默认时间"
+        },
+        {
+          "name": "ended_at",
+          "position": 6,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "会话结束时间（UTC）；未结束或异常断连未回填时为 NULL；不得早于开始时间"
+        },
+        {
+          "name": "session_status",
+          "position": 7,
+          "column_type": "varchar(16)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": "active",
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": "会话状态枚举：active 进行中 / closed 正常断开 / timeout 空闲超时 / error 协议错误终止"
+        },
+        {
+          "name": "stored_request_count",
+          "position": 8,
+          "column_type": "int unsigned",
+          "data_type": "int",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "会话内事件计数（connect/auth/query/disconnect 均计 1）；由事件写入事务原子自增"
+        },
+        {
+          "name": "event_count",
+          "position": 9,
+          "column_type": "bigint",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "connect_count",
+          "position": 10,
+          "column_type": "decimal(23,0)",
+          "data_type": "decimal",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "auth_attempt_count",
+          "position": 11,
+          "column_type": "decimal(23,0)",
+          "data_type": "decimal",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "auth_failure_count",
+          "position": 12,
+          "column_type": "decimal(23,0)",
+          "data_type": "decimal",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "query_count",
+          "position": 13,
+          "column_type": "decimal(23,0)",
+          "data_type": "decimal",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "denied_count",
+          "position": 14,
+          "column_type": "decimal(23,0)",
+          "data_type": "decimal",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "returned_rows_total",
+          "position": 15,
+          "column_type": "decimal(21,0)",
+          "data_type": "decimal",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "last_event_at",
+          "position": 16,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "事件发生时间（UTC），由捕获层在事件生成时确定并显式写入"
+        },
+        {
+          "name": "hit_count",
+          "position": 17,
+          "column_type": "bigint",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "hit_rule_count",
+          "position": 18,
+          "column_type": "bigint",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "last_hit_at",
+          "position": 19,
+          "column_type": "datetime(6)",
+          "data_type": "datetime",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "命中时间（UTC），由分析层写入；与 event_time 可能不同（窗口统计型规则在窗口结束时触发）"
+        },
+        {
+          "name": "hit_rule_codes",
+          "position": 20,
+          "column_type": "text",
+          "data_type": "text",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "ascii",
+          "collation": "ascii_bin",
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "calculated_risk_score",
+          "position": 21,
+          "column_type": "decimal(25,0)",
+          "data_type": "decimal",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "risk_level",
+          "position": 22,
+          "column_type": "varchar(8)",
+          "data_type": "varchar",
+          "nullable": false,
+          "default": "",
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "stored_max_risk_score",
+          "position": 23,
+          "column_type": "tinyint unsigned",
+          "data_type": "tinyint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": "本会话最高风险分 0-100，写入事件时以 GREATEST 更新；权威值由 v_session_risk_summary 重算校验"
+        },
+        {
+          "name": "alert_count",
+          "position": 24,
+          "column_type": "bigint",
+          "data_type": "bigint",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "unread_alert_count",
+          "position": 25,
+          "column_type": "decimal(23,0)",
+          "data_type": "decimal",
+          "nullable": false,
+          "default": "0",
+          "extra": "",
+          "key": "",
+          "character_set": null,
+          "collation": null,
+          "generation_expression": "",
+          "comment": ""
+        },
+        {
+          "name": "highest_alert_severity",
+          "position": 26,
+          "column_type": "varchar(8)",
+          "data_type": "varchar",
+          "nullable": true,
+          "default": null,
+          "extra": "",
+          "key": "",
+          "character_set": "utf8mb4",
+          "collation": "utf8mb4_0900_ai_ci",
+          "generation_expression": "",
+          "comment": ""
+        }
+      ],
+      "primary_key": null,
+      "foreign_keys": [],
+      "unique_constraints": [],
+      "check_constraints": [],
+      "indexes": []
+    }
+  },
+  "views": [
+    {
+      "name": "v_attacker_profile_summary",
+      "security_type": "DEFINER",
+      "is_updatable": "NO",
+      "check_option": "NONE",
+      "definition": ""
+    },
+    {
+      "name": "v_daily_attack_trend",
+      "security_type": "DEFINER",
+      "is_updatable": "NO",
+      "check_option": "NONE",
+      "definition": ""
+    },
+    {
+      "name": "v_rule_effectiveness",
+      "security_type": "DEFINER",
+      "is_updatable": "NO",
+      "check_option": "NONE",
+      "definition": ""
+    },
+    {
+      "name": "v_session_risk_summary",
+      "security_type": "DEFINER",
+      "is_updatable": "NO",
+      "check_option": "NONE",
+      "definition": ""
+    }
+  ]
+}

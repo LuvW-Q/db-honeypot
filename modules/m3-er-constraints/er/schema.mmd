@@ -1,0 +1,189 @@
+erDiagram
+
+%% =============================================================================
+%% M3 ER 模型：数据库蜜罐与攻击行为分析系统（honeypot_dev，MySQL 8.0.46 实测）
+%% 事实来源：
+%%   1. docs/database-design.md 第 2 节（设计意图与关系基数）
+%%   2. modules/m1-transaction-integration/migrations/versions/0001_initial_schema.py
+%%      （表、主键、外键、UNIQUE、CHECK、生成列的唯一事实来源）
+%%   3. tools/introspect_constraints.py → evidence/constraints.json（2026-11-25 实跑）
+%% 图例：
+%%   PK = 主键；UK = 唯一键（含生成列上的唯一索引）；FK = 外键
+%%   ||--o{ = 数据库外键保证的强制一对多
+%%   }o..o{ = 逻辑聚合（按 source_ip 归集画像，不建外键，先有会话后有画像）
+%%   类型中的 _u 后缀表示 UNSIGNED（Mermaid 类型名不能含空格）
+%%   11 张业务表 + alembic_version（迁移版本表，不画入业务 ER）
+%% =============================================================================
+    sessions {
+        char36 session_id PK "UUID v4 会话编号，业务主键"
+        varchar45 source_ip "来源地址（ascii），画像按此逻辑聚合"
+        smallint_u source_port "源端口 1-65535，可空"
+        varchar64 target_service "诱饵服务标识，默认 mysql-honeypot"
+        varchar255 client_fingerprint "客户端特征摘要，可空"
+        datetime6 started_at "开始时间 UTC"
+        datetime6 ended_at "结束时间 UTC，可空"
+        varchar16 session_status "active/closed/timeout/error"
+        int_u request_count "事件计数，默认 0"
+        tinyint_u max_risk_score "0-100，默认 0"
+        datetime6 created_at "行创建时间 UTC"
+        datetime6 updated_at "行更新时间 UTC"
+    }
+
+    attack_log {
+        bigint_u event_id PK "事件序号"
+        char36 event_uuid UK "幂等键，重复投递 1062"
+        char36 session_id FK "所属会话，fk_log_session"
+        varchar16 event_type "connect/auth/query/disconnect"
+        varchar45 source_ip "来源快照（受控反规范化）"
+        varchar128 username "用户名（不可信），可空"
+        varchar64 credential_test_id "凭据尝试编号，可空"
+        mediumtext sql_statement "原始 SQL，只存不执行"
+        mediumtext normalized_sql "归一化 SQL，可空"
+        datetime6 event_time "事件时间 UTC"
+        int_u returned_rows "返回行数，默认 0"
+        int_u response_ms "响应耗时毫秒，默认 0"
+        varchar16 status "success/failure/denied/error"
+        tinyint1 payload_truncated "载荷截断标记 0/1"
+        datetime6 created_at "行创建时间 UTC"
+    }
+
+    attacker_profile {
+        bigint_u attacker_id PK "画像编号"
+        varchar45 source_ip UK "一来源一画像 uk_attacker_profile_source_ip"
+        datetime6 first_seen "首次出现 UTC"
+        datetime6 last_seen "最近出现 UTC"
+        int_u total_connections "累计连接数"
+        int_u total_auth_attempts "累计认证尝试"
+        int_u total_auth_failures "累计认证失败"
+        int_u total_queries "累计查询"
+        tinyint_u risk_score "风险分 0-100"
+        varchar16 risk_level "生成列 VIRTUAL：low/medium/high/critical"
+        varchar1024 evidence_summary "证据摘要，可空"
+        datetime6 last_calculated_at "最近计算时间"
+        datetime6 created_at "行创建时间 UTC"
+        datetime6 updated_at "行更新时间 UTC"
+    }
+
+    attacker_intent {
+        bigint_u intent_id PK "意图编号"
+        bigint_u attacker_id FK "所属画像 fk_intent_profile"
+        varchar16 intent_type "scanning/bruteforce/recon/data_dump/destructive"
+        tinyint_u intent_score "意图分 0-100"
+        int_u evidence_count "证据计数"
+        datetime6 first_detected_at "首次识别 UTC"
+        datetime6 last_detected_at "最近识别 UTC"
+        datetime6 created_at "行创建时间 UTC"
+        datetime6 updated_at "行更新时间 UTC"
+    }
+
+    detection_rules {
+        bigint_u rule_id PK "规则版本行编号"
+        varchar16 rule_code "R01-R05"
+        varchar100 rule_name "规则名称"
+        varchar16 rule_type "frequency/keyword/sequence/volume"
+        varchar16 intent_type "目标意图类型"
+        json parameters_json "阈值与窗口参数"
+        tinyint_u risk_weight "权重 1-100"
+        smallint_u rule_version "版本号 >= 1"
+        tinyint1 enabled "是否启用 0/1"
+        varchar16 enabled_rule_code UK "生成列 STORED：启用版本参与唯一键"
+        varchar500 description "说明，可空"
+        datetime6 created_at "行创建时间 UTC"
+        datetime6 updated_at "行更新时间 UTC"
+    }
+
+    rule_hits {
+        bigint_u hit_id PK "命中编号"
+        bigint_u event_id FK "命中事件，复合 fk_hit_log"
+        char36 session_id FK "命中会话，fk_hit_session"
+        bigint_u rule_id FK "命中规则行 fk_hit_rule"
+        varchar16 rule_code "规则编码快照"
+        varchar16 intent_type "意图快照"
+        smallint_u rule_version "版本快照"
+        tinyint_u risk_weight "权重快照 1-100"
+        varchar1024 evidence_summary "可解释证据"
+        datetime6 triggered_at "命中时间 UTC"
+        datetime6 created_at "行创建时间 UTC"
+    }
+
+    alerts {
+        bigint_u alert_id PK "告警编号"
+        varchar160 dedup_key UK "去重键 rule_code:source_ip:UTC日期"
+        char36 session_id FK "首次触发会话 fk_alert_session"
+        bigint_u attacker_id FK "关联画像 fk_alert_attacker"
+        bigint_u rule_id FK "触发规则 fk_alert_rule"
+        varchar16 rule_code "规则编码快照"
+        bigint_u latest_hit_id FK "最新证据命中 fk_alert_latest_hit"
+        varchar16 alert_type "bruteforce/data_dump/destructive"
+        varchar8 severity "low/medium/high/critical"
+        varchar200 title "告警标题"
+        varchar1024 evidence_summary "证据摘要"
+        datetime6 first_seen_at "首次触发 UTC"
+        datetime6 last_seen_at "最近触发 UTC"
+        int_u occurrence_count "触发次数 >= 1"
+        tinyint1 is_read "已读标记 0/1"
+        datetime6 read_at "已读时间，可空（须与 is_read 一致）"
+        datetime6 created_at "行创建时间 UTC"
+        datetime6 updated_at "行更新时间 UTC"
+    }
+
+    fake_users {
+        bigint_u id PK "诱饵用户编号"
+        varchar64 username UK "虚构账号"
+        varchar120 email UK "虚构邮箱"
+        varchar32 phone "虚构手机号"
+        varchar120 password_hash "TEST-ONLY$ 前缀伪哈希"
+        varchar64 display_name "虚构显示名"
+        tinyint1 is_synthetic "恒为 1"
+        datetime6 created_at "行创建时间 UTC"
+    }
+
+    fake_orders {
+        bigint_u order_id PK "诱饵订单编号"
+        varchar32 order_no UK "虚构订单号"
+        bigint_u user_id FK "所属诱饵用户 fk_fake_orders_user"
+        decimal12_2 amount "虚构金额 >= 0"
+        char3 currency "币种，默认 CNY"
+        varchar16 order_status "pending/paid/shipped/cancelled/refunded"
+        varchar200 remark "备注，可空"
+        tinyint1 is_synthetic "恒为 1"
+        datetime6 created_at "行创建时间 UTC"
+    }
+
+    fake_config {
+        bigint_u config_id PK "诱饵配置编号"
+        varchar64 config_key UK "配置键"
+        varchar512 config_value "TEST-ONLY 前缀无效值"
+        varchar32 category "database/mail/api/storage"
+        varchar200 description "说明，可空"
+        tinyint1 is_invalid "恒为 1"
+        datetime6 created_at "行创建时间 UTC"
+        datetime6 updated_at "行更新时间 UTC"
+    }
+
+    audit_log {
+        bigint_u audit_id PK "审计编号（仅追加，无业务外键）"
+        datetime6 occurred_at "发生时间 UTC"
+        varchar64 account_name "数据库账号"
+        varchar32 operation "reset/rule_change/alert_ack/export/migration/manual_query/login_failed"
+        varchar64 target_table "目标表，可空"
+        varchar128 target_key "目标键，可空"
+        varchar16 result "success/failure"
+        varchar1000 detail "详情，可空"
+        char36 request_id "关联请求编号，可空"
+    }
+
+    %% ---- 数据库外键保证的强制一对多（10 条，全部 ON UPDATE/DELETE RESTRICT）----
+    sessions          ||--o{ attack_log       : "fk_log_session 包含事件"
+    sessions          ||--o{ rule_hits        : "fk_hit_session 关联命中"
+    sessions          ||--o{ alerts           : "fk_alert_session 关联告警"
+    attack_log        ||--o{ rule_hits        : "fk_hit_log 复合外键保证同源"
+    detection_rules   ||--o{ rule_hits        : "fk_hit_rule 被命中（版本快照）"
+    detection_rules   ||--o{ alerts           : "fk_alert_rule 触发规则"
+    rule_hits         ||--o{ alerts           : "fk_alert_latest_hit 作为最新证据"
+    attacker_profile  ||--o{ attacker_intent  : "fk_intent_profile 拥有意图"
+    attacker_profile  ||--o{ alerts           : "fk_alert_attacker 产生告警"
+    fake_users        ||--o{ fake_orders      : "fk_fake_orders_user 拥有订单"
+
+    %% ---- 逻辑聚合（无外键）：画像按 source_ip 归集会话 ----
+    attacker_profile  }o..o{ sessions          : "按 source_ip 逻辑聚合（非外键）"
