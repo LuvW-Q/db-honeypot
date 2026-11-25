@@ -2,531 +2,335 @@
 
 | 项目 | 内容 |
 | --- | --- |
-| 文档用途 | 给出可重复、可计时的现场演示步骤：从空库到连接、认证、踩点、拖库/破坏、控制台、伪数据隔离，并附数据库专项演示与答辩口径 |
+| 文档用途 | 给出可计时、可复现的现场演示脚本：启动 → 制造诱饵流量 → 四页逐页操作 → 降级 → 批量已读与禁用控件，并标注每步的预期可见结果与证据文件 |
 | 目标读者 | 答辩演示者、同组替补、课程验收教师 |
-| 建议时长 | 主流程 12–15 分钟；数据库专项 6–8 分钟；答辩问答 3–5 分钟 |
-| 前置依赖 | MySQL 8.0.46、诱饵 3307、FastAPI 8000、前端产物（或 5173）；命令均在仓库根目录执行 |
-| 与其他文档的关系 | 步骤依据 [test-plan.md](test-plan.md) 与 `quickstart.md` V01–V23；数据库对象见 [database-design.md](database-design.md)；EXPLAIN 数字见 [explain-indexes.md](explain-indexes.md)；分层说明见 [architecture.md](architecture.md) |
+| 建议时长 | 主流程 12–15 分钟（下表按 13 分钟编排）；答辩问答另计 3–5 分钟 |
+| 前置依赖 | Docker（容器 `dbhoneypot-mysql`）、宿主 uvicorn `:8000`、诱饵 `:3307`、已构建的 `frontend/dist`；命令均在仓库根执行 |
+| 与其他文档的关系 | 验收矩阵与命令见 [test-plan.md](test-plan.md)；部署与 13 步验收见 [deployment.md](deployment.md)；结构与依赖见 [architecture.md](architecture.md)；数据库对象见 [database-design.md](database-design.md)；区域契约见 `specs/002-ui-console-modularization/contracts/ui-contracts.md` |
 
 > **演示纪律**：所有流量均为授权模拟；只连接 `127.0.0.1:3307`，不访问任何真实业务库；
-> 不展示 `.env`、完整口令、真实个人信息；演示数据可随时用 `reset_demo --yes` 重置。
+> 不展示 `.env`、完整口令与真实个人信息；演示数据可随时用 `make reset-demo` 重置。
+> 控制台只读为主，唯一写操作是“告警已读”。
 
 ---
 
-## 0. 演示前检查（T-30 分钟）
+## 0. 演示前检查（T-30 分钟，不计时）
 
 ```bash
-set -a; source .env; set +a
-API=http://127.0.0.1:8000
+cp -n .env.example .env          # 首次执行；口令为 TEST-ONLY 占位
+make db-up                       # 容器 MySQL 就绪（首次自动建库 + 四类账号）
+make migrate                     # alembic upgrade head（M1 迁移目录）
+make seed                        # 固定种子：reset → gen(200/2400) → demo_basic 样本
+make frontend-build              # 构建 dist（由后端托管，单地址）
+make api                         # 终端 A：uvicorn :8000
+make honeypot                    # 终端 B：诱饵 :3307
 
-# 1) 服务与端口
-docker compose ps
-ss -ltnp | grep -E ':(3306|3307|8000|5173) '
-curl -s "$API/api/health" | jq
-
-# 2) 清空观测数据，保留规则/诱饵（演示从空库开始）
-cd backend && .venv/bin/python -m app.cli.reset_demo --yes && cd ..
-
-# 3) 干净副本（强烈建议）
-docker exec dbhoneypot-mysql mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" \
-  --single-transaction honeypot_dev > /tmp/honeypot_dev_clean.sql
-
-# 4) 录屏开始（OBS/系统录屏），并打开控制台
-open http://127.0.0.1:8000/    # macOS；Linux 用 xdg-open
+curl -s http://127.0.0.1:8000/api/health | python3 -m json.tool
+open http://127.0.0.1:8000/#/    # macOS；Linux 用 xdg-open
 ```
 
 **检查表**
 
 | 项目 | 期望 |
 | --- | --- |
-| `/api/health` | `status=ok`、`database=ok`、`honeypot=up` |
-| 端口 | 3306/3307/8000 各一行；5173 仅开发模式 |
-| 控制台 | 概览四张卡可加载；告警/攻击者页可打开 |
-| 重置后 | `sessions/attack_log/rule_hits/alerts/attacker_profile` 为空；`detection_rules=5` |
-| 备份 | `/tmp/honeypot_dev_clean.sql` 存在且非空 |
+| `docker compose ps` | `dbhoneypot-mysql` 为 `Up (healthy)` |
+| `/api/health` | HTTP 200，`status=ok`，`database.status=ok` |
+| 侧栏状态条 | 诱饵监听 `127.0.0.1:3307` 在线、`LIVE UTC+8` 时钟走动 |
+| 首页 KPI | 四张卡有数字（不是 0 或 `—`），趋势/环图有图形 |
+| 告警列表 | 有 `demo_basic` 产生的告警（R02/R04/R05），未读徽标在侧栏 04 显示 |
+
+**失败兜底**：页面空白或 404 → 确认 `make frontend-build` 已生成
+`modules/m5-views-console/frontend/dist/index.html`；告警统计卡显示 `—` 或接口报
+`VALIDATION_ERROR` → 通常是部署产物滞后，执行 `make frontend-build` 后强制刷新；
+数据库不可用 → `make db-up` 后等 healthcheck 变绿。
 
 ---
 
-## 1. 演示总览
+## 1. 总览与时间分配
 
 ```mermaid
 flowchart LR
-    A["① 空库控制台<br/>1 min"] --> B["② 连接诱饵<br/>1 min"]
-    B --> C["③ 认证失败/成功<br/>2 min"]
-    C --> D["④ SHOW/DESCRIBE 踩点<br/>2 min"]
-    D --> E["⑤ 样本拖库/破坏<br/>3 min"]
-    E --> F["⑥ 控制台时间线/画像/告警<br/>3 min"]
-    F --> G["⑦ 说明伪数据隔离<br/>1 min"]
-    G --> H["数据库专项<br/>6–8 min"]
-    H --> I["答辩口径与限制<br/>3–5 min"]
+    A["① 启动与健康<br/>1.5 min"] --> B["② 制造真实诱饵流量<br/>2 min"]
+    B --> C["③ 首页概览 #/<br/>2.5 min"]
+    C --> D["④ 攻击者列表 #/attackers<br/>2.5 min"]
+    D --> E["⑤ 攻击者详情与时间线<br/>2.5 min"]
+    E --> F["⑥ 告警列表 + 单条/批量已读<br/>3 min"]
+    F --> G["⑦ 降级演示（停 DB）<br/>1.5 min"]
+    G --> H["⑧ 禁用控件与收尾<br/>1 min"]
 ```
 
 ---
 
-## 2. 七步演示
-
-### 第 1 步：空库状态（约 1 分钟）
+## 2. 第 1 步：启动与健康（约 1.5 分钟）
 
 **操作**
 
 ```bash
-curl -s "$API/api/overview" | jq
+docker compose ps
+curl -s http://127.0.0.1:8000/api/health
+open http://127.0.0.1:8000/#/
 ```
 
-**预期**
+**预期可见结果**
 
-```json
-{"sessions":0,"queries":0,"alerts":0,"high_risk_attackers":0,"generated_at":"..."}
-```
+- `/api/health` 返回 200：`status=ok`、`database.status=ok`、`honeypot.listen=127.0.0.1:3307`。
+- 页面为深色控制台（默认跟随系统外观）：固定左侧栏（品牌 + 诱饵状态 + 01–04 导航 +
+  底部“内核视图/当前权限/规格版本”）、固定页头（`Honeypot-MySQL-01 (Isolated DMZ)`、
+  `AI 辅助分析` 标签、`LIVE UTC+8` 时钟、主题切换按钮、“现场刷新数据”按钮）。
+- 页头主题按钮为圆角矩形，默认显示“跟随系统”；点击循环“跟随系统 → 浅色 → 深色”，
+  界面即时换肤且刷新后保持；把操作系统外观改为深/浅色时，`跟随系统` 模式下页面实时跟随。
+- 首页标题右侧显示“演示库就绪: SEED RULES ACTIVE, LIVE TRAP ONLINE”。
 
-浏览器打开 `http://127.0.0.1:8000/`（开发模式 `http://127.0.0.1:5173/`），概览显示四个 0，
-攻击者列表与告警列表显示空态，不报错。
+**讲解点**：只有一个对外地址 `:8000`；前端是构建产物由后端托管，`dist` 里没有任何外部
+CDN 引用（可出示 `offline-assets.json`）。双主题共用一套语义令牌（`--c-*`/`--chart-*`），
+浅色配色对应 `ux/stitch_database_honeypot_analytics_console_light/`，不是简单反色。
 
-**讲解点**：空库不是“坏掉”，而是证明页面数字来自数据库聚合；下一步的每条事件都会让数字变化。
+**证据**：`modules/m5-views-console/evidence/deploy/run-1/offline-assets.json`（`external_refs: []`）、
+`modules/m5-views-console/evidence/deploy/run-1/deploy-record.json`（第 1–7 步状态）、
+`modules/m5-views-console/evidence/visual/theme-evidence.md`（双主题与实时跟随验收）。
 
-**失败兜底**：若页面打不开，先用 `curl $API/api/overview` 展示 JSON 并切到已录制视频；
-若数据库有残留数据，再执行一次 `reset_demo --yes`。
-
-> 需要 2 000 级数据做 EXPLAIN 时，不要在第 1 步前生成（否则空库叙事不成立）；可在数据库专项
-> 之前临时 `gen_demo_data --sessions 200 --events 2000`，或直接使用已有的 `db/explain` JSON。
+**失败兜底**：`make db-up` 超时 → `docker compose logs mysql`；端口被占 → `make api API_PORT=8001`
+并同步浏览器地址。
 
 ---
 
-### 第 2 步：连接诱饵（约 1 分钟）
+## 3. 第 2 步：制造一条真实诱饵流量（约 2 分钟）
 
-**操作（宿主机无 mysql 客户端时用容器内客户端，推荐）**
+**操作（授权模拟器，真实 MySQL 协议，来源 127.0.0.1）**
 
 ```bash
-set -a; source .env; set +a
-ACC="$HONEYPOT_ACCOUNTS"; USER="${ACC%%,*}"; USER="${USER%%:*}"
-PASS="${ACC#*:}"; PASS="${PASS%%,*}"
-
-docker run --rm --network host -e MYSQL_PWD="$PASS" \
-  docker.1ms.run/library/mysql:8.0 \
-  mysql -h127.0.0.1 -P3307 -u"$USER" \
-        --default-auth=mysql_native_password --ssl-mode=DISABLED \
-        --default-character-set=utf8mb4 \
-        -e "SELECT 1 AS connected;"
+PYTHONPATH=.:modules/m1-transaction-integration:modules/m2-decoy-capture:\
+modules/m4-rules-derived:modules/m5-views-console \
+  .venv/bin/python -m m2_decoy_capture.cli.simulate_traffic \
+  --target 127.0.0.1:3307 --rounds 3
 ```
 
-**预期**：返回一行 `connected=1`，退出码 0；后台出现 `connect` + `auth(success)` 事件。
+**预期可见结果**
 
-**核对（另开终端）**
+- 每轮一次独立会话；固定语句序列包含 `SHOW DATABASES`、`SHOW TABLES`、`DESCRIBE users`、
+  两条 SELECT，以及 `UPDATE / DELETE / INSERT / DROP / TRUNCATE` 五个**预期被拒绝**的写操作。
+- 终端打印每轮结果：读操作成功、写操作返回 `1142`（权限不足），客户端连接不中断。
+- 控制台“现场刷新数据”，首页连接数/查询数增加；攻击者列表出现新来源，
+  并在详情页看到踩点（R03）证据。
 
-```sql
-SELECT session_id, source_ip, started_at, request_count, session_status
-FROM sessions ORDER BY started_at DESC LIMIT 1;
-SELECT event_id, event_type, status, event_time
-FROM attack_log ORDER BY event_id DESC LIMIT 3;
-```
+**讲解点**：写操作在诱饵层就被拒绝，数据库里没有任何真实变更；SQL 只作为字符串入库，
+绝不拼进查询执行。诱饵只监听回环地址，非回环监听会被服务端直接拒绝。
 
-**讲解点**：3307 是诱饵服务，不是 3306 的真实 MySQL；连接即产生一条会话。
+**备选**：`make demo` 一键完成“导入 `demo_basic` 样本 → 检查/启动诱饵 → 运行模拟器 → 打印概览摘要”，
+等价覆盖 R01–R05 与三类告警。
 
-**失败兜底**：`1045` 检查口令是否来自 `.env` 的 `HONEYPOT_ACCOUNTS`；`2059/2026` 检查
-`--default-auth=mysql_native_password --ssl-mode=DISABLED`；端口占用改 `HONEYPOT_PORT` 并同步演示命令。
+**证据**：`modules/m5-views-console/evidence/sql-ui/page-dom-capture.json`
+（四页 DOM 文本 + 请求状态）、`modules/m5-views-console/evidence/sql-ui/checklist.md`（数据规模与核对结论）。
+
+**失败兜底**：模拟器退出码 3 表示目标未被授权（非回环地址或不在
+`HONEYPOT_ALLOWED_CLIENT_CIDRS`）；诱饵未启动时先 `make honeypot`。
 
 ---
 
-### 第 3 步：认证失败 / 认证成功（约 2 分钟）
+## 4. 第 3 步：首页概览 `#/`（约 2.5 分钟）
 
-**失败认证**
+**操作点**
+
+1. 观察 `OV-KPI` 四张卡：连接数（`SRC: sessions`）、查询数（`SRC: attack_log`）、
+   未处理告警（`SRC: alerts 未读`）、高风险攻击者（`SRC: v_attacker_profile`）。
+2. 点击范围切换 `今日 24H` / `最近 7 天` / `全部历史`，观察 KPI 与趋势同步变化
+   （URL query 变为 `?range=7d` 之类，刷新仍保持）。
+3. `OV-TREND` 每日趋势面积图：悬停看每日事件/查询/告警，脚注写口径。
+4. `OV-DONUT` 规则命中与意图分布：中心为总命中数，右侧图例 R01–R05 及占比。
+5. `OV-TOP5` 高风险 TOP5：点“画像详情”下钻到攻击者详情。
+
+**预期可见结果**
+
+- KPI 数字与数据库视图一致（可现场用下方 SQL 对照）；卡片点击可跳转：
+  攻击者相关卡 → `#/attackers`，未处理告警卡 → `#/alerts?is_read=false`。
+- 趋势图与环图均由真实接口数据绘制，无数据时显示空态而不是假曲线。
+- TOP5 按风险分从高到低，风险分条宽度与分数一致。
+
+**现场核对（可选，终端 C）**
 
 ```bash
-docker run --rm --network host docker.1ms.run/library/mysql:8.0 \
-  mysql -h127.0.0.1 -P3307 -u no_such_user -p'TEST-ONLY-WRONG' \
-        --default-auth=mysql_native_password --ssl-mode=DISABLED \
-        -e "SELECT 1;" ; echo "exit=$?"
+# 口令取仓库根 .env 的 MYSQL_ROOT_PASSWORD（TEST-ONLY 占位）
+docker exec -it dbhoneypot-mysql mysql -uroot -p"$MYSQL_ROOT_PASSWORD" -e \
+  "SELECT COUNT(*) AS sessions FROM honeypot_dev.sessions;
+   SELECT COUNT(*) AS alerts FROM honeypot_dev.alerts;
+   SELECT COUNT(*) AS high_risk FROM honeypot_dev.v_attacker_profile_summary
+     WHERE risk_level IN ('high','critical');"
 ```
 
-**预期**：客户端报 `ERROR 1045 (28000): Access denied ...`，`exit` 非 0；后台仍有
-`connect(success)` 与 `auth(failure)` 事件。
+**证据**：`modules/m5-views-console/evidence/deploy/run-1/screenshots/overview-1440x900.png`
+与 `overview-1920x1080.png`；数据库↔API↔页面逐项对照见
+`modules/m5-views-console/evidence/sql-ui/checklist.md`；
+视图口径与可执行查询见 `modules/m5-views-console/views/queries.sql`。
 
-**成功认证**
-
-```bash
-docker run --rm --network host -e MYSQL_PWD="$PASS" \
-  docker.1ms.run/library/mysql:8.0 \
-  mysql -h127.0.0.1 -P3307 -u"$USER" \
-        --default-auth=mysql_native_password --ssl-mode=DISABLED \
-        --default-character-set=utf8mb4 \
-        -e "SHOW DATABASES;"
-```
-
-**预期**：返回 `honeypot_shop`、`honeypot_archive`；后台 `auth(success)`。
-
-**核对**
-
-```sql
-SELECT status, username, credential_test_id, COUNT(*) AS n
-FROM attack_log WHERE event_type='auth'
-GROUP BY status, username, credential_test_id ORDER BY n DESC LIMIT 5;
-```
-
-**讲解点**：失败与成功都记录；表中**没有口令列**，只保存用户名与 `TEST-ONLY` 测试标识。
-
-**失败兜底**：若失败认证没有事件，检查服务是否在 3307、是否被旧进程占用；用录屏片段兜底。
+**失败兜底**：范围切换后数字不变 → 看 Network 里 `/api/overview?range=…` 是否 200；
+401/422 → 确认 uvicorn 与 `dist` 版本一致（重建产物）。
 
 ---
 
-### 第 4 步：SHOW / DESCRIBE 踩点（约 2 分钟）
+## 5. 第 4 步：攻击者列表 `#/attackers`（约 2.5 分钟）
 
-**操作**：同一连接内依次执行
+**操作点**
 
-```sql
-SHOW DATABASES;
-USE honeypot_shop;
-SHOW TABLES;
-DESCRIBE users;
-SELECT id, username, email FROM users LIMIT 5;
-```
+1. `AT-HEAD` 汇总卡：高危及严重攻击源数量、最近意图。
+2. `AT-FILTER` 搜索框输入 `198.51.100`（来源均为 RFC 5737 文档网段），点“搜索”。
+3. 风险档筛选：全部 / 严重 (≥80) / 高 (60–79) / 中 (30–59) / 低 (0–29)；
+   意图下拉（5 类 + 全部）；排序基准（风险分/最近出现/首次出现/累计会话）。
+4. 观察 URL query 变化（`?q=…&risk_level=high&sort=…`），刷新后筛选仍生效。
+5. `AT-PAGER` 翻页，筛选条件保持；越界页码回退第 1 页。
+6. 指一下置灰的“导出遥测 CSV”按钮：`演示未开放：导出功能不在本版范围`。
 
-**预期**
+**预期可见结果**
 
-- `SHOW TABLES` 返回 `config`、`orders`、`users`；
-- `DESCRIBE users` 返回 7 列（`id/username/email/phone/password_hash/role/created_at`）；
-- `SELECT` 返回固定 5 行伪造用户，邮箱形如 `demo_user_01@example.com`；
-- 后台对应 `query(success)` 事件，并命中 **R03 recon +15**。
+- `AT-TABLE` 八列：来源 IP（IP + 网络归属标签）、首次出现、最近出现、主要意图、
+  会话数、查询数、风险分（条 + 数值）、等级、操作；风险分条宽度 = 分数百分比。
+- 搜索/筛选即时请求真实接口；无匹配时显示空态 + “清除筛选条件”。
+- 点“画像详情”进入 `#/attackers/:ip`。
 
-**核对**
+**证据**：`modules/m5-views-console/evidence/deploy/run-1/screenshots/attackers-1440x900.png`
+与 `attackers-1920x1080.png`；接口与页面数值一致性见
+`modules/m5-views-console/evidence/sql-ui/checklist.md`（攻击者列表组）。
 
-```sql
-SELECT h.rule_code, h.intent_type, h.risk_weight, h.rule_version,
-       h.triggered_at, h.evidence_summary
-FROM rule_hits h JOIN attack_log l ON l.event_id = h.event_id
-WHERE l.source_ip = '127.0.0.1' AND h.rule_code='R03'
-ORDER BY h.hit_id DESC LIMIT 3;
-```
-
-**讲解点**：`evidence_summary` 说明“命中了哪个元数据关键词”，不是只有标签。
-
-**失败兜底**：若 R03 未命中，确认 `detection_rules` 中 R03 `enabled=1`；再执行一次 `SHOW TABLES`。
+**失败兜底**：列表一直加载 → `/api/attackers` 是否 200；`SRC` 标注缺失说明页面读的不是新产物。
 
 ---
 
-### 第 5 步：样本拖库 / 破坏（约 3 分钟）
+## 6. 第 5 步：攻击者详情与时间线 `#/attackers/:ip`（约 2.5 分钟）
 
-**方式 A（推荐，固定样本，可重复）**
+**操作点**
+
+1. 从列表点入（或直接打开 `#/attackers/198.51.100.17`）。
+2. `AD-HEAD`：返回链接、h1 为 IP、子网/网络归属徽标、四枚快捷指标
+   （综合风险分、累计会话、执行查询、认证尝试含成功/失败）。
+3. `AD-BANNER` 脱敏横幅：“演示数据已脱敏 · 不执行任何采集 SQL”。
+4. `AD-PROFILE` 左卡六行键值（首次/最近出现、会话数、查询数、平均时长、高危操作次数）
+   + 威胁等级盒 + 处置建议；下方两个禁用按钮。
+5. `AD-TIMELINE` 时间线：按时间列出事件类型、状态、SQL 归一化片段与规则命中标签
+   （R01–R05 的命中权重与证据摘要）。
+6. 指一下禁用控件：“DMZ 隔离（联动）”与“导出取证报告 / 同步证据链”，
+   `title` 分别为 `演示未开放：…`。
+
+**预期可见结果**
+
+- 四枚快捷指标与 `v_attacker_profile_summary` / 画像字段一致；
+- 高风险来源（如风险分 85）威胁等级盒为 `critical`，会话/事件都能在时间线找到对应证据；
+- 被拒绝的写操作在时间线里显示为失败状态与 `1142`，不是“成功篡改”。
+
+**讲解点**：从“一条告警”能一路下钻到“哪个会话、哪条事件、哪条规则、权重多少”，
+这就是“可解释”的落点；告警的 `latest_hit_id` 指向具体命中快照。
+
+**证据**：`modules/m5-views-console/evidence/deploy/run-1/screenshots/attacker-detail-1440x900.png`
+与 `attacker-detail-1920x1080.png`；画像与页面数值核对见
+`modules/m5-views-console/evidence/sql-ui/verify-views.json`（`--check-pages` 部分）。
+
+**失败兜底**：详情页 404（`ATTACKER_NOT_FOUND`）→ 该 IP 没有画像，先制造流量或导入样本；
+时间线为空 → 刷新页面重取，或检查 `:session` query 是否指向已存在会话。
+
+---
+
+## 7. 第 6 步：告警列表 + 单条/批量已读 `#/alerts`（约 3 分钟）
+
+**操作点**
+
+1. `AL-HEAD` / `AL-STATS`：未读告警数、已读/总数、今日新增、今日高峰时段。
+2. 标签页：全部告警 / 未读 / 已读；筛选项：等级、类型（如“批量拖库 (R04)”）、
+   时间范围（今日 / 近 3 天 / 近 7 天）。
+3. 单条处置：点某条告警“标记已读” → 顶部 toast 显示 `告警 #<id> 已标记已读`，
+   卡片状态与统计卡同步变化。
+4. 批量处置：勾选 2–3 条 → 按钮变为 `批量标记已读 (N)` → 点击。
+5. 观察底部说明：“批量标记逐条提交（并发 2），失败条目不静默丢弃”。
+
+**预期可见结果**
+
+- 批量成功：toast `已标记 N 条告警为已读`，副文案“列表与统计卡已同步更新”；
+  侧栏 04 未读徽标随未读数减少，为 0 时隐藏但仍保留编号 04。
+- 部分失败：toast 类型为 `partial`，文案 `部分成功：X 条已读，Y 条失败`，并列出前 3 条失败原因；
+  失败条目仍保持未读，可重试。
+- 空态/无数据不显示假卡片。
+
+**强制演示“部分/全部失败”（可选 30 秒）**：先勾选若干告警，再执行
+`docker stop dbhoneypot-mysql`，点击批量已读 → 出现失败 toast；
+`docker start dbhoneypot-mysql` 恢复后再点一次即可成功（顺带进入下一步降级话题）。
+
+**证据**：`modules/m5-views-console/evidence/deploy/run-1/screenshots/alerts-1440x900.png`
+与 `alerts-1920x1080.png`；告警统计的 SQL↔API 对照见
+`modules/m5-views-console/evidence/sql-ui/checklist.md`（组 2）；
+逐条 PATCH 与部分失败语义见 `specs/002-ui-console-modularization/contracts/ui-contracts.md` §6.4。
+
+**失败兜底**：统计卡显示 `—` → 先 `make frontend-build` 再刷新；标记已读报错但数据已变 →
+刷新页面确认（写操作是逐条 PATCH，幂等重试安全）。
+
+---
+
+## 8. 第 7 步：降级演示（停 DB，约 1.5 分钟）
+
+**操作**
 
 ```bash
-cd backend
-.venv/bin/python -m app.cli.import_samples --sample S03 --sample S04
+docker stop dbhoneypot-mysql
+curl -i http://127.0.0.1:8000/api/health        # 期望 503 + status=degraded
+curl -sI http://127.0.0.1:8000/ | head -1       # SPA 入口仍 200（静态资源不依赖库）
+# 浏览器在控制台点“现场刷新数据”，观察降级横幅
+docker start dbhoneypot-mysql
+curl -s http://127.0.0.1:8000/api/health        # 恢复 200 + status=ok
 ```
 
-**预期（stdout JSON 摘要）**
+**预期可见结果**
 
-| 样本 | 内容 | 结果 |
+- `/api/health` 变为 HTTP 503，`status=degraded`，`database.status=down`。
+- 控制台顶部出现红色横幅：**“数据库不可用或健康检查失败，以下为最近一次成功数据。”**
+  右侧带“重试”按钮；页面保留最后一次成功数据，不白屏、不弹出未处理异常。
+- 页面静态资源（SPA 入口、字体、图标）仍然 200，说明前端不依赖数据库即可加载。
+- `docker start` 后点“重试”或“现场刷新数据”，横幅消失、KPI 恢复。
+
+**讲解点**：降级是“只影响数据新鲜度、不吞掉页面”的设计；诱饵服务与之解耦，
+数据库故障不会让诱饵变成可被探测的异常服务。
+
+**证据**：`modules/m5-views-console/evidence/deploy/run-1/deploy-record.json` 第 11 步
+（降级检查）与 `modules/m5-views-console/evidence/deploy/run-1/browser.json`
+（四页 × 两视口的 console/请求/溢出记录）。
+
+---
+
+## 9. 第 8 步：禁用控件与收尾（约 1 分钟）
+
+**逐项说明**（现场指认，不点击）
+
+| 位置 | 控件 | 禁用文案 |
 | --- | --- | --- |
-| `S03` | 同一会话连续 SELECT、累计 1000 行 | 命中 **R04 data_dump +25**，生成 `data_dump` 告警（`severity=high`） |
-| `S04` | `DROP TABLE fake_orders` 被拒绝 | 命中 **R05 destructive +35**，生成 `destructive` 告警（`severity=critical`） |
+| 攻击者列表 `AT-FILTER` | 导出遥测 CSV | `演示未开放：导出功能不在本版范围` |
+| 攻击者详情 `AD-PROFILE` | DMZ 隔离（联动） | `演示未开放：系统仅分析，不执行主动反制` |
+| 攻击者详情 `AD-FOOTER` | 导出取证报告 (JSON/CSV) | `演示未开放：导出功能不在本版范围` |
+| 攻击者详情 `AD-FOOTER` | 同步证据链至防御规则库 | `演示未开放：需要规则下发通道` |
+| 侧栏 03（未从列表进入时） | 攻击者详情与时间线 | `请先从攻击者列表进入`（`aria-disabled="true"`） |
 
-**方式 B（真实客户端，展示“诱饵层拒绝执行”）**
+**讲解点**：没有数据或通道支撑的控件一律置灰并写明原因，不做“点了没反应”的假交互；
+所有可点的卡片/行/导航都指向真实路由。
 
-```sql
--- 同一连接内逐条执行，均预期 1142
-UPDATE orders SET status='cancelled' WHERE id=1;
-DELETE FROM orders WHERE id=1;
-DROP TABLE orders;
-TRUNCATE TABLE orders;
-INSERT INTO users (username) VALUES ('demo_user_x');
-SELECT COUNT(*) FROM orders;   -- 仍返回 120，诱饵数据未被修改
-```
-
-**讲解点**：写操作“记录但不执行”，因此既有攻击证据，又没有真实数据破坏风险。
-
-**失败兜底**：若 `import_samples` 报数据库不可达，检查 `DATABASE_URL` 与迁移；若样本已导入过，
-重复导入会走幂等（`deduped` 非零），可改讲“幂等”而不是重复制造告警。
+**收尾**：`make evidence` 用已有证据重建 `evidence/deploy/summary.md`；
+`make verify` 可整轮重跑（13 步），轮次目录为 `evidence/deploy/run-N/`。
 
 ---
 
-### 第 6 步：控制台时间线 / 画像 / 告警（约 3 分钟）
-
-**入口**
-
-- 概览：`http://127.0.0.1:8000/`
-- 攻击者列表：`http://127.0.0.1:8000/#/attackers`
-- 攻击者详情：点击风险最高的来源（例如 `198.51.100.17` 或 `127.0.0.1`）
-- 告警列表：`http://127.0.0.1:8000/#/alerts`
-
-**展示顺序**
-
-1. **概览**：会话数、查询数、告警数、高风险攻击者数变化；趋势图显示有事件日期。
-2. **攻击者列表**：按风险分降序；主要意图标签、连接数、认证尝试、告警数。
-3. **攻击者详情**：画像统计 → 意图列表（分数/证据计数/最近时间）→ 会话摘要 → 点击会话打开时间线。
-4. **时间线**：`connect → auth → query… → disconnect` 顺序；每条显示状态、SQL 摘要、规则命中。
-5. **告警列表**：筛选 `critical`/`high`；点击“标记已读”，状态立即变为已读并写审计。
-
-**可复现的接口命令（页面故障时）**
-
-```bash
-curl -s "$API/api/overview" | jq
-curl -s "$API/api/attackers?page=1&page_size=5&sort=risk_score&order=desc" | jq
-curl -s "$API/api/attackers/127.0.0.1" | jq '{attacker,intents,sessions,recent_rule_hits}'
-SID=$(curl -s "$API/api/attackers/127.0.0.1" | jq -r '.sessions[0].session_id')
-curl -s "$API/api/sessions/$SID/timeline" | jq '{session,events,rule_hits,alerts}'
-curl -s "$API/api/alerts?severity=high&is_read=false" | jq
-```
-
-**讲解点**：页面数字全部来自 4 个视图；详情页才读明细与证据；告警可以定位到 `latest_hit_id`。
-
-**失败兜底**：前端 502/空白时直接用上面的 `curl` 展示 JSON；或切到录屏。
-
----
-
-### 第 7 步：说明伪数据隔离（约 1 分钟）
-
-**操作**
-
-```bash
-# 1) 诱饵端口看到的“假库”
-docker run --rm --network host -e MYSQL_PWD="$PASS" \
-  docker.1ms.run/library/mysql:8.0 \
-  mysql -h127.0.0.1 -P3307 -u"$USER" \
-        --default-auth=mysql_native_password --ssl-mode=DISABLED \
-        -e "SHOW DATABASES; SELECT config_key, config_value FROM honeypot_shop.config LIMIT 3;"
-
-# 2) 真实 MySQL 端口（3306）没有 honeypot_shop 库
-docker exec dbhoneypot-mysql mysql -uroot -p"$MYSQL_ROOT_PASSWORD" \
-  -e "SHOW DATABASES LIKE 'honeypot_shop';"   # 期望：空结果
-
-# 3) 物理诱饵表可在 3306 查到，但只是 TEST-ONLY 数据
-docker exec dbhoneypot-mysql mysql -uroot -p"$MYSQL_ROOT_PASSWORD" \
-  -e "SELECT username,email,LEFT(password_hash,18) FROM honeypot_dev.fake_users LIMIT 3;"
-```
-
-**讲解点**
-
-- `honeypot_shop` / `honeypot_archive` 只存在于诱饵协议投影中，真实库没有这两个库；
-- 物理 `fake_*` 表只是诱饵数据源，所有邮箱/手机号/哈希/密钥均为 `TEST-ONLY` 虚构值；
-- 诱饵服务只监听 `127.0.0.1:3307`，不暴露公网，不连接真实资产；
-- 采集到的 SQL 只存储不执行。
-
-**失败兜底**：用 `fake_catalog.py` 与 `db/init` 截图说明，不强行现场操作。
-
----
-
-## 3. 数据库专项演示（6–8 分钟）
-
-### 3.1 外键拦截（约 1 分钟）
-
-```sql
--- 用不存在的 session_id 写事件，预期 ERROR 1452
-INSERT INTO attack_log (event_uuid, session_id, event_type, source_ip, event_time, status)
-VALUES ('00000000-0000-4000-8000-0000000000f1',
-        '00000000-0000-4000-8000-0000000000ff',
-        'connect', '203.0.113.9', UTC_TIMESTAMP(), 'success');
-```
-
-**预期**：`ERROR 1452 (23000): Cannot add or update a child row ...`，`attack_log` 行数不变。
-
-**讲解点**：`sessions` 是会话主表，日志不能引用不存在的会话；外键是数据库层保证，不靠代码。
-
-### 3.2 `event_uuid` 幂等（约 1 分钟）
-
-先用一个真实存在的会话编号，插入固定 `event_uuid` 两次：
-
-```sql
-SET @sid = (SELECT session_id FROM sessions LIMIT 1);
-INSERT INTO attack_log (event_uuid, session_id, event_type, source_ip, event_time, status)
-VALUES ('00000000-0000-4000-8000-0000000000f2', @sid, 'connect', '203.0.113.9', UTC_TIMESTAMP(), 'success');
--- 再执行一次相同语句：
-INSERT INTO attack_log (event_uuid, session_id, event_type, source_ip, event_time, status)
-VALUES ('00000000-0000-4000-8000-0000000000f2', @sid, 'connect', '203.0.113.9', UTC_TIMESTAMP(), 'success');
-```
-
-**预期**：第二次 `ERROR 1062 (23000): Duplicate entry ... for key 'uk_attack_log_event_uuid'`；
-`SELECT COUNT(*) FROM attack_log WHERE event_uuid='...f2'` 仍为 1。
-
-**讲解点**：幂等由唯一约束裁决，不依赖应用“先查后插”；重复请求返回已有事件编号，不重复计数。
-
-### 3.3 事务回滚（约 1.5 分钟）
-
-**方式 A（应用层，推荐）**
-
-```bash
-cd backend
-.venv/bin/python -m app.cli.verify_transaction --inject-failure profile_write
-```
-
-**预期**：输出显示 `sessions/attack_log/rule_hits/attacker_profile/attacker_intent/alerts`
-在“执行前 / 注入失败后 / 清理后”计数一致，`exit=0`；日志中可见失败阶段与 `event_uuid`。
-
-**方式 B（数据库层手工事务）**
-
-```sql
-START TRANSACTION;
-INSERT INTO sessions (session_id, source_ip, target_service, started_at, session_status,
-                      request_count, max_risk_score)
-VALUES ('00000000-0000-4000-8000-00000000aa01', '203.0.113.9', 'mysql-honeypot',
-        UTC_TIMESTAMP(), 'active', 0, 0);
--- 故意触发外键失败
-INSERT INTO attack_log (event_uuid, session_id, event_type, source_ip, event_time, status)
-VALUES ('00000000-0000-4000-8000-0000000000f3',
-        '00000000-0000-4000-8000-0000000000ff', 'connect', '203.0.113.9',
-        UTC_TIMESTAMP(), 'success');
-ROLLBACK;
-SELECT COUNT(*) FROM sessions WHERE session_id='00000000-0000-4000-8000-00000000aa01';  -- 0
-```
-
-**讲解点**：事件写入的会话、日志、命中、画像、意图、告警在同一事务；任一步失败整体回滚。
-
-### 3.4 四个分析视图（约 1.5 分钟）
-
-```sql
--- ① 会话风险汇总：CTE + 多表 LEFT JOIN + GROUP BY
-SELECT session_id, source_ip, event_count, query_count, hit_rule_codes,
-       calculated_risk_score, risk_level, stored_max_risk_score, alert_count
-FROM v_session_risk_summary
-ORDER BY calculated_risk_score DESC, started_at DESC LIMIT 5;
-
--- ② 攻击者画像汇总：JOIN 聚合 + ROW_NUMBER 选主要意图
-SELECT source_ip, calculated_risk_score, risk_level, primary_intent_type,
-       session_count, total_queries, alert_count
-FROM v_attacker_profile_summary
-ORDER BY calculated_risk_score DESC, last_seen DESC LIMIT 5;
-
--- ③ 每日趋势：CTE + LAG + SUM() OVER + RANK()
-SELECT stat_date, event_count, prev_event_count, event_count_delta,
-       event_change_pct, cumulative_event_count, busy_day_rank
-FROM v_daily_attack_trend ORDER BY stat_date DESC LIMIT 7;
-
--- ④ 规则效果：COUNT(DISTINCT) + RANK()
-SELECT hit_rank, rule_code, rule_name, intent_type, is_enabled,
-       hit_count, affected_attacker_count, alert_count, alert_per_hit_ratio
-FROM v_rule_effectiveness ORDER BY hit_rank;
-```
-
-**讲解点**：四个视图分别体现 JOIN、窗口函数、CTE、排名；页面优先查视图，详情页再查明细。
-
-### 3.5 EXPLAIN 前后对比（约 1.5 分钟）
-
-**生成记录**
-
-```bash
-cd backend
-.venv/bin/python -m app.cli.explain_diff
-# 结果写入 ../db/explain/explain_<UTC时间戳>.json，并在 stdout 打印摘要
-```
-
-**现场查询（两条高频查询）**
-
-```sql
--- Q1 会话时间线
-EXPLAIN SELECT event_id, event_type, event_time, status
-FROM attack_log
-WHERE session_id = '5a060001-0000-4000-8000-000000000001'
-ORDER BY event_time, event_id;
-
--- Q2 近期高等级告警
-EXPLAIN SELECT alert_id, severity, created_at
-FROM alerts WHERE severity='critical'
-ORDER BY created_at DESC LIMIT 20;
-```
-
-**预期**：Q1 命中 `idx_log_session_time`（`type=ref`，`key_len=36`，`rows` 显著小于全表）；
-Q2 命中 `idx_alert_level_time`（`type=ref`，`key_len=34`，反向扫描）。
-
-**已生成的证据**：`db/explain/explain_20261119T145423Z.json`。实测摘要：
-
-| 组 | 查询 | 索引前 | 索引后 | 估算行数 | 中位耗时 |
-| --- | --- | --- | --- | --- | --- |
-| G1 | Q1 会话时间线 | `ALL / key=NULL / filesort=true` | `ref / idx_log_session_time / 无 filesort` | 2174 → 16 | 2.749 ms → 1.253 ms |
-| G2 | Q2 近期高等级告警 | `ALL / key=NULL / filesort=true` | `ref / idx_alert_level_time / 反向索引扫描` | 9 → 3 | 1.054 ms → 0.998 ms |
-
-**讲解点**：`type/key/rows/filesort` 的变化比毫秒数更有说服力；当前数据量小，耗时差异有限，
-数据量增大后差距会拉开。完整对比与复现见 [explain-indexes.md](explain-indexes.md)。
-
----
-
-## 4. 失败兜底与恢复
-
-### 4.1 现场故障处理
-
-| 故障 | 快速处理 |
-| --- | --- |
-| 3307 端口占用 | `ss -ltnp \| grep 3307` 找进程；改 `HONEYPOT_PORT=3308` 并同步所有演示命令 |
-| API 8000 不通 | `cd backend && .venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000` |
-| 控制台空白 | 用 `curl` 展示 JSON；或切录屏 |
-| 数据库不可用 | `docker compose up -d mysql`；必要时恢复备份 |
-| 数据被污染 | `python -m app.cli.reset_demo --yes`，再导入样本 |
-| 规则被改坏 | `git` 恢复迁移/种子；或重建库后 `alembic upgrade head && seed --all` |
-| 全部失败 | 播放完整录屏，按本文顺序讲解截图与查询结果 |
-
-### 4.2 从干净副本恢复
-
-```bash
-docker exec -i dbhoneypot-mysql mysql -uroot -p"$MYSQL_ROOT_PASSWORD" honeypot_dev \
-  < /tmp/honeypot_dev_clean.sql
-# 恢复后复查：
-docker exec dbhoneypot-mysql mysql -uroot -p"$MYSQL_ROOT_PASSWORD" -N \
-  -e "SELECT COUNT(*) FROM honeypot_dev.detection_rules; SELECT COUNT(*) FROM honeypot_dev.sessions;"
-```
-
-### 4.3 结束清场
-
-```bash
-cd backend && .venv/bin/python -m app.cli.reset_demo --yes
-# 先停前端/后端/诱饵，再停数据库
-docker compose stop mysql
-```
-
----
-
-## 5. 答辩口径
-
-### 5.1 创新点（诚实表述）
-
-> 本项目把 **MySQL 协议诱饵、结构化行为日志、可解释规则、攻击者画像和实时控制台**
-> 整合为一个课程级闭环：访问者在 3307 看到的是一套完全虚构的库表；后台把同一次连接的
-> 连接、认证与 SQL 串成会话，用数据库配置的 R01–R05 规则生成意图、0–100 风险分和可追溯
-> 告警，并能在控制台中从告警逐级回到原始事件。创新点在**场景组合与完整闭环**，
-> 不在新的检测算法。
-
-### 5.2 主动说明的限制
-
-| 限制 | 表述 |
-| --- | --- |
-| 规则阈值 | 来自课程演示数据，不是生产安全基线；误报/漏报未做大规模评估 |
-| 协议范围 | 只支持 MySQL 最小子集与 `mysql_native_password`；不支持 SSL、预处理协议、多语句，部分 GUI 客户端需特殊配置 |
-| 部署规模 | 单机、Docker 隔离网段；不做高并发、分区、分布式与高可用 |
-| 检测能力 | 只观察进入诱饵环境的流量；不能发现绕过蜜罐的真实攻击 |
-| AI | 默认关闭，只做白名单只读模板与辅助解释；不参与评分与最终判定 |
-| 权限 | 四类账号已分离；表级最小权限收紧脚本需在演示前执行（若现场未执行，应说明“设计已定义，实例待收紧”） |
-| 测试 | 自动化测试已补齐部分单元/冒烟用例；完整集成/接口回归仍以手工验收为主 |
-| 错误码 | 只保证 MySQL 错误码与行为类别一致，不保证错误文案逐字相同 |
-
-### 5.3 预设问答
-
-| 问题 | 回答要点 |
-| --- | --- |
-| 为什么用 MySQL 模拟库而不是真实 MySQL？ | 真实 MySQL 难以灵活伪造库表与按事件注入，且 general_log 粒度/权限复杂；模拟库安全、可控，降级路线可换真实 MySQL |
-| 风险分怎么保证可解释？ | 每个命中写 `rule_hits`，保存规则版本/权重/证据摘要；分数按 `rule_code` 去重取最大权重求和并封顶，每分可回溯 |
-| 重复事件会不会重复计数？ | 不会。`event_uuid` 唯一约束是唯一裁决点；重复提交返回已有 `event_id`，不重复分析 |
-| 告警为什么会去重？ | `dedup_key=<rule_code>:<source_ip>:<UTC日期>` 唯一；重复触发只累加次数、更新最近时间与证据 |
-| 视图会不会拖慢页面？ | 当前规模（千至万级事件）可接受；页面查询带 LIMIT；数据量增大后可物化汇总表 |
-| 为什么画像和会话没有外键？ | 画像按 IP 聚合、先有会话后有画像；强加外键会破坏写入顺序，改由事务顺序 + 视图重算 + 校验 SQL 保证一致 |
-| 裁判/老师问“这是不是真攻击”？ | 全部为授权模拟/合成样本；来源使用 RFC 5737 保留网段；不连接真实资产 |
-| AI 会不会改分数？ | 不会。AI 只用只读账号执行白名单模板，输出标记为辅助解释，不参与规则/评分/等级 |
-
----
-
-## 6. 演示后记录
+## 10. 演示后记录
 
 | 字段 | 内容 |
 | --- | --- |
-| 日期/环境 | 2026-11-19，MySQL 8.0.46，API 8000，诱饵 3307 |
-| 使用样本 | `demo_basic`（S01–S07）或 `S03+S04` |
-| 关键会话 | `5a030001-...`（R04）、`5a040001-...`（R05）、`5a060001-...`（综合 85 分） |
-| 关键告警 | `alert_id`、`latest_hit_id`、`dedup_key` |
-| 结果 | 7 步是否全部完成；失败步骤与兜底方式 |
-| 录屏/截图 | 文件名与存放位置（建议 `docs/evidence/`，当前仓库未创建） |
+| 日期/环境 | 2026-11-25，容器 MySQL 8.0.46（`mysql:8.0`），API `:8000`，诱饵 `:3307` |
+| 使用样本 | `demo_basic`（S01–S07）或 `S03+S04`；模拟器轮数 |
+| 关键会话/告警 | `session_id`、`event_id`、`alert_id`、`dedup_key`、风险分与等级 |
+| 结果 | 四页与降级是否全部完成；失败步骤与兜底方式 |
+| 截图/录屏 | 本轮 `evidence/deploy/run-N/screenshots/`；四页基线见 `evidence/visual/baseline/`（待 T063 采集） |
+| 收尾 | 是否 `docker start dbhoneypot-mysql`、是否停掉 uvicorn 与诱饵进程 |
 
 ---
 
-## 7. 相关文档
+## 11. 相关文档
 
-- [test-plan.md](test-plan.md)：测试矩阵、SC 映射与证据记录模板。
+- [test-plan.md](test-plan.md)：测试矩阵、002 验收场景与证据记录方式。
+- [deployment.md](deployment.md)：拓扑、环境变量、13 步验收与排障。
+- [architecture.md](architecture.md)：模块结构、依赖方向、端口与安全边界。
 - [database-design.md](database-design.md)：ER、约束、视图、事务与账号。
-- [explain-indexes.md](explain-indexes.md)：EXPLAIN JSON 依据与复现步骤。
-- [architecture.md](architecture.md)：五层架构、端口、安全边界。
-- `specs/001-database-honeypot/quickstart.md`：V01–V23 命令全集与故障处理。
-- `backend/app/cli/samples/README.md`：S01–S07 样本编号与预期（与实际代码一致）。
+- [screenshots/README.md](screenshots/README.md)：旧版截图索引与四页基线命名约定。
+- `modules/m2-decoy-capture/docs/explain-indexes.md`：两条高频查询的 `EXPLAIN` 对比
+  （归档 JSON：`modules/m2-decoy-capture/evidence/explain/explain_20261119T145423Z.json`）。
+- `modules/m3-er-constraints/constraints/catalog.md`：11 表 / 10 外键 / 12 唯一 / 38 CHECK 实测清单。

@@ -54,166 +54,16 @@
 
 ## 2. ER 图（11 张表）
 
-> 图中 `||--o{` 表示由数据库外键保证的强制一对多；`}o..o{` 表示**逻辑聚合**（按 `source_ip`
-> 归集画像，不建外键）；`audit_log` 为独立仅追加表，不与业务表建外键。
-
-```mermaid
-erDiagram
-    sessions {
-        char36 session_id PK "UUID v4 会话编号"
-        varchar45 source_ip "来源地址"
-        smallint source_port "来源端口"
-        varchar64 target_service "诱饵服务标识"
-        datetime6 started_at "开始 UTC"
-        datetime6 ended_at "结束 UTC"
-        varchar16 session_status "active/closed/timeout/error"
-        int request_count "事件计数"
-        tinyint max_risk_score "会话最高风险分"
-    }
-
-    attack_log {
-        bigint event_id PK "事件序号"
-        char36 event_uuid UK "幂等键"
-        char36 session_id FK "所属会话"
-        varchar16 event_type "connect/auth/query/disconnect"
-        varchar45 source_ip "来源快照"
-        varchar128 username "用户名（不可信）"
-        mediumtext sql_statement "原始 SQL（只存不执行）"
-        datetime6 event_time "事件时间 UTC"
-        int returned_rows "返回行数"
-        varchar16 status "success/failure/denied/error"
-    }
-
-    attacker_profile {
-        bigint attacker_id PK "画像编号"
-        varchar45 source_ip UK "按来源聚合"
-        datetime6 first_seen "首次出现"
-        datetime6 last_seen "最近出现"
-        int total_connections "累计连接"
-        int total_auth_attempts "累计认证尝试"
-        int total_queries "累计查询"
-        tinyint risk_score "风险分 0-100"
-        varchar16 risk_level "生成列 low/medium/high/critical"
-    }
-
-    attacker_intent {
-        bigint intent_id PK "意图编号"
-        bigint attacker_id FK "所属画像"
-        varchar16 intent_type UK "意图类型"
-        tinyint intent_score "意图分 0-100"
-        int evidence_count "证据计数"
-        datetime6 first_detected_at "首次识别"
-        datetime6 last_detected_at "最近识别"
-    }
-
-    detection_rules {
-        bigint rule_id PK "规则版本行"
-        varchar16 rule_code UK "R01-R05"
-        varchar16 rule_type "frequency/keyword/sequence/volume"
-        varchar16 intent_type "目标意图"
-        json parameters_json "阈值与窗口参数"
-        tinyint risk_weight "权重 1-100"
-        smallint rule_version UK "版本号"
-        tinyint enabled "是否启用"
-    }
-
-    rule_hits {
-        bigint hit_id PK "命中编号"
-        bigint event_id FK "命中事件"
-        char36 session_id FK "命中会话"
-        bigint rule_id FK "命中规则行"
-        varchar16 rule_code "编码快照"
-        varchar16 intent_type "意图快照"
-        smallint rule_version "版本快照"
-        tinyint risk_weight "权重快照"
-        varchar1024 evidence_summary "可解释证据"
-        datetime6 triggered_at "命中时间 UTC"
-    }
-
-    alerts {
-        bigint alert_id PK "告警编号"
-        varchar160 dedup_key UK "去重键"
-        char36 session_id FK "首次触发会话"
-        bigint attacker_id FK "关联画像"
-        bigint rule_id FK "触发规则"
-        bigint latest_hit_id FK "最新证据命中"
-        varchar16 alert_type "bruteforce/data_dump/destructive"
-        varchar8 severity "low/medium/high/critical"
-        datetime6 first_seen_at "首次触发"
-        datetime6 last_seen_at "最近触发"
-        int occurrence_count "触发次数"
-        tinyint is_read "已读标记"
-    }
-
-    fake_users {
-        bigint id PK "诱饵用户编号"
-        varchar64 username UK "虚构账号"
-        varchar120 email UK "虚构邮箱"
-        varchar32 phone "虚构手机号"
-        varchar120 password_hash "TEST-ONLY 伪哈希"
-        tinyint is_synthetic "恒为 1"
-    }
-
-    fake_orders {
-        bigint order_id PK "诱饵订单编号"
-        varchar32 order_no UK "虚构订单号"
-        bigint user_id FK "所属诱饵用户"
-        decimal amount "虚构金额"
-        varchar16 order_status "订单状态"
-    }
-
-    fake_config {
-        bigint config_id PK "诱饵配置编号"
-        varchar64 config_key UK "配置键"
-        varchar512 config_value "TEST-ONLY 无效值"
-        varchar32 category "配置分类"
-        tinyint is_invalid "恒为 1"
-    }
-
-    audit_log {
-        bigint audit_id PK "审计编号"
-        datetime6 occurred_at "发生时间 UTC"
-        varchar64 account_name "数据库账号"
-        varchar32 operation "reset/rule_change/alert_ack 等"
-        varchar16 result "success/failure"
-        char36 request_id "关联请求编号"
-    }
-
-    sessions ||--o{ attack_log : "包含事件"
-    sessions ||--o{ rule_hits : "关联命中"
-    sessions ||--o{ alerts : "关联告警"
-    attack_log ||--o{ rule_hits : "触发命中（复合外键保证同源）"
-    detection_rules ||--o{ rule_hits : "被命中（版本快照）"
-    detection_rules ||--o{ alerts : "触发规则"
-    rule_hits ||--o{ alerts : "作为证据 latest_hit_id"
-    attacker_profile ||--o{ attacker_intent : "拥有意图"
-    attacker_profile ||--o{ alerts : "产生告警"
-    attacker_profile }o..o{ sessions : "按 source_ip 逻辑聚合（非外键）"
-    fake_users ||--o{ fake_orders : "拥有订单"
-```
-
-### 2.1 基数与实现方式
-
-| 关系 | 基数 | 实现 | 说明 |
-| --- | --- | --- | --- |
-| `sessions → attack_log` | 1 : 0..N | `fk_log_session(session_id)` | 一个会话的 connect/auth/query/disconnect |
-| `attack_log → rule_hits` | 1 : 0..N | 复合外键 `fk_hit_log(event_id, session_id)` | 同时保证命中的事件与会话同源 |
-| `sessions → rule_hits` | 1 : 0..N | `fk_hit_session(session_id)` | 独立会话引用，错误定位更清晰 |
-| `detection_rules → rule_hits` | 1 : 0..N | `fk_hit_rule(rule_id)` | 命中保存版本/权重快照 |
-| `sessions → alerts` | 1 : 0..N | `fk_alert_session(session_id)` | 告警必须回到具体会话 |
-| `attacker_profile → alerts` | 1 : 0..N | `fk_alert_attacker(attacker_id)` | 画像先于告警写入 |
-| `detection_rules → alerts` | 1 : 0..N | `fk_alert_rule(rule_id)` | 告警记录触发规则 |
-| `rule_hits → alerts` | 1 : 0..N | `fk_alert_latest_hit(latest_hit_id)` | 证据可定位到具体命中 |
-| `attacker_profile → attacker_intent` | 1 : 0..N | `fk_intent_profile` + `UNIQUE(attacker_id,intent_type)` | 一行一条意图 |
-| `attacker_profile ⋯ sessions` | 1 : 0..N（逻辑） | 无外键，按 `source_ip` 等值聚合 | 先有会话后有画像，强加外键会破坏写入顺序 |
-| `fake_users → fake_orders` | 1 : 0..N | `fk_fake_orders_user(user_id)` | 诱饵展示数据独立 |
-| `audit_log` | 独立 | 无外键 | 仅追加，避免 RESTRICT 阻塞 |
-
-**中心事实表**是 `sessions` 与 `attack_log`；所有派生结果必须能沿
-`session_id → event_id → rule_id → rule_version` 回溯。`attacker_profile` 不存多值意图列表，
-主要意图由 `v_attacker_profile_summary` 的窗口排序实时计算。
-
----
+> **权威源**：ER 模型与约束规范归 M3，图源为
+> [`modules/m3-er-constraints/er/schema.mmd`](../../modules/m3-er-constraints/er/schema.mmd)
+> （Mermaid，可版本管理），导出图见
+> [`modules/m3-er-constraints/evidence/schema.svg`](../../modules/m3-er-constraints/evidence/schema.svg)
+> 与同目录 `schema.png`。本文不再重复维护第二份 ER 图，避免与 DDL 漂移（FR-120）。
+>
+> 阅读约定：`||--o{` 为数据库外键保证的强制一对多；`}o..o{` 为按 `source_ip` 归集的
+> **逻辑聚合**（不建外键，画像由 M4 派生）；`audit_log` 为独立仅追加表，不与业务表建外键。
+> 实体清单与关系基数、约束目录见
+> [`modules/m3-er-constraints/constraints/catalog.md`](../../modules/m3-er-constraints/constraints/catalog.md)。
 
 ## 3. 关系模式摘要（11 张表）
 
@@ -415,8 +265,9 @@ DELETE FROM sessions;
 COMMIT;
 ```
 
-不使用 `TRUNCATE`（DDL 隐式提交、无法回滚）；重置实现见 `backend/app/services/reset.py`，
-CLI 为 `python -m app.cli.reset_demo --yes`。
+不使用 `TRUNCATE`（DDL 隐式提交、无法回滚）；重置实现见
+[`modules/m1-transaction-integration/m1_transaction_integration/cli/reset_demo.py`](../../modules/m1-transaction-integration/m1_transaction_integration/cli/reset_demo.py)，
+CLI 为 `python -m m1_transaction_integration.cli.reset_demo --yes`。
 
 ---
 
@@ -452,8 +303,8 @@ CLI 为 `python -m app.cli.reset_demo --yes`。
 ### 8.1 命令
 
 ```bash
-cd backend
-.venv/bin/alembic upgrade head       # 建表、视图、索引、规则种子
+# 仓库根执行（迁移脚本位于 M1 模块）
+PYTHONPATH=.:modules/m1-transaction-integration .venv/bin/alembic upgrade head       # 建表、视图、索引、规则种子
 .venv/bin/alembic current            # 查看当前修订
 .venv/bin/alembic downgrade -1       # 回退一个修订（演示环境慎用；先备份）
 ```
@@ -511,4 +362,5 @@ cd backend
 - [explain-indexes.md](explain-indexes.md)：复合索引实测记录。
 - `specs/001-database-honeypot/data-model.md`：完整数据字典、全部 DDL/视图 SQL、约束矩阵、需求映射。
 - `specs/001-database-honeypot/contracts/events.md`：事件字段、状态机、事务与幂等契约。
-- `backend/migrations/versions/0001_initial_schema.py` … `0004_seed_rules.py`：迁移唯一事实来源。
+- [`modules/m1-transaction-integration/migrations/versions/`](../../modules/m1-transaction-integration/migrations/versions)：迁移唯一事实来源（`0001_initial_schema.py` … `0004_seed_rules.py`）。
+- [`modules/m3-er-constraints/`](../../modules/m3-er-constraints)：ER 模型、约束目录与实测证据。
