@@ -1,0 +1,1189 @@
+{
+  "captured_at": "2026-11-25T05:20:00Z",
+  "note": "T009 接口基线：搬迁后 001 契约的字段快照（字段名/类型 + 确定性示例值）。T051 回归对比用：允许新增字段，既有字段名/类型不变；is_read 等可变状态只比形状。",
+  "base_url": "http://127.0.0.1:8000",
+  "endpoints": {
+    "health": {
+      "path": "/api/health",
+      "shape": {
+        "status": "str",
+        "version": "str",
+        "database": {
+          "status": "str",
+          "latency_ms": "int"
+        },
+        "honeypot": {
+          "status": "str",
+          "listen": "str",
+          "accepted_connections": "int"
+        },
+        "generated_at": "str"
+      },
+      "sample": {
+        "status": "ok",
+        "version": "0.1.0",
+        "database": {
+          "status": "ok",
+          "latency_ms": 2
+        },
+        "honeypot": {
+          "status": "down",
+          "listen": "127.0.0.1:3307",
+          "accepted_connections": 0
+        },
+        "generated_at": "2026-11-25T05:29:48.185183Z"
+      }
+    },
+    "overview": {
+      "path": "/api/overview?range=all",
+      "shape": {
+        "sessions": "int",
+        "queries": "int",
+        "alerts": "int",
+        "high_risk_attackers": "int",
+        "generated_at": "str",
+        "range": "str",
+        "window_start": "NoneType",
+        "attackers_total": "int",
+        "high_risk_ratio": "float",
+        "alerts_unread": "int",
+        "alerts_by_severity": {
+          "low": "int",
+          "medium": "int",
+          "high": "int",
+          "critical": "int"
+        },
+        "sessions_today": "int",
+        "queries_today": "int",
+        "sessions_delta_pct": "NoneType",
+        "queries_delta_pct": "NoneType",
+        "query_blocked_rate": "float",
+        "today_window": {
+          "start": "str",
+          "end": "str"
+        },
+        "yesterday_window": {
+          "start": "str",
+          "end": "str"
+        }
+      },
+      "sample": {
+        "sessions": 214,
+        "queries": 1222,
+        "alerts": 8,
+        "high_risk_attackers": 1,
+        "generated_at": "2026-11-25T05:29:48Z",
+        "range": "all",
+        "window_start": null,
+        "attackers_total": 14,
+        "high_risk_ratio": 0.0714,
+        "alerts_unread": 8,
+        "alerts_by_severity": {
+          "low": 0,
+          "medium": 3,
+          "high": 3,
+          "critical": 2
+        },
+        "sessions_today": 0,
+        "queries_today": 0,
+        "sessions_delta_pct": null,
+        "queries_delta_pct": null,
+        "query_blocked_rate": 0.198,
+        "today_window": {
+          "start": "2026-11-24T16:00:00Z",
+          "end": "2026-11-25T16:00:00Z"
+        },
+        "yesterday_window": {
+          "start": "2026-11-23T16:00:00Z",
+          "end": "2026-11-24T16:00:00Z"
+        }
+      }
+    },
+    "trend": {
+      "path": "/api/trend?days=7",
+      "shape": {
+        "days": "int",
+        "items": [
+          {
+            "stat_date": "str",
+            "day_seq": "int",
+            "event_count": "int",
+            "session_count": "int",
+            "source_count": "int",
+            "query_count": "int",
+            "denied_count": "int",
+            "alert_count": "int",
+            "high_level_alert_count": "int",
+            "prev_event_count": "NoneType",
+            "event_count_delta": "NoneType",
+            "event_change_pct": "NoneType",
+            "cumulative_event_count": "int",
+            "busy_day_rank": "int",
+            "hit_bruteforce": "int",
+            "hit_data_dump": "int",
+            "hit_scanning": "int",
+            "hit_recon": "int",
+            "hit_destructive": "int"
+          }
+        ]
+      },
+      "sample": {
+        "days": 7,
+        "items": [
+          {
+            "stat_date": "2026-11-19",
+            "day_seq": 1,
+            "event_count": 0,
+            "session_count": 0,
+            "source_count": 0,
+            "query_count": 0,
+            "denied_count": 0,
+            "alert_count": 0,
+            "high_level_alert_count": 0,
+            "prev_event_count": null,
+            "event_count_delta": null,
+            "event_change_pct": null,
+            "cumulative_event_count": 0,
+            "busy_day_rank": 1,
+            "hit_bruteforce": 0,
+            "hit_data_dump": 0,
+            "hit_scanning": 0,
+            "hit_recon": 0,
+            "hit_destructive": 0
+          },
+          {
+            "stat_date": "2026-11-20",
+            "day_seq": 2,
+            "event_count": 0,
+            "session_count": 0,
+            "source_count": 0,
+            "query_count": 0,
+            "denied_count": 0,
+            "alert_count": 0,
+            "high_level_alert_count": 0,
+            "prev_event_count": null,
+            "event_count_delta": null,
+            "event_change_pct": null,
+            "cumulative_event_count": 0,
+            "busy_day_rank": 1,
+            "hit_bruteforce": 0,
+            "hit_data_dump": 0,
+            "hit_scanning": 0,
+            "hit_recon": 0,
+            "hit_destructive": 0
+          },
+          {
+            "stat_date": "2026-11-21",
+            "day_seq": 3,
+            "event_count": 0,
+            "session_count": 0,
+            "source_count": 0,
+            "query_count": 0,
+            "denied_count": 0,
+            "alert_count": 0,
+            "high_level_alert_count": 0,
+            "prev_event_count": null,
+            "event_count_delta": null,
+            "event_change_pct": null,
+            "cumulative_event_count": 0,
+            "busy_day_rank": 1,
+            "hit_bruteforce": 0,
+            "hit_data_dump": 0,
+            "hit_scanning": 0,
+            "hit_recon": 0,
+            "hit_destructive": 0
+          },
+          {
+            "stat_date": "2026-11-22",
+            "day_seq": 4,
+            "event_count": 0,
+            "session_count": 0,
+            "source_count": 0,
+            "query_count": 0,
+            "denied_count": 0,
+            "alert_count": 0,
+            "high_level_alert_count": 0,
+            "prev_event_count": null,
+            "event_count_delta": null,
+            "event_change_pct": null,
+            "cumulative_event_count": 0,
+            "busy_day_rank": 1,
+            "hit_bruteforce": 0,
+            "hit_data_dump": 0,
+            "hit_scanning": 0,
+            "hit_recon": 0,
+            "hit_destructive": 0
+          },
+          {
+            "stat_date": "2026-11-23",
+            "day_seq": 5,
+            "event_count": 0,
+            "session_count": 0,
+            "source_count": 0,
+            "query_count": 0,
+            "denied_count": 0,
+            "alert_count": 0,
+            "high_level_alert_count": 0,
+            "prev_event_count": null,
+            "event_count_delta": null,
+            "event_change_pct": null,
+            "cumulative_event_count": 0,
+            "busy_day_rank": 1,
+            "hit_bruteforce": 0,
+            "hit_data_dump": 0,
+            "hit_scanning": 0,
+            "hit_recon": 0,
+            "hit_destructive": 0
+          },
+          {
+            "stat_date": "2026-11-24",
+            "day_seq": 6,
+            "event_count": 0,
+            "session_count": 0,
+            "source_count": 0,
+            "query_count": 0,
+            "denied_count": 0,
+            "alert_count": 0,
+            "high_level_alert_count": 0,
+            "prev_event_count": null,
+            "event_count_delta": null,
+            "event_change_pct": null,
+            "cumulative_event_count": 0,
+            "busy_day_rank": 1,
+            "hit_bruteforce": 0,
+            "hit_data_dump": 0,
+            "hit_scanning": 0,
+            "hit_recon": 0,
+            "hit_destructive": 0
+          },
+          {
+            "stat_date": "2026-11-25",
+            "day_seq": 7,
+            "event_count": 0,
+            "session_count": 0,
+            "source_count": 0,
+            "query_count": 0,
+            "denied_count": 0,
+            "alert_count": 0,
+            "high_level_alert_count": 0,
+            "prev_event_count": null,
+            "event_count_delta": null,
+            "event_change_pct": null,
+            "cumulative_event_count": 0,
+            "busy_day_rank": 1,
+            "hit_bruteforce": 0,
+            "hit_data_dump": 0,
+            "hit_scanning": 0,
+            "hit_recon": 0,
+            "hit_destructive": 0
+          }
+        ]
+      }
+    },
+    "attackers": {
+      "path": "/api/attackers?page=1&page_size=5",
+      "shape": {
+        "items": [
+          {
+            "attacker_id": "int",
+            "source_ip": "str",
+            "first_seen": "str",
+            "last_seen": "str",
+            "total_connections": "int",
+            "total_auth_attempts": "int",
+            "total_queries": "int",
+            "main_intent": {
+              "intent_type": "str",
+              "intent_score": "int",
+              "evidence_count": "int",
+              "last_detected_at": "str"
+            },
+            "risk_score": "int",
+            "risk_level": "str",
+            "alert_count": "int",
+            "intent_labels": [
+              "str"
+            ],
+            "triggered_rule_codes": [
+              "str"
+            ],
+            "network_scope": "str",
+            "network_scope_label": "str"
+          }
+        ],
+        "page": "int",
+        "page_size": "int",
+        "total": "int",
+        "total_pages": "int"
+      },
+      "sample": {
+        "items": [
+          {
+            "attacker_id": 939,
+            "source_ip": "198.51.100.17",
+            "first_seen": "2026-11-18T06:00:00Z",
+            "last_seen": "2026-11-18T06:00:15Z",
+            "total_connections": 1,
+            "total_auth_attempts": 8,
+            "total_queries": 6,
+            "main_intent": {
+              "intent_type": "destructive",
+              "intent_score": 35,
+              "evidence_count": 1,
+              "last_detected_at": "2026-11-18T06:00:14Z"
+            },
+            "risk_score": 85,
+            "risk_level": "critical",
+            "alert_count": 3,
+            "intent_labels": [
+              "destructive",
+              "data_dump",
+              "bruteforce"
+            ],
+            "triggered_rule_codes": [
+              "R02",
+              "R04",
+              "R05"
+            ],
+            "network_scope": "reserved",
+            "network_scope_label": "文档保留"
+          },
+          {
+            "attacker_id": 924,
+            "source_ip": "198.51.100.15",
+            "first_seen": "2026-11-18T04:00:00Z",
+            "last_seen": "2026-11-18T04:00:03Z",
+            "total_connections": 1,
+            "total_auth_attempts": 1,
+            "total_queries": 1,
+            "main_intent": {
+              "intent_type": "destructive",
+              "intent_score": 35,
+              "evidence_count": 1,
+              "last_detected_at": "2026-11-18T04:00:02Z"
+            },
+            "risk_score": 35,
+            "risk_level": "medium",
+            "alert_count": 1,
+            "intent_labels": [
+              "destructive"
+            ],
+            "triggered_rule_codes": [
+              "R05"
+            ],
+            "network_scope": "reserved",
+            "network_scope_label": "文档保留"
+          },
+          {
+            "attacker_id": 1005,
+            "source_ip": "198.51.100.23",
+            "first_seen": "2026-11-18T07:50:00Z",
+            "last_seen": "2026-11-18T07:50:06Z",
+            "total_connections": 1,
+            "total_auth_attempts": 0,
+            "total_queries": 5,
+            "main_intent": {
+              "intent_type": "data_dump",
+              "intent_score": 25,
+              "evidence_count": 1,
+              "last_detected_at": "2026-11-18T07:50:05Z"
+            },
+            "risk_score": 25,
+            "risk_level": "low",
+            "alert_count": 1,
+            "intent_labels": [
+              "data_dump"
+            ],
+            "triggered_rule_codes": [
+              "R04"
+            ],
+            "network_scope": "reserved",
+            "network_scope_label": "文档保留"
+          },
+          {
+            "attacker_id": 976,
+            "source_ip": "198.51.100.20",
+            "first_seen": "2026-11-18T07:20:00Z",
+            "last_seen": "2026-11-18T07:20:09Z",
+            "total_connections": 1,
+            "total_auth_attempts": 8,
+            "total_queries": 0,
+            "main_intent": {
+              "intent_type": "bruteforce",
+              "intent_score": 25,
+              "evidence_count": 1,
+              "last_detected_at": "2026-11-18T07:20:08Z"
+            },
+            "risk_score": 25,
+            "risk_level": "low",
+            "alert_count": 1,
+            "intent_labels": [
+              "bruteforce"
+            ],
+            "triggered_rule_codes": [
+              "R02"
+            ],
+            "network_scope": "reserved",
+            "network_scope_label": "文档保留"
+          },
+          {
+            "attacker_id": 916,
+            "source_ip": "198.51.100.14",
+            "first_seen": "2026-11-18T03:00:00Z",
+            "last_seen": "2026-11-18T03:00:07Z",
+            "total_connections": 1,
+            "total_auth_attempts": 1,
+            "total_queries": 5,
+            "main_intent": {
+              "intent_type": "data_dump",
+              "intent_score": 25,
+              "evidence_count": 1,
+              "last_detected_at": "2026-11-18T03:00:06Z"
+            },
+            "risk_score": 25,
+            "risk_level": "low",
+            "alert_count": 1,
+            "intent_labels": [
+              "data_dump"
+            ],
+            "triggered_rule_codes": [
+              "R04"
+            ],
+            "network_scope": "reserved",
+            "network_scope_label": "文档保留"
+          }
+        ],
+        "page": 1,
+        "page_size": 5,
+        "total": 14,
+        "total_pages": 3
+      }
+    },
+    "attacker_summary": {
+      "path": "/api/attackers/summary",
+      "shape": {
+        "total": "int",
+        "high_risk_count": "int",
+        "latest_intent": {
+          "intent_type": "str",
+          "rule_code": "str",
+          "rule_name": "str",
+          "source_ip": "str",
+          "last_detected_at": "str"
+        },
+        "generated_at": "str"
+      },
+      "sample": {
+        "total": 14,
+        "high_risk_count": 1,
+        "latest_intent": {
+          "intent_type": "data_dump",
+          "rule_code": "R04",
+          "rule_name": "会话级批量数据读取",
+          "source_ip": "198.51.100.23",
+          "last_detected_at": "2026-11-18T07:50:05Z"
+        },
+        "generated_at": "2026-11-25T05:29:48Z"
+      }
+    },
+    "attacker_detail": {
+      "path": "/api/attackers/198.51.100.17",
+      "shape": {
+        "attacker": {
+          "attacker_id": "int",
+          "source_ip": "str",
+          "first_seen": "str",
+          "last_seen": "str",
+          "total_connections": "int",
+          "total_auth_attempts": "int",
+          "total_auth_failures": "int",
+          "total_queries": "int",
+          "risk_score": "int",
+          "calculated_risk_score": "int",
+          "risk_level": "str",
+          "session_count": "int",
+          "high_risk_session_count": "int",
+          "alert_count": "int",
+          "unread_alert_count": "int",
+          "intent_labels": "str",
+          "triggered_rule_codes": "str",
+          "evidence_summary": "str",
+          "avg_session_seconds": "int",
+          "auth_success_count": "int",
+          "high_risk_op_count": "int",
+          "network_scope": "str",
+          "network_scope_label": "str"
+        },
+        "intents": [
+          {
+            "intent_type": "str",
+            "intent_score": "int",
+            "evidence_count": "int",
+            "first_detected_at": "str",
+            "last_detected_at": "str"
+          }
+        ],
+        "sessions": [
+          {
+            "session_id": "str",
+            "source_port": "int",
+            "target_service": "str",
+            "started_at": "str",
+            "ended_at": "str",
+            "session_status": "str",
+            "event_count": "int",
+            "query_count": "int",
+            "hit_rule_count": "int",
+            "hit_rule_codes": "str",
+            "risk_score": "int",
+            "risk_level": "str",
+            "stored_max_risk_score": "int",
+            "alert_count": "int"
+          }
+        ],
+        "recent_rule_hits": [
+          {
+            "hit_id": "int",
+            "event_id": "int",
+            "rule_code": "str",
+            "rule_name": "str",
+            "intent_type": "str",
+            "rule_version": "int",
+            "risk_weight": "int",
+            "triggered_at": "str",
+            "evidence_summary": "str"
+          }
+        ]
+      },
+      "sample": {
+        "attacker": {
+          "attacker_id": 939,
+          "source_ip": "198.51.100.17",
+          "first_seen": "2026-11-18T06:00:00Z",
+          "last_seen": "2026-11-18T06:00:15Z",
+          "total_connections": 1,
+          "total_auth_attempts": 8,
+          "total_auth_failures": 8,
+          "total_queries": 6,
+          "risk_score": 85,
+          "calculated_risk_score": 85,
+          "risk_level": "critical",
+          "session_count": 1,
+          "high_risk_session_count": 1,
+          "alert_count": 3,
+          "unread_alert_count": 3,
+          "intent_labels": "destructive,data_dump,bruteforce",
+          "triggered_rule_codes": "R02,R04,R05",
+          "evidence_summary": "命中规则：R05×1(权重35)、R02×1(权重25)、R04×1(权重25)；最近事件 disconnect",
+          "avg_session_seconds": 15,
+          "auth_success_count": 0,
+          "high_risk_op_count": 2,
+          "network_scope": "reserved",
+          "network_scope_label": "文档保留"
+        },
+        "intents": [
+          {
+            "intent_type": "destructive",
+            "intent_score": 35,
+            "evidence_count": 1,
+            "first_detected_at": "2026-11-18T06:00:14Z",
+            "last_detected_at": "2026-11-18T06:00:14Z"
+          },
+          {
+            "intent_type": "data_dump",
+            "intent_score": 25,
+            "evidence_count": 1,
+            "first_detected_at": "2026-11-18T06:00:13Z",
+            "last_detected_at": "2026-11-18T06:00:13Z"
+          },
+          {
+            "intent_type": "bruteforce",
+            "intent_score": 25,
+            "evidence_count": 1,
+            "first_detected_at": "2026-11-18T06:00:08Z",
+            "last_detected_at": "2026-11-18T06:00:08Z"
+          }
+        ],
+        "sessions": [
+          {
+            "session_id": "5a060001-0000-4000-8000-000000000001",
+            "source_port": 50100,
+            "target_service": "mysql-honeypot",
+            "started_at": "2026-11-18T06:00:00Z",
+            "ended_at": "2026-11-18T06:00:15Z",
+            "session_status": "timeout",
+            "event_count": 16,
+            "query_count": 6,
+            "hit_rule_count": 3,
+            "hit_rule_codes": "R02,R04,R05",
+            "risk_score": 85,
+            "risk_level": "critical",
+            "stored_max_risk_score": 85,
+            "alert_count": 3
+          }
+        ],
+        "recent_rule_hits": [
+          {
+            "hit_id": 90,
+            "event_id": 20157,
+            "rule_code": "R05",
+            "rule_name": "破坏性写操作尝试",
+            "intent_type": "destructive",
+            "rule_version": 1,
+            "risk_weight": 35,
+            "triggered_at": "2026-11-18T06:00:14Z",
+            "evidence_summary": "本事件为破坏性写操作尝试：SQL 首关键词为 DROP，状态 denied，诱饵层仅记录不执行"
+          },
+          {
+            "hit_id": 89,
+            "event_id": 20156,
+            "rule_code": "R04",
+            "rule_name": "会话级批量数据读取",
+            "intent_type": "data_dump",
+            "rule_version": 1,
+            "risk_weight": 25,
+            "triggered_at": "2026-11-18T06:00:13Z",
+            "evidence_summary": "300 秒内连续 SELECT 5 次（阈值 5），符合批量拖库特征"
+          },
+          {
+            "hit_id": 88,
+            "event_id": 20151,
+            "rule_code": "R02",
+            "rule_name": "短时多凭据认证爆破",
+            "intent_type": "bruteforce",
+            "rule_version": 1,
+            "risk_weight": 25,
+            "triggered_at": "2026-11-18T06:00:08Z",
+            "evidence_summary": "300 秒内同一来源认证尝试 8 次（阈值 8），不同凭据组合 8 组（阈值 5），符合爆破特征"
+          }
+        ]
+      }
+    },
+    "alerts": {
+      "path": "/api/alerts?page=1&page_size=5",
+      "shape": {
+        "items": [
+          {
+            "alert_id": "int",
+            "dedup_key": "str",
+            "session_id": "str",
+            "attacker_id": "int",
+            "source_ip": "str",
+            "rule_code": "str",
+            "rule_name": "str",
+            "latest_hit_id": "int",
+            "alert_type": "str",
+            "severity": "str",
+            "title": "str",
+            "evidence_summary": "str",
+            "first_seen_at": "str",
+            "last_seen_at": "str",
+            "occurrence_count": "int",
+            "created_at": "str",
+            "is_read": "bool",
+            "read_at": "NoneType"
+          }
+        ],
+        "page": "int",
+        "page_size": "int",
+        "total": "int",
+        "total_pages": "int"
+      },
+      "sample": {
+        "items": [
+          {
+            "alert_id": 67,
+            "dedup_key": "R04:198.51.100.23:2026-11-18",
+            "session_id": "5a070006-0000-4000-8000-000000000006",
+            "attacker_id": 1005,
+            "source_ip": "198.51.100.23",
+            "rule_code": "R04",
+            "rule_name": "会话级批量数据读取",
+            "latest_hit_id": 93,
+            "alert_type": "data_dump",
+            "severity": "high",
+            "title": "疑似批量拖库：来自 198.51.100.23 的规则 R04 命中",
+            "evidence_summary": "规则 R04 v1（命中时间 2026-11-18 07:50:05Z）：300 秒内连续 SELECT 5 次（阈值 5），符合批量拖库特征；来源 198.51.100.23",
+            "first_seen_at": "2026-11-18T07:50:05Z",
+            "last_seen_at": "2026-11-18T07:50:05Z",
+            "occurrence_count": 1,
+            "created_at": "2026-11-25T05:19:06Z",
+            "is_read": false,
+            "read_at": null
+          },
+          {
+            "alert_id": 66,
+            "dedup_key": "R02:198.51.100.20:2026-11-18",
+            "session_id": "5a070003-0000-4000-8000-000000000003",
+            "attacker_id": 976,
+            "source_ip": "198.51.100.20",
+            "rule_code": "R02",
+            "rule_name": "短时多凭据认证爆破",
+            "latest_hit_id": 92,
+            "alert_type": "bruteforce",
+            "severity": "medium",
+            "title": "疑似认证爆破：来自 198.51.100.20 的规则 R02 命中",
+            "evidence_summary": "规则 R02 v1（命中时间 2026-11-18 07:20:08Z）：300 秒内同一来源认证尝试 8 次（阈值 8），不同凭据组合 5 组（阈值 5），符合爆破特征；来源 198.51.100.20",
+            "first_seen_at": "2026-11-18T07:20:08Z",
+            "last_seen_at": "2026-11-18T07:20:08Z",
+            "occurrence_count": 1,
+            "created_at": "2026-11-25T05:19:06Z",
+            "is_read": false,
+            "read_at": null
+          },
+          {
+            "alert_id": 65,
+            "dedup_key": "R05:198.51.100.17:2026-11-18",
+            "session_id": "5a060001-0000-4000-8000-000000000001",
+            "attacker_id": 939,
+            "source_ip": "198.51.100.17",
+            "rule_code": "R05",
+            "rule_name": "破坏性写操作尝试",
+            "latest_hit_id": 90,
+            "alert_type": "destructive",
+            "severity": "critical",
+            "title": "疑似破坏性操作：来自 198.51.100.17 的规则 R05 命中",
+            "evidence_summary": "规则 R05 v1（命中时间 2026-11-18 06:00:14Z）：本事件为破坏性写操作尝试：SQL 首关键词为 DROP，状态 denied，诱饵层仅记录不执行；来源 198.51.100.17",
+            "first_seen_at": "2026-11-18T06:00:14Z",
+            "last_seen_at": "2026-11-18T06:00:14Z",
+            "occurrence_count": 1,
+            "created_at": "2026-11-25T05:19:06Z",
+            "is_read": false,
+            "read_at": null
+          },
+          {
+            "alert_id": 64,
+            "dedup_key": "R04:198.51.100.17:2026-11-18",
+            "session_id": "5a060001-0000-4000-8000-000000000001",
+            "attacker_id": 939,
+            "source_ip": "198.51.100.17",
+            "rule_code": "R04",
+            "rule_name": "会话级批量数据读取",
+            "latest_hit_id": 89,
+            "alert_type": "data_dump",
+            "severity": "high",
+            "title": "疑似批量拖库：来自 198.51.100.17 的规则 R04 命中",
+            "evidence_summary": "规则 R04 v1（命中时间 2026-11-18 06:00:13Z）：300 秒内连续 SELECT 5 次（阈值 5），符合批量拖库特征；来源 198.51.100.17",
+            "first_seen_at": "2026-11-18T06:00:13Z",
+            "last_seen_at": "2026-11-18T06:00:13Z",
+            "occurrence_count": 1,
+            "created_at": "2026-11-25T05:19:06Z",
+            "is_read": false,
+            "read_at": null
+          },
+          {
+            "alert_id": 63,
+            "dedup_key": "R02:198.51.100.17:2026-11-18",
+            "session_id": "5a060001-0000-4000-8000-000000000001",
+            "attacker_id": 939,
+            "source_ip": "198.51.100.17",
+            "rule_code": "R02",
+            "rule_name": "短时多凭据认证爆破",
+            "latest_hit_id": 88,
+            "alert_type": "bruteforce",
+            "severity": "medium",
+            "title": "疑似认证爆破：来自 198.51.100.17 的规则 R02 命中",
+            "evidence_summary": "规则 R02 v1（命中时间 2026-11-18 06:00:08Z）：300 秒内同一来源认证尝试 8 次（阈值 8），不同凭据组合 8 组（阈值 5），符合爆破特征；来源 198.51.100.17",
+            "first_seen_at": "2026-11-18T06:00:08Z",
+            "last_seen_at": "2026-11-18T06:00:08Z",
+            "occurrence_count": 1,
+            "created_at": "2026-11-25T05:19:06Z",
+            "is_read": false,
+            "read_at": null
+          }
+        ],
+        "page": 1,
+        "page_size": 5,
+        "total": 8,
+        "total_pages": 2
+      }
+    },
+    "alerts_summary": {
+      "path": "/api/alerts/summary",
+      "shape": {
+        "total": "int",
+        "unread": "int",
+        "read": "int",
+        "resolution_rate": "float",
+        "by_severity": {
+          "low": "int",
+          "medium": "int",
+          "high": "int",
+          "critical": "int"
+        },
+        "unread_by_severity": {
+          "low": "int",
+          "medium": "int",
+          "high": "int",
+          "critical": "int"
+        },
+        "by_alert_type": {
+          "bruteforce": "int",
+          "data_dump": "int",
+          "destructive": "int"
+        },
+        "today_new": "int",
+        "yesterday_new": "int",
+        "today_delta_pct": "NoneType",
+        "peak_window": {
+          "start": "str",
+          "end": "str",
+          "count": "int"
+        },
+        "today_window": {
+          "start": "str",
+          "end": "str"
+        },
+        "generated_at": "str"
+      },
+      "sample": {
+        "total": 8,
+        "unread": 8,
+        "read": 0,
+        "resolution_rate": 0.0,
+        "by_severity": {
+          "low": 0,
+          "medium": 3,
+          "high": 3,
+          "critical": 2
+        },
+        "unread_by_severity": {
+          "low": 0,
+          "medium": 3,
+          "high": 3,
+          "critical": 2
+        },
+        "by_alert_type": {
+          "bruteforce": 3,
+          "data_dump": 3,
+          "destructive": 2
+        },
+        "today_new": 8,
+        "yesterday_new": 0,
+        "today_delta_pct": null,
+        "peak_window": {
+          "start": "2026-11-25T05:00:00Z",
+          "end": "2026-11-25T06:00:00Z",
+          "count": 8
+        },
+        "today_window": {
+          "start": "2026-11-24T16:00:00Z",
+          "end": "2026-11-25T16:00:00Z"
+        },
+        "generated_at": "2026-11-25T05:29:48Z"
+      }
+    },
+    "rules": {
+      "path": "/api/rules",
+      "shape": {
+        "items": [
+          {
+            "rule_id": "int",
+            "rule_code": "str",
+            "rule_name": "str",
+            "rule_type": "str",
+            "intent_type": "str",
+            "parameters": {
+              "scope": "str",
+              "boundary": "str",
+              "window_seconds": "int",
+              "min_connect_count": "int",
+              "max_valid_sql_count": "int"
+            },
+            "risk_weight": "int",
+            "rule_version": "int",
+            "enabled": "bool",
+            "description": "str",
+            "created_at": "str",
+            "updated_at": "str"
+          }
+        ],
+        "total": "int"
+      },
+      "sample": {
+        "items": [
+          {
+            "rule_id": 1,
+            "rule_code": "R01",
+            "rule_name": "短时高频连接扫描",
+            "rule_type": "frequency",
+            "intent_type": "scanning",
+            "parameters": {
+              "scope": "source_ip",
+              "boundary": "inclusive",
+              "window_seconds": 60,
+              "min_connect_count": 10,
+              "max_valid_sql_count": 0
+            },
+            "risk_weight": 10,
+            "rule_version": 1,
+            "enabled": true,
+            "description": "60 秒内同一来源连接不少于 10 次且无有效 SQL，典型端口/服务扫描特征",
+            "created_at": "2026-11-25T03:42:57Z",
+            "updated_at": "2026-11-25T03:42:57Z"
+          },
+          {
+            "rule_id": 2,
+            "rule_code": "R02",
+            "rule_name": "短时多凭据认证爆破",
+            "rule_type": "frequency",
+            "intent_type": "bruteforce",
+            "parameters": {
+              "scope": "source_ip",
+              "window_seconds": 300,
+              "count_failed_only": false,
+              "min_auth_attempts": 8,
+              "min_distinct_credential_pairs": 5
+            },
+            "risk_weight": 25,
+            "rule_version": 1,
+            "enabled": true,
+            "description": "5 分钟内同一来源认证尝试不少于 8 次，且不同用户名与测试标识组合不少于 5 组",
+            "created_at": "2026-11-25T03:42:57Z",
+            "updated_at": "2026-11-25T03:42:57Z"
+          },
+          {
+            "rule_id": 3,
+            "rule_code": "R03",
+            "rule_name": "元数据与结构探测",
+            "rule_type": "keyword",
+            "intent_type": "recon",
+            "parameters": {
+              "scope": "event",
+              "keywords": [
+                "SHOW TABLES",
+                "SHOW DATABASES",
+                "SHOW COLUMNS",
+                "SHOW FIELDS",
+                "DESCRIBE",
+                "DESC ",
+                "INFORMATION_SCHEMA"
+              ],
+              "match_target": "normalized_sql",
+              "case_sensitive": false,
+              "max_hits_per_event": 1
+            },
+            "risk_weight": 15,
+            "rule_version": 1,
+            "enabled": true,
+            "description": "出现 SHOW TABLES、SHOW DATABASES、SHOW COLUMNS、DESCRIBE、information_schema 查询",
+            "created_at": "2026-11-25T03:42:57Z",
+            "updated_at": "2026-11-25T03:42:57Z"
+          },
+          {
+            "rule_id": 4,
+            "rule_code": "R04",
+            "rule_name": "会话级批量数据读取",
+            "rule_type": "volume",
+            "intent_type": "data_dump",
+            "parameters": {
+              "scope": "session",
+              "count_scope": "session_cumulative",
+              "window_seconds": 300,
+              "min_consecutive_select": 5,
+              "session_returned_rows_threshold": 1000
+            },
+            "risk_weight": 25,
+            "rule_version": 1,
+            "enabled": true,
+            "description": "同一会话连续 SELECT 不少于 5 次，或会话累计返回行数超过 1000 行",
+            "created_at": "2026-11-25T03:42:57Z",
+            "updated_at": "2026-11-25T03:42:57Z"
+          },
+          {
+            "rule_id": 5,
+            "rule_code": "R05",
+            "rule_name": "破坏性写操作尝试",
+            "rule_type": "keyword",
+            "intent_type": "destructive",
+            "parameters": {
+              "scope": "event",
+              "keywords": [
+                "DROP",
+                "TRUNCATE",
+                "DELETE",
+                "UPDATE",
+                "INSERT"
+              ],
+              "count_status": [
+                "denied",
+                "error",
+                "success"
+              ],
+              "match_target": "normalized_sql",
+              "word_boundary": true,
+              "case_sensitive": false
+            },
+            "risk_weight": 35,
+            "rule_version": 1,
+            "enabled": true,
+            "description": "出现 DROP、TRUNCATE、DELETE、UPDATE、INSERT（诱饵层拒绝执行，仅记录并告警）",
+            "created_at": "2026-11-25T03:42:57Z",
+            "updated_at": "2026-11-25T03:42:57Z"
+          }
+        ],
+        "total": 5
+      }
+    },
+    "timeline": {
+      "path": "/api/sessions/5a010001-0000-4000-8000-000000000001/timeline",
+      "shape": {
+        "session": {
+          "session_id": "str",
+          "source_ip": "str",
+          "source_port": "int",
+          "target_service": "str",
+          "client_fingerprint": "str",
+          "started_at": "str",
+          "ended_at": "str",
+          "session_status": "str",
+          "request_count": "int",
+          "event_count": "int",
+          "query_count": "int",
+          "max_risk_score": "int",
+          "calculated_risk_score": "int",
+          "risk_level": "str",
+          "alert_count": "int"
+        },
+        "events": [
+          {
+            "event_id": "int",
+            "event_uuid": "str",
+            "event_type": "str",
+            "event_time": "str",
+            "source_ip": "str",
+            "username": "NoneType",
+            "credential_test_id": "NoneType",
+            "credential_masked": "NoneType",
+            "sql_statement": "NoneType",
+            "normalized_sql": "NoneType",
+            "statement_type": "NoneType",
+            "returned_rows": "int",
+            "response_ms": "int",
+            "status": "str",
+            "payload_truncated": "bool"
+          }
+        ],
+        "rule_hits": [
+          {
+            "hit_id": "int",
+            "event_id": "int",
+            "rule_code": "str",
+            "rule_name": "str",
+            "intent_type": "str",
+            "rule_version": "int",
+            "risk_weight": "int",
+            "triggered_at": "str",
+            "evidence_summary": "str"
+          }
+        ],
+        "alerts": [],
+        "events_truncated": "bool"
+      },
+      "sample": {
+        "session": {
+          "session_id": "5a010001-0000-4000-8000-000000000001",
+          "source_ip": "198.51.100.11",
+          "source_port": 50100,
+          "target_service": "mysql-honeypot",
+          "client_fingerprint": "固定合成样本（TEST-ONLY，不含真实客户端信息）",
+          "started_at": "2026-11-18T01:00:00Z",
+          "ended_at": "2026-11-18T01:00:03Z",
+          "session_status": "closed",
+          "request_count": 4,
+          "event_count": 4,
+          "query_count": 1,
+          "max_risk_score": 15,
+          "calculated_risk_score": 15,
+          "risk_level": "low",
+          "alert_count": 0
+        },
+        "events": [
+          {
+            "event_id": 20097,
+            "event_uuid": "e1010001-0000-4000-8000-000000000001",
+            "event_type": "connect",
+            "event_time": "2026-11-18T01:00:00Z",
+            "source_ip": "198.51.100.11",
+            "username": null,
+            "credential_test_id": null,
+            "credential_masked": null,
+            "sql_statement": null,
+            "normalized_sql": null,
+            "statement_type": null,
+            "returned_rows": 0,
+            "response_ms": 0,
+            "status": "success",
+            "payload_truncated": false
+          },
+          {
+            "event_id": 20098,
+            "event_uuid": "e1010002-0000-4000-8000-000000000002",
+            "event_type": "auth",
+            "event_time": "2026-11-18T01:00:01Z",
+            "source_ip": "198.51.100.11",
+            "username": "s0****************er",
+            "credential_test_id": "TEST-ONLY-S01-AUTH",
+            "credential_masked": "****",
+            "sql_statement": null,
+            "normalized_sql": null,
+            "statement_type": null,
+            "returned_rows": 0,
+            "response_ms": 0,
+            "status": "success",
+            "payload_truncated": false
+          },
+          {
+            "event_id": 20099,
+            "event_uuid": "e1010003-0000-4000-8000-000000000003",
+            "event_type": "query",
+            "event_time": "2026-11-18T01:00:02Z",
+            "source_ip": "198.51.100.11",
+            "username": null,
+            "credential_test_id": null,
+            "credential_masked": null,
+            "sql_statement": "SHOW TABLES",
+            "normalized_sql": "show tables",
+            "statement_type": "SHOW",
+            "returned_rows": 3,
+            "response_ms": 3,
+            "status": "success",
+            "payload_truncated": false
+          },
+          {
+            "event_id": 20100,
+            "event_uuid": "e1010004-0000-4000-8000-000000000004",
+            "event_type": "disconnect",
+            "event_time": "2026-11-18T01:00:03Z",
+            "source_ip": "198.51.100.11",
+            "username": null,
+            "credential_test_id": null,
+            "credential_masked": null,
+            "sql_statement": null,
+            "normalized_sql": null,
+            "statement_type": null,
+            "returned_rows": 0,
+            "response_ms": 0,
+            "status": "success",
+            "payload_truncated": false
+          }
+        ],
+        "rule_hits": [
+          {
+            "hit_id": 83,
+            "event_id": 20099,
+            "rule_code": "R03",
+            "rule_name": "元数据与结构探测",
+            "intent_type": "recon",
+            "rule_version": 1,
+            "risk_weight": 15,
+            "triggered_at": "2026-11-18T01:00:02Z",
+            "evidence_summary": "本事件 SQL 命中元数据探测关键词“SHOW TABLES”，属结构/元数据踩点行为"
+          }
+        ],
+        "alerts": [],
+        "events_truncated": false
+      }
+    }
+  }
+}
