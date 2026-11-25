@@ -1,0 +1,315 @@
+{
+  "generated_at": "2026-11-25T05:34:14Z",
+  "evidence_date": "2026-11-25",
+  "kind": "supplementary-variants",
+  "note": "explain_diff CLI 固定两组（Q1/Q2）；本文件补充『同一时间线的不同写法』两组，方法一致（IGNORE INDEX，无 DDL，只读）。",
+  "database": {
+    "host": "127.0.0.1",
+    "port": 3306,
+    "schema": "honeypot_dev"
+  },
+  "dataset": {
+    "mysql_version": "8.0.46",
+    "tables": {
+      "attack_log": 2525,
+      "sessions": 214,
+      "alerts": 8
+    }
+  },
+  "method": "before 用 IGNORE INDEX 显式禁用目标索引模拟索引不可用；after 正常执行；同一只读连接，预热后 5 次中位耗时。",
+  "timing_runs": 5,
+  "groups": [
+    {
+      "group": "G3",
+      "query_id": "Q3",
+      "name": "同一会话时间线 + event_time 下界（增量拉取写法）",
+      "table": "attack_log",
+      "expected_index": "idx_log_session_time",
+      "sql": {
+        "before": "SELECT event_id, event_type, event_time, status FROM attack_log IGNORE INDEX (idx_log_session_time) WHERE session_id = :sid AND event_time >= :t0 ORDER BY event_time, event_id",
+        "after": "SELECT event_id, event_type, event_time, status FROM attack_log WHERE session_id = :sid AND event_time >= :t0 ORDER BY event_time, event_id"
+      },
+      "query_params": {
+        "sid": "5a060001-0000-4000-8000-000000000001",
+        "t0": "2026-11-18 06:00:09"
+      },
+      "explain": {
+        "format": "JSON",
+        "before": {
+          "query_block": {
+            "select_id": 1,
+            "cost_info": {
+              "query_cost": "271.30"
+            },
+            "ordering_operation": {
+              "using_filesort": true,
+              "cost_info": {
+                "sort_cost": "3.85"
+              },
+              "table": {
+                "table_name": "attack_log",
+                "access_type": "ALL",
+                "rows_examined_per_scan": 2432,
+                "rows_produced_per_join": 3,
+                "filtered": "0.16",
+                "cost_info": {
+                  "read_cost": "267.06",
+                  "eval_cost": "0.39",
+                  "prefix_cost": "267.45",
+                  "data_read_per_join": "4K"
+                },
+                "used_columns": [
+                  "event_id",
+                  "session_id",
+                  "event_type",
+                  "event_time",
+                  "status"
+                ],
+                "attached_condition": "((`honeypot_dev`.`attack_log`.`session_id` = '5a060001-0000-4000-8000-000000000001') and (`honeypot_dev`.`attack_log`.`event_time` >= TIMESTAMP'2026-11-18 06:00:09'))"
+              }
+            }
+          }
+        },
+        "after": {
+          "query_block": {
+            "select_id": 1,
+            "cost_info": {
+              "query_cost": "3.41"
+            },
+            "ordering_operation": {
+              "using_filesort": false,
+              "table": {
+                "table_name": "attack_log",
+                "access_type": "range",
+                "possible_keys": [
+                  "idx_log_session_time"
+                ],
+                "key": "idx_log_session_time",
+                "used_key_parts": [
+                  "session_id",
+                  "event_time"
+                ],
+                "key_length": "44",
+                "rows_examined_per_scan": 7,
+                "rows_produced_per_join": 7,
+                "filtered": "100.00",
+                "index_condition": "((`honeypot_dev`.`attack_log`.`session_id` = '5a060001-0000-4000-8000-000000000001') and (`honeypot_dev`.`attack_log`.`event_time` >= TIMESTAMP'2026-11-18 06:00:09'))",
+                "cost_info": {
+                  "read_cost": "2.71",
+                  "eval_cost": "0.70",
+                  "prefix_cost": "3.41",
+                  "data_read_per_join": "7K"
+                },
+                "used_columns": [
+                  "event_id",
+                  "session_id",
+                  "event_type",
+                  "event_time",
+                  "status"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "plan_fields": {
+        "before": {
+          "table": "attack_log",
+          "type": "ALL",
+          "possible_keys": null,
+          "key": null,
+          "key_len": null,
+          "rows": 2432,
+          "rows_produced": 3,
+          "filtered": "0.16",
+          "using_filesort": true,
+          "using_temporary_table": null,
+          "using_index": null,
+          "backward_index_scan": null,
+          "query_cost": "271.30",
+          "attached_condition": "((`honeypot_dev`.`attack_log`.`session_id` = '5a060001-0000-4000-8000-000000000001') and (`honeypot_dev`.`attack_log`.`event_time` >= TIMESTAMP'2026-11-18 06:00:09'))"
+        },
+        "after": {
+          "table": "attack_log",
+          "type": "range",
+          "possible_keys": [
+            "idx_log_session_time"
+          ],
+          "key": "idx_log_session_time",
+          "key_len": "44",
+          "rows": 7,
+          "rows_produced": 7,
+          "filtered": "100.00",
+          "using_filesort": false,
+          "using_temporary_table": null,
+          "using_index": null,
+          "backward_index_scan": null,
+          "query_cost": "3.41",
+          "attached_condition": null
+        }
+      },
+      "timing_ms": {
+        "before": {
+          "runs": 5,
+          "row_count": 7,
+          "median_ms": 0.757,
+          "min_ms": 0.689,
+          "max_ms": 0.993
+        },
+        "after": {
+          "runs": 5,
+          "row_count": 7,
+          "median_ms": 0.372,
+          "min_ms": 0.358,
+          "max_ms": 0.38
+        }
+      },
+      "expected": "type=ALL + filesort → type=range，key 命中 idx_log_session_time，key_len 由 36 增至 44（session_id 36 + event_time 8）"
+    },
+    {
+      "group": "G4",
+      "query_id": "Q4",
+      "name": "按来源 IP 倒序取最近事件（告警溯源写法）",
+      "table": "attack_log",
+      "expected_index": "idx_log_source_time",
+      "sql": {
+        "before": "SELECT event_id, event_type, event_time, session_id FROM attack_log IGNORE INDEX (idx_log_source_time) WHERE source_ip = :ip ORDER BY event_time DESC LIMIT 20",
+        "after": "SELECT event_id, event_type, event_time, session_id FROM attack_log WHERE source_ip = :ip ORDER BY event_time DESC LIMIT 20"
+      },
+      "query_params": {
+        "ip": "198.51.100.17"
+      },
+      "explain": {
+        "format": "JSON",
+        "before": {
+          "query_block": {
+            "select_id": 1,
+            "cost_info": {
+              "query_cost": "267.45"
+            },
+            "ordering_operation": {
+              "using_filesort": true,
+              "table": {
+                "table_name": "attack_log",
+                "access_type": "ALL",
+                "rows_examined_per_scan": 2432,
+                "rows_produced_per_join": 63,
+                "filtered": "2.61",
+                "cost_info": {
+                  "read_cost": "261.11",
+                  "eval_cost": "6.34",
+                  "prefix_cost": "267.45",
+                  "data_read_per_join": "66K"
+                },
+                "used_columns": [
+                  "event_id",
+                  "session_id",
+                  "event_type",
+                  "source_ip",
+                  "event_time"
+                ],
+                "attached_condition": "(`honeypot_dev`.`attack_log`.`source_ip` = '198.51.100.17')"
+              }
+            }
+          }
+        },
+        "after": {
+          "query_block": {
+            "select_id": 1,
+            "cost_info": {
+              "query_cost": "5.60"
+            },
+            "ordering_operation": {
+              "using_filesort": false,
+              "table": {
+                "table_name": "attack_log",
+                "access_type": "ref",
+                "possible_keys": [
+                  "idx_log_source_time"
+                ],
+                "key": "idx_log_source_time",
+                "used_key_parts": [
+                  "source_ip"
+                ],
+                "key_length": "47",
+                "ref": [
+                  "const"
+                ],
+                "rows_examined_per_scan": 16,
+                "rows_produced_per_join": 16,
+                "filtered": "100.00",
+                "backward_index_scan": true,
+                "cost_info": {
+                  "read_cost": "4.00",
+                  "eval_cost": "1.60",
+                  "prefix_cost": "5.60",
+                  "data_read_per_join": "16K"
+                },
+                "used_columns": [
+                  "event_id",
+                  "session_id",
+                  "event_type",
+                  "source_ip",
+                  "event_time"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "plan_fields": {
+        "before": {
+          "table": "attack_log",
+          "type": "ALL",
+          "possible_keys": null,
+          "key": null,
+          "key_len": null,
+          "rows": 2432,
+          "rows_produced": 63,
+          "filtered": "2.61",
+          "using_filesort": true,
+          "using_temporary_table": null,
+          "using_index": null,
+          "backward_index_scan": null,
+          "query_cost": "267.45",
+          "attached_condition": "(`honeypot_dev`.`attack_log`.`source_ip` = '198.51.100.17')"
+        },
+        "after": {
+          "table": "attack_log",
+          "type": "ref",
+          "possible_keys": [
+            "idx_log_source_time"
+          ],
+          "key": "idx_log_source_time",
+          "key_len": "47",
+          "rows": 16,
+          "rows_produced": 16,
+          "filtered": "100.00",
+          "using_filesort": false,
+          "using_temporary_table": null,
+          "using_index": null,
+          "backward_index_scan": true,
+          "query_cost": "5.60",
+          "attached_condition": null
+        }
+      },
+      "timing_ms": {
+        "before": {
+          "runs": 5,
+          "row_count": 16,
+          "median_ms": 0.681,
+          "min_ms": 0.653,
+          "max_ms": 0.764
+        },
+        "after": {
+          "runs": 5,
+          "row_count": 16,
+          "median_ms": 0.346,
+          "min_ms": 0.334,
+          "max_ms": 0.365
+        }
+      },
+      "expected": "type=ALL + filesort → type=ref + 反向索引扫描，key 命中 idx_log_source_time"
+    }
+  ]
+}
